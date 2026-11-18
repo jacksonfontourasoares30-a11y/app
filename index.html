@@ -224,7 +224,15 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 .sim{display:none!important}#quem{font-size:13.5px;color:var(--mut);margin:-6px 0 14px;font-weight:600}.mini-b{border:1px solid var(--line);background:none;color:#c2410c;border-radius:8px;padding:2px 8px;font:700 12.5px Manrope,system-ui,sans-serif;cursor:pointer;margin-left:6px}
 @media(prefers-reduced-motion:no-preference){main section.on{animation:in .28s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}.sheet{animation:up .25s ease}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
 
-/* ===== layout v3 ===== *//* ===== layout v4: stories + feed + agenda ===== */
+/* ===== layout v3 ===== */
+/* fotos líderes */
+.pastor .av{overflow:hidden}.pastor .av img{width:100%;height:100%;object-fit:cover}
+.cg2 .hd{display:flex;align-items:center;gap:12px}.cg2 .hd .hdf{width:54px;height:54px;border-radius:27px;object-fit:cover;border:2.5px solid #ffffffcc;flex:none;box-shadow:0 4px 12px #0003}
+.fotb{border:1.5px dashed var(--line);border-radius:16px;padding:12px;display:grid;gap:8px}.fotb>b{font:800 15px Archivo,system-ui;color:var(--ink)}.fotb>small{color:var(--mut);font-size:12.5px;font-weight:600;margin-top:-4px}
+.fotr{display:flex;align-items:center;gap:10px;font-weight:700;font-size:14px;color:var(--ink)}.fotr>div{flex:1;min-width:0}.fotr small{display:block;color:var(--mut);font-size:12px;font-weight:600}
+.fav{width:44px;height:44px;border-radius:22px;background:var(--rose);color:var(--wine);display:grid;place-items:center;font:800 13px Archivo,system-ui;overflow:hidden;flex:none}.fav img{width:100%;height:100%;object-fit:cover}
+.fotr .btn{min-height:38px;padding:0 12px;font-size:13px;width:auto!important}.fx2{width:34px;height:34px;border-radius:17px;border:0;background:var(--rose);color:var(--wine);font-weight:800;cursor:pointer}
+/* ===== layout v4: stories + feed + agenda ===== */
 .sto{display:flex;gap:12px;overflow-x:auto;scrollbar-width:none;margin:2px -16px 0;padding:4px 16px 10px}.sto::-webkit-scrollbar{display:none}
 .stb{flex:none;width:70px;border:0;background:none;padding:0;font:700 11.5px Manrope,system-ui;color:var(--ink);text-align:center;text-decoration:none;cursor:pointer;display:grid;justify-items:center;gap:5px}
 .stb .rg{width:66px;height:66px;border-radius:33px;padding:2.5px;background:conic-gradient(var(--c),color-mix(in srgb,var(--c) 45%,#fff),var(--c));display:block}
@@ -485,7 +493,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
   <section id="igreja">
     <a class="back" href="#mais"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-chev"/></svg>Mais</a>
     <div class="ph"><h2>Conheça a igreja</h2><p id="igSub">Assembleia de Deus em Carlos Barbosa.</p></div>
-    <div class="card"><h3>Pastores presidentes</h3><div class="pastor"><div class="av">AO</div><div><b>Pr. Ageu Gaspar Ozório e Liane Ozório</b><p>Assembleia de Deus · Carlos Barbosa</p></div></div></div>
+    <div class="card"><h3>Pastores presidentes</h3><div class="pastor"><div class="av" id="pastAv">AO</div><div><b>Pr. Ageu Gaspar Ozório e Liane Ozório</b><p>Assembleia de Deus · Carlos Barbosa</p></div></div></div>
     <div class="h2" style="margin-top:20px">Nossas congregações</div>
     <div id="igL"></div>
   </section>
@@ -579,6 +587,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
         <label>Sede e congregações (uma por linha, a sede primeiro)<textarea name="congs" required></textarea></label>
         <label>Endereços e responsáveis (uma por linha: Congregação; endereço; responsáveis)<textarea name="info" placeholder="CEAD; Rua Antônio Prado, 165 – Vila Nova; Dirigentes: Geziel e Natália Machado"></textarea></label>
         <label>Código para ver as escalas (deixe em branco para escalas abertas)<input name="codigo" maxlength="20" placeholder="Ex.: 2026AD" autocomplete="off"></label>
+        <div class="fotb"><b>Fotos dos pastores e dirigentes</b><small>Aparecem na página da igreja e nos avisos publicados por eles. Peça autorização antes de colocar.</small><div id="fotL"></div><input type="hidden" name="fotos"><input type="file" accept="image/*" id="fotI" hidden></div>
         <label>Link da transmissão ao vivo (YouTube ou Facebook, opcional)<input name="aoVivo" type="url" maxlength="300" placeholder="https://youtube.com/@..."></label>
         <label>Programação semanal (uma por linha: Congregação; dia; hora; culto)<textarea name="prog" placeholder="Sede; quinta; 19:30; Culto da Vitória"></textarea></label>
         <button class="btn">Salvar</button><div class="msg"></div>
@@ -989,7 +998,7 @@ function rFeed(){const box=$('#feed');if(!box)return;const it=[];
   let l=it.filter(x=>feedF==='all'||x.t===feedF).slice(0,24);
   const vI=(()=>{const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)%VERS.length})();
   let h=l.map((x,n)=>{let o='';if(x.t==='aviso'){const a=x.a,u=urgVivo(a);
-      o=`<article class="fp"><div class="fh"><span class="fa" style="background:${corP(a.de||'L')}">${esc(inic(a.de||'Liderança'))}</span><div><b>${esc(a.de||'Liderança')}</b><small>Aviso · ${esc(a.cong||'Todas')}${quando(a)?' · '+quando(a):''}</small></div><span class="ft${u?' u':''}">${u?'URGENTE':'AVISO'}</span></div>
+      o=`<article class="fp"><div class="fh"><span class="fa" style="background:${corP(a.de||'L')}">${fotoDe(a.de)?`<img src="${fotoDe(a.de)}" alt="">`:esc(inic(a.de||'Liderança'))}</span><div><b>${esc(a.de||'Liderança')}</b><small>Aviso · ${esc(a.cong||'Todas')}${quando(a)?' · '+quando(a):''}</small></div><span class="ft${u?' u':''}">${u?'URGENTE':'AVISO'}</span></div>
       <button class="fx${u?' u':''}" data-avid="${esc(a.id)}">${a.titulo?`<b>${esc(a.titulo)}</b>`:''}<span>${esc(a.texto)}</span>${a.video?`<em class="avv" data-vurl="${esc(a.video)}">${IC('play')}Assistir vídeo</em>`:''}</button>${hasMedia(a)?`<div class="fi">${media(a,a.titulo||'Aviso')}</div>`:''}</article>`}
     else{const e=x.e,cg=e.cong&&e.cong!=='Todas'?e.cong:'',k='e:'+x.id;
       o=`<article class="fp"><div class="fh"><span class="fa" style="background:${cg?ccol(cg):'#0b2160'}">${cg?esc(inic(cg)):'<img src="icon-192.png" alt="">'}</span><div><b>${cg?'Congregação '+esc(cg):esc(cfg().nome)}</b><small>Evento · ${cap(fmt(e.data,{weekday:'short',day:'numeric',month:'short'}))}${e.hora?' · '+esc(e.hora):''}</small></div><span class="ft e">EVENTO</span></div>
@@ -1144,10 +1153,31 @@ const avCard=(a,full)=>`<button class="av-card${full?' full':''}${urgVivo(a)?' u
 function rBadge(){const n=avVis().filter(a=>!lidos.has(a.id)).length;$('#badge').textContent=n?String(n>9?'9+':n):''}
 function marcar(ids){let ch=false;ids.forEach(i=>{if(!lidos.has(i)){lidos.add(i);ch=true}});if(ch){try{localStorage.setItem('avLidos',JSON.stringify([...lidos].slice(-300)))}catch(_){}}rBadge()}
 function rAvisos(){if(!loaded){$('#avL').innerHTML=SK(3);return}const l=avVis();$('#avL').innerHTML=l.length?l.map(a=>avCard(a,true)).join(''):'<div class="empty">Nenhum aviso no momento.</div>';setTimeout(()=>marcar(l.map(a=>a.id)),1500)}
-function rIgreja(){const c=cfg(),inf=c.info||{};
+
+/* ===== fotos dos líderes ===== */
+const fotoSrc=v=>!v?'':/^data:image\//.test(v)?v:srcOf({mid:v,mtype:'image'});
+const TIT=/^(pr|pra|pb|presb|dc|diac|diác|ev|miss|irm[aã]?|pastor|pastora|dirigentes?|presidentes?|pastores|e|de|da|do|dos|das)\.?$/i;
+function fotoDe(nome){const c=cfg(),F=c.fotos||{},n=String(nome||'').toLowerCase();if(!n)return'';
+  const ws=t=>String(t||'').split(/[\s,:;]+/).filter(w=>w.length>2&&!TIT.test(w)).map(w=>w.toLowerCase());
+  if(F.pastor&&(/\bpastor(es)?\b|presidente/.test(n)||ws((c.info||{})[c.congs[0]]?.resp||'Ageu Liane').concat(['ageu','liane']).some(w=>n.includes(w))))return fotoSrc(F.pastor);
+  for(const k of c.congs||[]){if(F[k]&&ws((c.info||{})[k]?.resp).some(w=>n.includes(w)))return fotoSrc(F[k])}return''}
+function rFotL(){const f=$('#fig');if(!f)return;let o={};try{o=JSON.parse(f.elements.fotos.value||'{}')}catch(_){}
+  const rows=[['pastor','Pastores presidentes']].concat((cfg().congs||[]).map(k=>[k,'Dirigentes · '+k]));
+  $('#fotL').innerHTML=rows.map(([k,l])=>`<div class="fotr"><span class="fav">${o[k]?`<img src="${fotoSrc(o[k])}" alt="">`:esc(inic(l.replace('Dirigentes · ','')))}</span><div>${esc(l)}<small>${o[k]?'Foto colocada':'Sem foto'}</small></div><button type="button" class="btn gh" data-fotk="${esc(k)}">${o[k]?'Trocar':'Escolher foto'}</button>${o[k]?`<button type="button" class="fx2" data-fotx="${esc(k)}" aria-label="Remover foto">✕</button>`:''}</div>`).join('')}
+function sqBlob(file,max=420){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const sd=Math.min(img.width,img.height),sx=(img.width-sd)/2,sy=Math.max(0,(img.height-sd)/2-sd*.08);const c=document.createElement('canvas');c.width=c.height=Math.min(max,sd);c.getContext('2d').drawImage(img,sx,Math.max(0,sy),sd,sd,0,0,c.width,c.height);URL.revokeObjectURL(img.src);c.toBlob(w=>{if(w&&w.type==='image/webp')return res(w);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.85)},'image/webp',.82)};img.onerror=rej;img.src=URL.createObjectURL(file)})}
+let fotK='';
+document.addEventListener('click',e=>{const b=e.target.closest('[data-fotk],[data-fotx]');if(!b)return;e.preventDefault();const f=$('#fig');
+  if(b.dataset.fotx){let o={};try{o=JSON.parse(f.elements.fotos.value||'{}')}catch(_){}delete o[b.dataset.fotx];f.elements.fotos.value=JSON.stringify(o);rFotL();f.querySelector('.msg').textContent='Foto removida. Toque em Salvar para confirmar.';return}
+  fotK=b.dataset.fotk;$('#fotI').value='';$('#fotI').click()});
+document.addEventListener('change',async e=>{if(e.target.id!=='fotI')return;const file=e.target.files&&e.target.files[0];if(!file||!fotK)return;const f=$('#fig'),m=f.querySelector('.msg');
+  if(!/^image\//.test(file.type)){m.textContent='Escolha uma imagem.';return}m.textContent='Preparando a foto…';
+  try{const bl=await sqBlob(file);let v;if(assets){const up=await assets.upload(bl);v=up.id}else{v=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(bl)})}
+    let o={};try{o=JSON.parse(f.elements.fotos.value||'{}')}catch(_){}o[fotK]=v;f.elements.fotos.value=JSON.stringify(o);rFotL();m.textContent='Foto pronta! Toque em Salvar para publicar.'}
+  catch(_){m.textContent='Não deu certo com essa foto. Tente outra.'}});
+function rIgreja(){const c=cfg(),inf=c.info||{};{const pa=$('#pastAv'),F=c.fotos||{};if(pa)pa.innerHTML=F.pastor?`<img src="${fotoSrc(F.pastor)}" alt="Pastores presidentes">`:'AO'}
   const DS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   $('#igL').innerHTML=c.congs.map(n=>{const i=inf[n]||{};const cc=ccol(n),dk=CDK[n]?`rgb(${CDK[n]})`:'#0b2160';const hs=(c.prog||[]).filter(x=>x.cong===n).sort((a,b)=>a.dia-b.dia||String(a.hora).localeCompare(b.hora));
-    return `<div class="cg2" style="--cc:${cc};--cd:${dk}"><div class="hd"><b>${esc(n)}</b>${i.resp?`<span>${esc(i.resp)}</span>`:''}</div><div class="bd2">${i.end?`<div class="ad">${IC('pin')}${esc(i.end)}</div>`:'<div class="ad">Endereço em breve.</div>'}${hs.length?`<div class="hrs">${hs.map(x=>`<span>${DS[x.dia]} ${esc(String(x.hora).replace(':00','h').replace(':','h'))}</span>`).join('')}</div>`:''}${i.end?`<a class="btn gh" href="${maps(i.end)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}</div></div>`}).join('')}
+    return `<div class="cg2" style="--cc:${cc};--cd:${dk}"><div class="hd">${(()=>{const F=c.fotos||{},v=F[n]||(n===c.congs[0]?F.pastor:'');return v?`<img class="hdf" src="${fotoSrc(v)}" alt="">`:''})()}<div><b>${esc(n)}</b>${i.resp?`<span>${esc(i.resp)}</span>`:''}</div></div><div class="bd2">${i.end?`<div class="ad">${IC('pin')}${esc(i.end)}</div>`:'<div class="ad">Endereço em breve.</div>'}${hs.length?`<div class="hrs">${hs.map(x=>`<span>${DS[x.dia]} ${esc(String(x.hora).replace(':00','h').replace(':','h'))}</span>`).join('')}</div>`:''}${i.end?`<a class="btn gh" href="${maps(i.end)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}</div></div>`}).join('')}
 let pgDia=null;document.addEventListener('click',e=>{const b=e.target.closest('[data-pgd]');if(b){pgDia=+b.dataset.pgd;rProg()}});
 function rProg(){const c=cfg(),pg=(c.prog||[]).filter(x=>inCong(x));
   if(!pg.length){$('#pgL').innerHTML='<div class="empty">A programação semanal ainda não foi cadastrada.</div>';return}
@@ -1223,7 +1253,7 @@ function setCapa(){const w=$('.hwrap');if(!w)return;const c=cfg(),inf=(c.info||{
 function rHead(){const c=cfg();$('#nome').textContent=c.nome;document.title=c.nome;if(cong&&!c.congs.includes(cong))cong='';
   $('#cnome').innerHTML=(cong?`<i class="cdot" style="--cc:${ccol(cong)};margin-right:6px"></i>`:'')+esc(cong||'Todas');setCapa();const hh=new Date().getHours();{const g=hh<12?'Bom dia':hh<18?'Boa tarde':'Boa noite';const ws=me.trim().split(/\s+/).filter(w=>w.length>2&&!/^(pr|pb|dc|ev|pra|irm[aã]?|miss)\.?$/i.test(w));const nm=ws[0]?ws[0][0].toUpperCase()+ws[0].slice(1).toLowerCase():'';$('#hi').textContent=nm?`${g}, ${nm}!`:g+'!'}$('#hoje').textContent=cap(now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
   $$('.selC').forEach(sl=>{const v0=sl.value;sl.innerHTML=(sl.dataset.all?['Todas',...c.congs]:c.congs).map(x=>`<option>${esc(x)}</option>`).join('');if(v0&&[...sl.options].some(o=>o.value===v0))sl.value=v0});
-  const f=$('#fig');if(f.hidden||!f.dataset.filled){f.elements.nome.value=c.nome;f.elements.aoVivo.value=c.aoVivo||'';f.elements.congs.value=c.congs.join('\n');f.elements.info.value=Object.entries(c.info||{}).map(([k,v])=>[k,v.end||'',v.resp||''].join('; ')).join('\n');f.elements.codigo.value=c.codigo||'';f.elements.prog.value=(c.prog||[]).map(x=>[x.cong,DN[x.dia],x.hora,x.nome].join('; ')).join('\n');f.dataset.filled='1'}}
+  const f=$('#fig');if(f.hidden||!f.dataset.filled){f.elements.fotos.value=JSON.stringify(c.fotos||{});rFotL();f.elements.nome.value=c.nome;f.elements.aoVivo.value=c.aoVivo||'';f.elements.congs.value=c.congs.join('\n');f.elements.info.value=Object.entries(c.info||{}).map(([k,v])=>[k,v.end||'',v.resp||''].join('; ')).join('\n');f.elements.codigo.value=c.codigo||'';f.elements.prog.value=(c.prog||[]).map(x=>[x.cong,DN[x.dia],x.hora,x.nome].join('; ')).join('\n');f.dataset.filled='1'}}
 function render(){if(loaded)hideSplash();rHead();rBadge();const v=cur();$('.app').classList.toggle('home',v==='inicio');$$('main section').forEach(s=>s.classList.toggle('on',s.id===v));$$('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v||(a.dataset.v==='mais'&&['igreja','programacao','oracao','admin','avisos','eventos','calendario'].includes(v))));R[v]()}
 addEventListener('hashchange',()=>{$('#modal').classList.remove('on');render();scrollTo(0,0)});
 
@@ -1485,7 +1515,7 @@ $('#fig').addEventListener('submit',async e=>{e.preventDefault();const f=e.targe
   const congs=[...new Set(f.elements.congs.value.split('\n').map(x=>x.trim()).filter(Boolean))].slice(0,20);if(!congs.length){m.textContent='Informe ao menos a sede.';return}
   m.textContent='Salvando…';try{const info={};f.elements.info.value.split('\n').map(l=>l.split(';').map(x=>x.trim())).filter(a=>a[0]).forEach(a=>{info[a[0]]={end:a[1]||'',resp:a[2]||''}});
   const prog=f.elements.prog.value.split('\n').map(l=>l.split(';').map(x=>x.trim())).filter(a=>a.length>=4).map(a=>({cong:a[0],dia:DN.findIndex(d=>d.normalize('NFD').replace(/[\u0300-\u036f]/g,'').startsWith(a[1].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').slice(0,3))),hora:a[2],nome:a.slice(3).join('; ')})).filter(x=>x.dia>=0);
-  await db.doc('config/igreja').set({nome:f.elements.nome.value.trim()||DEFCFG.nome,congs,info,prog,codigo:f.elements.codigo.value.trim(),aoVivo:/^https:\/\//.test(f.elements.aoVivo.value.trim())?f.elements.aoVivo.value.trim():''});m.textContent='Salvo!'}catch(err){m.textContent='Não deu certo. Tente de novo.'}});
+  await db.doc('config/igreja').set({nome:f.elements.nome.value.trim()||DEFCFG.nome,congs,info,prog,codigo:f.elements.codigo.value.trim(),fotos:(()=>{try{const o=JSON.parse(f.elements.fotos.value||'{}');const z={};for(const [k,v] of Object.entries(o))if(typeof v==='string'&&v.length<400000&&String(k).length<60)z[k]=v;return z}catch(_){return{}}})(),aoVivo:/^https:\/\//.test(f.elements.aoVivo.value.trim())?f.elements.aoVivo.value.trim():''});m.textContent='Salvo!'}catch(err){m.textContent='Não deu certo. Tente de novo.'}});
 function useSample(){usingSample=true;loaded=true;const d=JSON.parse(JSON.stringify(SAMPLE));for(const k in d)setCol(k,d[k]);render()}
 render();setTimeout(rPush,1500);
 (async()=>{
