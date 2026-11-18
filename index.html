@@ -228,6 +228,7 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 @media(prefers-reduced-motion:no-preference){main section.on{animation:in .28s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}.sheet{animation:up .25s ease}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
 
 #fav input[readonly]{background:light-dark(#eef1f6,#141c33);color:var(--mut);cursor:not-allowed}
+.st.prog{background:light-dark(#e8eeff,#16224a);color:light-dark(#1546b8,#9db6ff)}
 /* ===== layout v3 ===== */
 /* fotos líderes */
 .pastor .av{overflow:hidden}.pastor .av img{width:100%;height:100%;object-fit:cover}
@@ -554,6 +555,9 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
         <label>Link do vídeo (opcional)<input name="video" type="url" maxlength="300" placeholder="Cole o link do vídeo" inputmode="url"><span class="note" style="margin:0;text-align:left;font-weight:500">Vídeos não são enviados pelo app. Coloque o vídeo no YouTube, Instagram, Facebook ou Google Drive e cole o link aqui.</span></label>
         <label class="urgsw"><input name="urgente" type="checkbox"><div><b>⚠ Marcar como urgente</b><small>Aparece em vermelho no topo da tela inicial por 2 dias e a notificação chega com destaque. Use para cancelamentos e mudanças de última hora.</small></div></label>
         <div class="two"><label>Mostrar até<input name="ate" type="date"></label><label style="display:flex;gap:10px;align-items:center;font-weight:500;padding-top:22px"><input name="fixo" type="checkbox" style="width:22px;height:22px"> Fixar no topo</label></div>
+        <label>Quando publicar<select name="qpub" id="qpub"><option value="">Publicar agora</option><option value="dep">Programar para depois</option></select></label>
+        <div class="two" id="qpubB" hidden><label>Dia<input name="pubD" type="date"></label><label>Hora<input name="pubH" type="time"></label></div>
+        <p class="note" id="qpubN" hidden style="margin:-4px 0 0;text-align:left;font-weight:500">O aviso fica guardado e só aparece para os irmãos na hora marcada. A notificação sai junto.</p>
         <button class="btn">Enviar aviso</button><div class="msg"></div>
       </form>
       <datalist id="remet"><option>Pastor Ageu Ozório</option><option>Secretaria</option><option>Departamento de Mídia</option><option>UMADCB</option><option>UFADCB</option><option>Asafe</option><option>Peniel</option></datalist>
@@ -1211,7 +1215,10 @@ function rEscalas(){
 }
 
 let lidos=new Set();try{lidos=new Set(JSON.parse(localStorage.getItem('avLidos')||'[]'))}catch(e){}
-const avVis=()=>S.avisos.filter(a=>a&&a.texto&&(!a.ate||a.ate>=TODAY)&&inCong(a)).sort((a,b)=>(urgVivo(b)?1:0)-(urgVivo(a)?1:0)||(b.fixo?1:0)-(a.fixo?1:0)||String(b.criado||'').localeCompare(a.criado||''));
+const pubFut=a=>!!(a&&a.publicar_em&&a.publicar_em>new Date().toISOString());
+const pubTxt=a=>{if(!a||!a.publicar_em)return'';const d=new Date(a.publicar_em);
+  return cap(d.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'short'}))+' às '+pad(d.getHours())+':'+pad(d.getMinutes())};
+const avVis=()=>S.avisos.filter(a=>a&&a.texto&&!pubFut(a)&&(!a.ate||a.ate>=TODAY)&&inCong(a)).sort((a,b)=>(urgVivo(b)?1:0)-(urgVivo(a)?1:0)||(b.fixo?1:0)-(a.fixo?1:0)||String(b.criado||'').localeCompare(a.criado||''));
 
 const urgVivo=a=>!!(a&&a.urgente&&(a.ate?a.ate>=TODAY:(!a.criado||Date.now()-new Date(a.criado)<48*36e5)));
 let urgOk=new Set();try{urgOk=new Set(JSON.parse(localStorage.getItem('urgOk')||'[]'))}catch(_){}
@@ -1313,7 +1320,7 @@ function rAdmin(){
   $('#grupos').innerHTML=[...new Set(S.escalas.flatMap(gr))].map(m=>`<option value="${esc(m)}">`).join('');
   const col={av:'avisos',ev:'eventos',ba:'banners',es:'escalas'}[adTab];
   const items=[...ALL[col]].filter(x=>papel!=='lider'||x.autor_email===eu.email||pub(x)).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
-  $('#admL').innerHTML=items.length?items.map(x=>`<div class="li"><div><b>${esc(x.titulo||x.culto||x.ministerio||(x.texto?String(x.texto).slice(0,40)+'…':'Banner'))}</b><br><span style="color:var(--mut)">${x.cong?esc(x.cong)+' · ':''}${x.semanal&&x.data?'Toda semana, '+DIAS[toD(x.data).getDay()]:x.data?fmt(x.data,{day:'numeric',month:'short',year:'numeric'}):esc(x.sub||'')}${okMid(x)?(x.mtype==='video'?' · vídeo':' · imagem'):''}${x.de?esc(x.de)+' → '+esc(x.cong||'Todas')+(x.fixo?' · fixado':''):''}${x.ate&&!x.data?(x.ate<TODAY?' · <b style="color:#c2410c">expirado</b>':' · até '+fmt(x.ate,{day:'numeric',month:'short'})):''}${x.hora?' · '+esc(x.hora):''}${x.status==='pendente'?'<br><span class="st pend">Aguardando aprovação</span>':x.status==='recusado'?`<br><span class="st rec">Recusado${x.motivo?': '+esc(x.motivo):''}</span>`:''}</span></div>${papel!=='lider'||x.autor_email===eu.email&&!pub(x)?`<button data-del="${col}/${esc(x.id)}">Apagar</button>`:''}</div>`).join(''):'<div class="empty">Nada publicado ainda.</div>';
+  $('#admL').innerHTML=items.length?items.map(x=>`<div class="li"><div><b>${esc(x.titulo||x.culto||x.ministerio||(x.texto?String(x.texto).slice(0,40)+'…':'Banner'))}</b><br><span style="color:var(--mut)">${x.cong?esc(x.cong)+' · ':''}${x.semanal&&x.data?'Toda semana, '+DIAS[toD(x.data).getDay()]:x.data?fmt(x.data,{day:'numeric',month:'short',year:'numeric'}):esc(x.sub||'')}${okMid(x)?(x.mtype==='video'?' · vídeo':' · imagem'):''}${x.de?esc(x.de)+' → '+esc(x.cong||'Todas')+(x.fixo?' · fixado':''):''}${x.ate&&!x.data?(x.ate<TODAY?' · <b style="color:#c2410c">expirado</b>':' · até '+fmt(x.ate,{day:'numeric',month:'short'})):''}${x.hora?' · '+esc(x.hora):''}${pubFut(x)?`<br><span class="st prog">Programado · ${esc(pubTxt(x))}</span>`:''}${x.status==='pendente'?'<br><span class="st pend">Aguardando aprovação</span>':x.status==='recusado'?`<br><span class="st rec">Recusado${x.motivo?': '+esc(x.motivo):''}</span>`:''}</span></div>${papel!=='lider'||x.autor_email===eu.email&&!pub(x)?`<button data-del="${col}/${esc(x.id)}">Apagar</button>`:''}</div>`).join(''):'<div class="empty">Nada publicado ainda.</div>';
 }
 
 const R={agenda:rAgenda,avisos:rAvisos,inicio:rInicio,eventos:rEventos,calendario:rCal,escalas:rEscalas,mais:()=>{},igreja:rIgreja,programacao:rProg,oracao:()=>{},admin:rAdmin};
@@ -1444,17 +1451,30 @@ async function submit(form,col,build,after){
     try{const fd=new FormData(form);const o=stamp(build(fd));const f=fd.get('img');if(f&&f.size){const vid=/^video\//.test(f.type);if(vid)throw{code:'video'};
         if(assets){if(f.size>20*1024*1024)throw{code:'big'};m.textContent='Enviando arquivo…';const up=await assets.upload(vid?f:await shrinkBlob(f));o.mid=up.id;o.mtype=vid?'video':'image'}
         else if(vid)throw{code:'novid'};else o.img=await shrink(f)}
-      o.criado=new Date().toISOString();const ref=await db.collection(col).add(o);if(after)await after(o,ref,fd);if(o.status==='publicado')notificar(msgDe(col,o));form.reset();m.textContent=o.status==='pendente'?'Enviado! Aguardando aprovação do pastor.':'Publicado!'}
+      o.criado=new Date().toISOString();const ref=await db.collection(col).add(o);if(after)await after(o,ref,fd);if(o.status==='publicado'&&!pubFut(o))notificar(msgDe(col,o));form.reset();m.textContent=o.status==='pendente'?'Enviado! Aguardando aprovação do pastor.':pubFut(o)?'Programado para '+pubTxt(o)+'.':'Publicado!'}
     catch(err){const c=err&&err.code;m.textContent=c==='video'?'Vídeos não são enviados pelo app, porque gastam muito da internet grátis. Publique no YouTube e cole o link no campo "Link do vídeo".':c==='invalid_argument'?'Você não tem permissão para publicar.':c==='big'?'Arquivo grande demais (máx. 20 MB).':c==='novid'?'Vídeos precisam de permissão de editor.':'Não deu certo. Tente de novo.'}
     b.disabled=false});
 }
 const v=(fd,k)=>String(fd.get(k)||'').trim();
+function pubEm(fd){if(String(fd.get('qpub')||'')!=='dep')return'';
+  const d=String(fd.get('pubD')||''),h=String(fd.get('pubH')||'');if(!d||!h)return'';
+  const t=new Date(d+'T'+h);if(isNaN(t)||t.getTime()<=Date.now())return'';return t.toISOString()}
+{const f=$('#fav'),sel=f&&f.elements.qpub;
+ const sinc=()=>{const on=sel.value==='dep';$('#qpubB').hidden=!on;$('#qpubN').hidden=!on;
+   f.elements.pubD.required=on;f.elements.pubH.required=on;
+   if(on&&!f.elements.pubD.value)f.elements.pubD.value=TODAY;
+   f.elements.pubD.min=TODAY;val()};
+ const val=()=>{const on=sel.value==='dep',d=f.elements.pubD.value,h=f.elements.pubH.value;
+   const ruim=on&&d&&h&&new Date(d+'T'+h).getTime()<=Date.now();
+   f.elements.pubH.setCustomValidity(ruim?'Escolha uma data e uma hora que ainda não passaram.':'')};
+ if(sel){sel.addEventListener('change',sinc);f.elements.pubD.addEventListener('input',val);f.elements.pubH.addEventListener('input',val);
+   f.addEventListener('reset',()=>setTimeout(sinc,0))}}
 const ytL=u=>/^https:\/\/[^\s"'<>]+$/.test(u)?u:'';
 document.addEventListener('change',e=>{const i=e.target;if(i.name!=='img'||!i.files||!i.files[0]||!/^video\//.test(i.files[0].type))return;i.value='';const m=i.form&&i.form.querySelector('.msg');if(m)m.textContent='Vídeos não são enviados pelo app. Publique no YouTube e cole o link no campo "Link do vídeo".'});
 document.addEventListener('click',e=>{const t=e.target.closest('[data-vurl]');if(!t)return;e.preventDefault();e.stopPropagation();if(/^https:\/\//.test(t.dataset.vurl))open(t.dataset.vurl,'_blank','noopener')},true);
 {const fe=$('#fev');let touched=false;fe.elements.bannerAte.addEventListener('input',()=>touched=true);fe.elements.data.addEventListener('input',()=>{if(!touched&&!fe.elements.semanal.checked)fe.elements.bannerAte.value=fe.elements.data.value});fe.elements.semanal.addEventListener('change',()=>{if(!touched)fe.elements.bannerAte.value=fe.elements.semanal.checked?'':fe.elements.data.value});fe.addEventListener('reset',()=>touched=false)}
 submit($('#fev'),'eventos',fd=>({titulo:v(fd,'titulo'),data:v(fd,'data'),hora:v(fd,'hora'),cong:v(fd,'cong')||'Todas',local:v(fd,'local'),ministerio:v(fd,'ministerio')||'Geral',desc:v(fd,'desc'),semanal:fd.get('semanal')==='on',video:ytL(v(fd,'video'))}),async(o,ref,fd)=>{if(fd.get('comoBanner')!=='on'||!(okMid(o)||okImg(o.img)))return;const bn={titulo:o.titulo,ordem:50,evento:ref.id,status:o.status,autor:o.autor,ate:v(fd,'bannerAte')||(o.semanal?'':o.data),criado:o.criado};if(o.mid){bn.mid=o.mid;bn.mtype=o.mtype}else bn.img=o.img;await db.collection('banners').add(bn)});
-submit($('#fav'),'avisos',fd=>({de:v(fd,'de'),cong:v(fd,'cong')||'Todas',titulo:v(fd,'titulo'),texto:v(fd,'texto'),ate:v(fd,'ate'),fixo:fd.get('fixo')==='on',urgente:fd.get('urgente')==='on',video:ytL(v(fd,'video'))}));
+submit($('#fav'),'avisos',fd=>({de:v(fd,'de'),cong:v(fd,'cong')||'Todas',titulo:v(fd,'titulo'),texto:v(fd,'texto'),ate:v(fd,'ate'),fixo:fd.get('fixo')==='on',urgente:fd.get('urgente')==='on',video:ytL(v(fd,'video')),publicar_em:pubEm(fd)}));
 submit($('#fba'),'banners',fd=>({titulo:v(fd,'titulo'),sub:v(fd,'sub'),cor:okCol(v(fd,'cor')),ate:v(fd,'ate')}));
 submit($('#fes'),'escalas',fd=>({cong:v(fd,'cong'),data:v(fd,'data'),hora:v(fd,'hora'),culto:v(fd,'culto'),pessoas:v(fd,'pessoas').split('\n').map(l=>l.trim()).filter(Boolean).slice(0,30),grupo:v(fd,'grupo'),destaque:fd.get('destaque')==='on'}));
 $('#fmm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,m=f.querySelector('.msg');if(!db){m.textContent='Os dados não estão disponíveis nesta visualização.';return}
