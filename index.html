@@ -39,9 +39,12 @@ main section.on{display:block}
 .h2{font:800 18px/1.2 Archivo,system-ui;margin:26px 0 12px;display:flex;justify-content:space-between;align-items:center}
 .h2 a{font:700 14px Manrope,system-ui,sans-serif;color:var(--wine);text-decoration:none;cursor:pointer;display:inline-flex;align-items:center;gap:2px;min-height:36px}
 .note{font-size:13px;color:var(--mut);margin:14px 0 0;text-align:center}
-.hero{position:relative;margin:-60px 0 0;background:var(--card);border-radius:22px;box-shadow:0 12px 32px -14px rgb(11 33 96/.45);padding:18px;display:grid;gap:12px;z-index:1}
+.hero{position:relative;margin:-60px 0 0;background:var(--card);border-radius:22px;box-shadow:0 12px 32px -14px rgb(11 33 96/.45);padding:18px;display:grid;gap:12px;z-index:1;overflow:hidden}
+.hero.cg{box-shadow:0 12px 32px -14px rgb(11 33 96/.45),inset 5px 0 0 var(--cc)}
 .hero .lb{display:inline-flex;align-items:center;gap:7px;font:800 12px Manrope,system-ui,sans-serif;letter-spacing:.06em;text-transform:uppercase;color:var(--wine)}
 .hero .lb i{width:8px;height:8px;border-radius:9px;background:var(--acc);box-shadow:0 0 0 4px #d9a52b33}
+.hero.cg .lb{color:var(--cc)}
+.hero.cg .lb i{background:var(--cc);box-shadow:0 0 0 4px color-mix(in srgb,var(--cc) 22%,transparent)}
 .hero h3{font-size:23px;font-weight:800}
 .meta{display:grid;gap:6px;color:var(--mut);font-size:14.5px;font-weight:600}
 .meta div{display:flex;gap:8px;align-items:center}.meta .ic{color:var(--wine)}
@@ -250,6 +253,7 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 .fx{display:block;width:100%;text-align:left;margin-top:10px;border:0;border-radius:16px;padding:13px 14px;background:light-dark(#f4f6fa,#141c33);color:var(--ink);font:600 14px/1.5 Manrope,system-ui;cursor:pointer}
 .fx b{display:block;font:800 15px Archivo,system-ui;margin-bottom:2px}.fx span{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
 .fx.u{background:linear-gradient(135deg,#b91c1c,#e11d2a);color:#fff}
+.fx.cg{box-shadow:inset 4px 0 0 var(--c)}
 .fx.ev{box-shadow:inset 4px 0 0 var(--c)}.fx.ev small{font:800 11.5px Manrope,system-ui;color:var(--c);display:block;margin-bottom:2px}.fx.ev span{color:var(--mut);font-size:13px}
 .fac{display:flex;gap:18px;align-items:center;padding:10px 2px 6px}.fac a,.fac button{display:flex;align-items:center;gap:6px;border:0;background:none;padding:4px 0;font:700 13px Manrope,system-ui;color:var(--mut);text-decoration:none;cursor:pointer}.fac .ic{width:19px;height:19px}
 .amb{color:#e11d48!important}.amb .ic{stroke:#e11d48}.amb.on .ic{fill:#e11d48}.amb.pop .ic{animation:amp .5s}@keyframes amp{40%{transform:scale(1.5)}}
@@ -1061,8 +1065,9 @@ function rFeed(){const box=$('#feed');if(!box)return;const it=[];
   let l=it.filter(x=>feedF==='all'||x.t===feedF).slice(0,24);
   const vI=(()=>{const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)%VERS.length})();
   let h=l.map((x,n)=>{let o='';if(x.t==='aviso'){const a=x.a,u=urgVivo(a);
-      o=`<article class="fp"><div class="fh"><span class="fa" style="background:${corP(a.de||'L')}">${fotoDe(a.de)?`<img src="${fotoDe(a.de)}" alt="">`:esc(inic(a.de||'Liderança'))}</span><div><b>${esc(a.de||'Liderança')}</b><small>Aviso · ${esc(a.cong||'Todas')}${quando(a)?' · '+quando(a):''}</small></div><span class="ft${u?' u':''}">${u?'URGENTE':'AVISO'}</span></div>
-      <button class="fx${u?' u':''}" data-avid="${esc(a.id)}">${a.titulo?`<b>${esc(a.titulo)}</b>`:''}<span>${esc(a.texto)}</span>${a.video?`<em class="avv" data-vurl="${esc(a.video)}">${IC('play')}Assistir vídeo</em>`:''}</button>${hasMedia(a)?`<div class="fi">${media(a,a.titulo||'Aviso')}</div>`:''}</article>`}
+      const acg=a.cong&&a.cong!=='Todas'&&CC[a.cong]?ccol(a.cong):'';
+      o=`<article class="fp"><div class="fh"><span class="fa" style="background:${acg||'#0b2160'}">${fotoDe(a.de)?`<img src="${fotoDe(a.de)}" alt="">`:esc(inic(a.de||'Liderança'))}</span><div><b>${esc(a.de||'Liderança')}</b><small>Aviso · ${esc(a.cong||'Todas')}${quando(a)?' · '+quando(a):''}</small></div><span class="ft${u?' u':''}">${u?'URGENTE':'AVISO'}</span></div>
+      <button class="fx${u?' u':acg?' cg':''}"${acg?` style="--c:${acg}"`:''} data-avid="${esc(a.id)}">${a.titulo?`<b>${esc(a.titulo)}</b>`:''}<span>${esc(a.texto)}</span>${a.video?`<em class="avv" data-vurl="${esc(a.video)}">${IC('play')}Assistir vídeo</em>`:''}</button>${hasMedia(a)?`<div class="fi">${media(a,a.titulo||'Aviso')}</div>`:''}</article>`}
     else{const e=x.e,cg=e.cong&&e.cong!=='Todas'?e.cong:'',k='e:'+x.id;
       o=`<article class="fp"><div class="fh"><span class="fa" style="background:${cg?ccol(cg):'#0b2160'}">${cg?esc(inic(cg)):'<img src="icon-192.png" alt="">'}</span><div><b>${cg?'Congregação '+esc(cg):esc(cfg().nome)}</b><small>Evento · ${cap(fmt(e.data,{weekday:'short',day:'numeric',month:'short'}))}${e.hora?' · '+esc(e.hora):''}</small></div><span class="ft e">EVENTO</span></div>
       ${hasMedia(e)?`<button class="fi" data-ev="${esc(x.id)}" data-dt="${esc(e.data)}">${media(e,e.titulo)}</button>`:`<button class="fx ev" data-ev="${esc(x.id)}" data-dt="${esc(e.data)}" style="--c:${cg?ccol(cg):'#1546b8'}"><small>${cap(fmt(e.data,{weekday:'long',day:'numeric',month:'long'}))}${e.hora?' · '+esc(e.hora):''}</small><b>${esc(e.titulo)}</b>${e.local?`<span>${esc(e.local)}</span>`:''}</button>`}
@@ -1100,6 +1105,8 @@ function rInicio(){
   const nx=futuros().find(e=>e.data>TODAY||!e.hora||e.hora>=nowT||(+e.hora.slice(0,2)+2)*60+ +e.hora.slice(3)>=new Date().getHours()*60+new Date().getMinutes());
   {const av=avVis().filter(a=>!(urgVivo(a)&&!urgOk.has(a.id))).slice(0,2);$('#avHome').innerHTML=av.map(a=>avCard(a,false)).join('');$('#avHomeW').hidden=!av.length}
   const aoV=cfg().aoVivo,ehVivo=!!(aoV&&nx&&nx.data===TODAY&&nx.hora&&(()=>{const m=new Date().getHours()*60+new Date().getMinutes(),h=+nx.hora.slice(0,2)*60+ +nx.hora.slice(3);return m>=h-15&&m<=h+150})());
+  {const hc=nx&&nx.cong&&nx.cong!=='Todas'&&CC[nx.cong]?ccol(nx.cong):'';const he=$('#hero');
+   he.classList.toggle('cg',!!hc&&!ehVivo);if(hc)he.style.setProperty('--cc',hc);else he.style.removeProperty('--cc')}
   $('#hero').innerHTML=nx?`<span class="lb${ehVivo?' live':''}"><i></i>${ehVivo?'Ao vivo agora':nx.data===TODAY?(nx.hora&&nx.hora<=nowT?'Acontecendo agora':'Hoje'):'Próximo culto'}</span><h3>${esc(nx.titulo)}</h3>${cdTxt(nx)}<div class="meta"><div>${IC('cal')}${nx.data===TODAY?'Hoje':fmt(nx.data,{weekday:'long',day:'numeric',month:'long'})}${nx.hora?' · '+esc(nx.hora):''}</div>${nx.local?`<div>${IC('pin')}${esc(nx.local)}${!cong&&nx.cong&&nx.cong!=='Todas'?' · '+esc(nx.cong):''}</div>`:''}</div><div class="acts">${ehVivo?`<a class="btn live" href="${esc(aoV)}" target="_blank" rel="noopener">${IC('play')}Assistir ao vivo</a>`:''}${nx.local?`<a class="btn${ehVivo?' gh':''}" href="${maps(nx.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" data-ev="${esc(nx.base||nx.id)}" data-dt="${esc(nx.data)}">Detalhes</button></div>`:`<span class="lb"><i></i>Agenda</span><h3>Nenhum culto marcado</h3><div class="meta"><div>A programação aparece aqui assim que for publicada.</div></div>`;
   const vis=S.banners.filter(x=>!x.ate||x.ate>=TODAY);const b=vis.length?[...vis].sort((p,q)=>(p.ordem??99)-(q.ordem??99)||String(p.id).localeCompare(q.id)):[{titulo:'Bem-vindo!',sub:'Os avisos da igreja aparecem aqui.',cor:'#1546b8'}];
   $('#carr').innerHTML=b.map(x=>hasMedia(x)?`<div class="ban pic">${media(x,x.titulo||'Banner')}</div>`:`<div class="ban" style="background:linear-gradient(140deg,${okCol(x.cor)},#1a0a12)"><h3>${esc(x.titulo)}</h3>${x.sub?`<p>${esc(x.sub)}</p>`:''}</div>`).join('');
