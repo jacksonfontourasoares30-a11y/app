@@ -223,6 +223,60 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 .lockbox form{display:flex;gap:8px}.lockbox input{text-align:center;font-weight:700;letter-spacing:.1em}
 .sim{display:none!important}#quem{font-size:13.5px;color:var(--mut);margin:-6px 0 14px;font-weight:600}.mini-b{border:1px solid var(--line);background:none;color:#c2410c;border-radius:8px;padding:2px 8px;font:700 12.5px Manrope,system-ui,sans-serif;cursor:pointer;margin-left:6px}
 @media(prefers-reduced-motion:no-preference){main section.on{animation:in .28s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}.sheet{animation:up .25s ease}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
+
+/* ===== layout v3 ===== */
+nav div{background:light-dark(#0b2160f2,#0a1430f5)!important;box-shadow:0 14px 30px -10px rgb(11 33 96/.6)!important}
+nav a{color:#a9b8e3!important;transition:color .2s}
+nav a svg{transition:transform .3s cubic-bezier(.3,1.6,.5,1),background .2s;border-radius:14px}
+nav a.on{background:none!important;color:#fff!important}
+nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!important;padding:4px 12px;box-sizing:border-box;transform:translateY(-1px)}
+.carr{padding:6px 14% 10px!important;gap:10px!important}
+.carr .ban{flex:0 0 72%!important;transition:transform .35s ease,opacity .35s ease,box-shadow .35s;transform:scale(.88);opacity:.55}
+.carr .ban.cur{transform:none;opacity:1;box-shadow:0 18px 34px -14px rgb(11 33 96/.6)}
+.carr .ban.pic{aspect-ratio:4/5;cursor:zoom-in}.carr .ban.pic img{object-fit:cover!important}
+.viewer{position:fixed;inset:0;z-index:60;background:#000e;display:grid;place-items:center;padding:16px}.viewer img{max-width:100%;max-height:86vh;border-radius:12px}.viewer button{position:absolute;top:max(14px,env(safe-area-inset-top));right:14px;width:44px;height:44px;border-radius:22px;border:0;background:#ffffff26;color:#fff;font-size:22px}
+.minha{display:flex;gap:12px;align-items:center;width:100%;border:0;text-align:left;font:inherit;cursor:pointer;border-radius:18px;padding:14px;margin-top:14px;background:linear-gradient(135deg,#d9a52b,#f3c65a);color:#2a1d00;box-shadow:0 10px 24px -14px #a2780f}
+.minha .av2{width:40px;height:40px;border-radius:20px;background:#0b2160;color:#fff;display:grid;place-items:center;font:800 14px Archivo,system-ui;flex:none}
+.minha small{display:block;font:800 10.5px Manrope,system-ui;letter-spacing:.08em}.minha b{display:block;font:800 16px/1.25 Archivo,system-ui}.minha span{display:block;font-size:12.5px;font-weight:700;opacity:.9}
+.minha.vazio{background:var(--card);color:var(--ink);box-shadow:var(--sh)}.minha.vazio .av2{background:var(--rose);color:var(--wine)}
+.minha>.ic{flex:none;margin-left:auto;width:20px;height:20px}
+.wk .wkd{display:flex;gap:2px;justify-content:center;height:6px;margin-top:2px}.wk .wkd i{width:5px!important;height:5px!important;border-radius:5px;margin:0!important}
+.hero .lb.live{color:#dc2626}.hero .lb.live i{background:#dc2626;box-shadow:0 0 0 4px #dc262633;animation:pul 1.4s infinite}@keyframes pul{50%{opacity:.35}}
+.btn.live{background:#dc2626!important;color:#fff!important}
+.vers{margin-top:22px;border-radius:22px;padding:22px 20px;text-align:center;color:#fff;background:linear-gradient(160deg,#0b2160,#2b4db3);box-shadow:0 16px 30px -18px #0b2160}
+.vers small{font:800 11px Manrope,system-ui;letter-spacing:.12em;color:#f3c65a}.vers q{display:block;font:italic 600 17px/1.5 Georgia,'Times New Roman',serif;margin:10px 0 8px;quotes:'“' '”'}.vers b{font-size:13px;opacity:.9}
+.vers button{margin:14px auto 0;display:flex;align-items:center;gap:8px;border:0;border-radius:12px;padding:10px 18px;background:#ffffff22;color:#fff;font:800 14px Manrope,system-ui;cursor:pointer}
+/* escalas */
+.voce{display:flex;gap:12px;align-items:center;border-radius:18px;padding:14px;margin:12px 0 4px;background:linear-gradient(135deg,#d9a52b,#f3c65a);color:#2a1d00}.voce b{display:block;font:800 16px Archivo,system-ui}.voce span{font-size:12.5px;font-weight:700}
+.sem{display:flex;justify-content:space-between;align-items:baseline;font:800 16px Archivo,system-ui;margin:20px 2px 8px}.sem small{font:700 12.5px Manrope,system-ui;color:var(--wine)}
+.cl{position:relative;box-shadow:inset 4px 0 0 var(--cc,var(--wine)),var(--sh)!important}.cl.eu{outline:2px solid #d9a52b;outline-offset:-2px}
+.cl .dd{font:700 12.5px Manrope,system-ui;color:var(--mut);margin-top:2px}
+.pps{display:grid;gap:6px;margin-top:9px}.pps div{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:700}.pps i{width:30px;height:30px;border-radius:15px;display:grid;place-items:center;color:#fff;font:800 11.5px Archivo,system-ui;font-style:normal;flex:none}.pps .me{color:#9a6b00}
+/* eventos timeline */
+.tl{display:flex;gap:12px}.tl .tld{width:46px;flex:none;display:flex;flex-direction:column;align-items:center}.tl .tld b{font:800 22px/1 Archivo,system-ui;color:var(--cc,var(--wine))}.tl .tld small{font:800 11px Manrope,system-ui;color:var(--mut);text-transform:uppercase;margin-top:3px}.tl .tld i{flex:1;width:2px;background:var(--line);margin:6px 0 -6px}
+.tl:last-child .tld i{display:none}
+.tlc{flex:1;min-width:0;border:0;padding:0;font:inherit;text-align:left;color:inherit;background:var(--card);border-radius:18px;overflow:hidden;box-shadow:var(--sh);margin-bottom:14px;cursor:pointer}
+.tlc .art{height:150px;aspect-ratio:auto!important;border-radius:0!important}.tlc .art img,.tlc .art video{object-fit:cover!important}
+.tlc .tx{padding:11px 13px}.tlc b{display:block;font:800 16px Archivo,system-ui}.tlc span{font-size:13px;color:var(--mut);font-weight:600}.tlc em{font-style:normal;font-weight:800;color:var(--cc,var(--wine))}
+/* detalhe */
+.acts4{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:16px}.acts4 .btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;font-size:14px;padding:0 10px}.btn.wa{background:#25d366;color:#fff}
+/* igreja */
+.cg2{background:var(--card);border-radius:20px;overflow:hidden;box-shadow:var(--sh);margin-bottom:14px}.cg2 .hd{padding:15px 16px;color:#fff;background:linear-gradient(135deg,var(--cd),var(--cc))}.cg2 .hd b{font:800 19px Archivo,system-ui;display:block}.cg2 .hd span{font-size:12.5px;font-weight:700;opacity:.92}
+.cg2 .bd2{padding:12px 16px 14px;display:grid;gap:10px}.cg2 .ad{font-size:13.5px;font-weight:600;color:var(--mut);display:flex;gap:6px;align-items:flex-start}.cg2 .ad .ic{width:17px;height:17px;flex:none;margin-top:2px}
+.hrs{display:flex;flex-wrap:wrap;gap:6px}.hrs span{font:800 11.5px Manrope,system-ui;padding:4px 10px;border-radius:20px;color:var(--cc);background:color-mix(in srgb,var(--cc) 13%,transparent)}
+.cg2 a.btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;min-height:42px}
+/* mais */
+.tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tiles a{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:16px 6px 13px;text-decoration:none;color:var(--ink);display:grid;justify-items:center;gap:8px;font:800 13px Manrope,system-ui;text-align:center;cursor:pointer}
+.tiles a span{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:var(--rose);color:var(--wine)}.tiles a span .ic{width:24px;height:24px}
+.lid{display:flex;gap:12px;align-items:center;margin-top:12px;border-radius:18px;padding:15px;background:linear-gradient(135deg,#0b2160,#1546b8);color:#fff;text-decoration:none}.lid b{display:block}.lid small{opacity:.85;font-size:12.5px;font-weight:600}.lid .ic{width:26px;height:26px;color:#f3c65a;flex:none}
+.shr{display:flex;gap:12px;align-items:center;margin-top:10px;border-radius:18px;padding:14px;background:var(--card);box-shadow:var(--sh);width:100%;border:0;font:inherit;color:var(--ink);text-align:left;cursor:pointer}.shr .ic{width:24px;height:24px;color:#25d366;flex:none}.shr small{display:block;color:var(--mut);font-size:12.5px;font-weight:600}
+/* programação */
+.pdias{display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin:4px -16px 6px;padding:2px 16px}.pdias button{flex:none;border:0;border-radius:20px;padding:8px 14px;background:var(--card);box-shadow:var(--sh);font:800 13px Manrope,system-ui;color:var(--ink);cursor:pointer}.pdias button.on{background:var(--wine);color:#fff}
+.pg2{display:flex;gap:14px;align-items:center;background:var(--card);border-radius:16px;padding:13px 14px;margin-bottom:9px;box-shadow:inset 4px 0 0 var(--cc),var(--sh)}.pg2 b{font:800 18px Archivo,system-ui;width:58px;flex:none}.pg2 div{font-weight:700}.pg2 small{display:block;font-weight:800;color:var(--cc);font-size:12.5px}
+/* oração */
+.orh{margin:-18px -16px 0;padding:34px 22px 64px;text-align:center;color:#fff;background:linear-gradient(170deg,#0b2160,#2b4db3);border-radius:0 0 36px 36px}.orh .ic{width:44px;height:44px;color:#f3c65a}.orh h2{font:800 25px Archivo,system-ui;margin:8px 0 6px}.orh p{margin:0;font:italic 600 15px Georgia,serif;opacity:.92}
+#oracao form.adm{margin-top:-44px;position:relative}
+.okmsg{text-align:center;background:light-dark(#ecfdf3,#0f2a1c);border-radius:18px;padding:18px;margin-top:12px}.okmsg b{display:block;font:800 17px Archivo,system-ui;margin:4px 0}.okmsg .ic{width:30px;height:30px;color:#16a34a}
 </style>
 </head>
 <body>
@@ -247,6 +301,10 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 <symbol id="i-sun" viewBox="0 0 24 24"><circle cx="12" cy="12" r="4"/><path d="M12 2.5v2M12 19.5v2M4.6 4.6l1.4 1.4M18 18l1.4 1.4M2.5 12h2M19.5 12h2M4.6 19.4L6 18M18 6l1.4-1.4"/></symbol>
 <symbol id="i-moon" viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4a8 8 0 1 0 10.5 10.5z"/></symbol>
 <symbol id="i-auto" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5"/><path d="M12 3.5v17a8.5 8.5 0 0 0 0-17z" fill="currentColor" stroke="none"/></symbol>
+<symbol id="i-share" viewBox="0 0 24 24"><circle cx="18" cy="5" r="2.5"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="19" r="2.5"/><path d="M8.2 10.8l7.6-4.4M8.2 13.2l7.6 4.4"/></symbol>
+<symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></symbol>
+<symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 20l1.4-4A8 8 0 1 1 8.5 19z"/></symbol>
+<symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7"/></symbol>
 <symbol id="i-copy" viewBox="0 0 24 24"><rect x="8" y="8" width="12" height="12" rx="2"/><path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2"/></symbol>
 </defs></svg>
 <div class="app">
@@ -261,22 +319,19 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 <main>
   <section id="inicio">
     <div class="hero" id="hero"></div>
-    <div id="avHome"></div>
     <div id="pushC" hidden></div>
+    <div id="minha"></div>
     <div class="h2" id="destH">Destaques</div>
     <div class="carr" id="carr"></div><div class="dots" id="dots"></div>
-    <div class="quick"><a href="#eventos"><span><svg class="ic"><use href="#i-poster"/></svg></span>Eventos</a><a href="#calendario"><span><svg class="ic"><use href="#i-cal"/></svg></span>Calendário</a><a href="#escalas"><span><svg class="ic"><use href="#i-users"/></svg></span>Escalas</a><a href="#oracao"><span><svg class="ic"><use href="#i-heart"/></svg></span>Oração</a></div>
-    <div class="h2">Esta semana</div>
+    <div class="h2">Esta semana <a data-go="calendario">Calendário<svg class="ic"><use href="#i-chev"/></svg></a></div>
     <div class="wk" id="wk"></div><div class="wkl" id="wkl"></div>
-    <div class="h2">Próximos eventos <a data-go="eventos">Ver todos<svg class="ic"><use href="#i-chev"/></svg></a></div>
-    <div id="prox"></div>
-    <div class="h2">Escala da semana <a data-go="escalas">Ver todas<svg class="ic"><use href="#i-chev"/></svg></a></div>
-    <div id="semana"></div>
+    <div id="avHomeW"><div class="h2">Avisos <a data-go="avisos">Ver todos<svg class="ic"><use href="#i-chev"/></svg></a></div><div id="avHome"></div></div>
+    <div id="vers"></div>
     <p class="note" id="aviso"></p>
   </section>
   <section id="eventos">
     <div class="ph"><h2>Eventos</h2><p>Cultos especiais, congressos e programações.</p></div>
-    <div class="posters" id="posters"></div>
+    <div id="posters"></div>
   </section>
   <section id="calendario">
     <div class="ph"><h2>Calendário</h2><p>Toda a programação do ano.</p></div>
@@ -300,14 +355,16 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
   </section>
   <section id="mais">
     <div class="ph"><h2>Mais</h2><p>Tudo sobre a igreja num só lugar.</p></div>
-    <div class="menu">
-      <a href="#mais" id="pushM" data-push="1" hidden><span class="i"><svg class="ic"><use href="#i-bell"/></svg></span><div><b>Notificações no celular</b><small id="pushMs">…</small></div><svg class="ic"><use href="#i-chev"/></svg></a>
-      <a href="#avisos"><span class="i"><svg class="ic"><use href="#i-mega"/></svg></span><div><b>Avisos</b><small>Recados do pastor e dos departamentos</small></div><svg class="ic"><use href="#i-chev"/></svg></a>
-      <a href="#igreja"><span class="i"><svg class="ic"><use href="#i-info"/></svg></span><div><b>Conheça a igreja</b><small>Pastores e congregações</small></div><svg class="ic"><use href="#i-chev"/></svg></a>
-      <a href="#programacao"><span class="i"><svg class="ic"><use href="#i-clock"/></svg></span><div><b>Programação semanal</b><small>Horários fixos de cada congregação</small></div><svg class="ic"><use href="#i-chev"/></svg></a>
-      <a href="#oracao"><span class="i"><svg class="ic"><use href="#i-heart"/></svg></span><div><b>Pedido de oração</b><small>Envie seu pedido aos pastores</small></div><svg class="ic"><use href="#i-chev"/></svg></a>
-      <a href="#admin"><span class="i"><svg class="ic"><use href="#i-shield"/></svg></span><div><b>Área da liderança</b><small>Publicar eventos, banners e escalas</small></div><svg class="ic"><use href="#i-chev"/></svg></a>
+    <div class="tiles">
+      <a href="#avisos"><span><svg class="ic"><use href="#i-mega"/></svg></span>Avisos</a>
+      <a href="#igreja"><span><svg class="ic"><use href="#i-church"/></svg></span>Igreja</a>
+      <a href="#programacao"><span><svg class="ic"><use href="#i-clock"/></svg></span>Programação</a>
+      <a href="#oracao"><span><svg class="ic"><use href="#i-heart"/></svg></span>Oração</a>
+      <a href="#calendario"><span><svg class="ic"><use href="#i-cal"/></svg></span>Calendário</a>
+      <a href="#mais" id="pushM" data-push="1" hidden><span><svg class="ic"><use href="#i-bell"/></svg></span>Notificações<small id="pushMs" style="display:none">…</small></a>
     </div>
+    <a class="lid" href="#admin"><svg class="ic"><use href="#i-shield"/></svg><div><b>Área da liderança</b><small>Publicar avisos, eventos e escalas</small></div></a>
+    <button class="shr" data-shareapp="1"><svg class="ic"><use href="#i-chat"/></svg><div><b>Compartilhar o app</b><small>Envie o link pelo WhatsApp</small></div></button>
   </section>
   <section id="avisos">
     <div class="ph"><h2>Avisos</h2><p>Recados do pastor e dos departamentos.</p></div>
@@ -322,18 +379,21 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
   </section>
   <section id="programacao">
     <a class="back" href="#mais"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-chev"/></svg>Mais</a>
-    <div class="ph"><h2>Programação semanal</h2><p>Os cultos fixos de cada semana.</p></div>
+    <div class="ph"><h2>Programação semanal</h2><p>Horários fixos de todas as congregações.</p></div>
+    <div class="pdias" id="pgD"></div>
     <div id="pgL"></div>
   </section>
   <section id="oracao">
     <a class="back" href="#mais"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-chev"/></svg>Mais</a>
-    <div class="ph"><h2>Pedido de oração</h2><p>Seu pedido chega só aos pastores e à intercessão.</p></div>
+    <div class="orh"><svg class="ic"><use href="#i-heart"/></svg><h2>Pedido de oração</h2><p>“Orai uns pelos outros.” — Tiago 5:16</p></div>
     <form class="adm" id="for">
       <label>Seu nome (opcional)<input name="nome" maxlength="60" autocomplete="name"></label>
       <label>Congregação<select name="cong" class="selC"></select></label>
       <label>Pedido<textarea name="texto" required maxlength="1500" placeholder="Escreva aqui pelo que deseja oração"></textarea></label>
-      <button class="btn">Enviar pedido</button><div class="msg"></div>
+      <button class="btn">Enviar aos pastores</button><div class="msg"></div>
+      <p class="note" style="margin:0">Seu pedido chega só aos pastores e à intercessão.</p>
     </form>
+    <div id="orOk"></div>
   </section>
   <section id="admin">
     <a class="back" href="#mais"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-chev"/></svg>Mais</a>
@@ -403,6 +463,7 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
         <label>Sede e congregações (uma por linha, a sede primeiro)<textarea name="congs" required></textarea></label>
         <label>Endereços e responsáveis (uma por linha: Congregação; endereço; responsáveis)<textarea name="info" placeholder="CEAD; Rua Antônio Prado, 165 – Vila Nova; Dirigentes: Geziel e Natália Machado"></textarea></label>
         <label>Código para ver as escalas (deixe em branco para escalas abertas)<input name="codigo" maxlength="20" placeholder="Ex.: 2026AD" autocomplete="off"></label>
+        <label>Link da transmissão ao vivo (YouTube ou Facebook, opcional)<input name="aoVivo" type="url" maxlength="300" placeholder="https://youtube.com/@..."></label>
         <label>Programação semanal (uma por linha: Congregação; dia; hora; culto)<textarea name="prog" placeholder="Sede; quinta; 19:30; Culto da Vitória"></textarea></label>
         <button class="btn">Salvar</button><div class="msg"></div>
       </form>
@@ -735,46 +796,66 @@ const gr=s=>{const g=s.grupo||(s.itens?s.ministerio:'');return String(g||'').spl
 const ppl=s=>Array.isArray(s.pessoas)?s.pessoas.map(String):Array.isArray(s.itens)?s.itens.map(i=>(i.f?i.f+': ':'')+i.n):[];
 const hit=(s,n)=>!n||ppl(s).concat(gr(s)).some(x=>x.toLowerCase().includes(n));
 const escCard=s=>{const n=me.trim().toLowerCase();const p=ppl(s);
-  return `<div class="cl${s.destaque?' hl':''}">${s.hora?`<div class="hr">${esc(s.hora)}</div>`:''}<div><h4>${esc(s.culto||s.ministerio||'Culto')}</h4>${p.length?`<p class="pp">${p.map(x=>n&&x.toLowerCase().includes(n)?`<b>${esc(x)}</b>`:esc(x)).join(' · ')}</p>`:''}${gr(s).length?`<div class="gr">${gr(s).map(g=>`<span style="background:${mcol(g)}">${esc(g)}</span>`).join('')}</div>`:''}${!cong&&s.cong?`<div class="cg">${esc(s.cong)}</div>`:''}${n&&p.some(x=>x.toLowerCase().includes(n))&&s.data>=TODAY?`<div class="mini"><a href="${gcal('Escala: '+(s.culto||'Culto'),s.data,s.hora,(cfg().info||{})[s.cong]?.end||'',ppl(s).join(', '))}" target="_blank" rel="noopener">${IC('bell')}Agenda</a>${sentA.has(s.id)?`<button class="sent" disabled>Aviso enviado</button>`:`<button data-aus="${esc(s.id)}">${IC('x')}Não posso ir</button>`}</div>`:''}</div></div>`};
-const byDay=l=>{let h='',last='';for(const s of l){if(s.data!==last){h+=`<div class="dhead">${fmt(s.data,{weekday:'long',day:'numeric',month:'long'})}</div>`;last=s.data}h+=escCard(s)}return h};
+  const eu=n&&p.some(x=>x.toLowerCase().includes(n));
+  return `<div class="cl${s.destaque?' hl':''}${eu?' eu':''}"${s.cong&&CC[s.cong]?` style="--cc:${ccol(s.cong)}"`:''}>${s.hora?`<div class="hr">${esc(s.hora)}</div>`:''}<div style="flex:1;min-width:0"><h4>${esc(s.culto||s.ministerio||'Culto')}</h4><div class="dd">${cap(fmt(s.data,{weekday:'long',day:'numeric',month:'short'}))}</div>${p.length?`<div class="pps">${p.map(x=>{const m=n&&x.toLowerCase().includes(n);return `<div${m?' class="me"':''}><i style="background:${m?'#0b2160':corP(x)}">${esc(inic(x))}</i>${m?'Você · ':''}${esc(x)}</div>`}).join('')}</div>`:''}${gr(s).length?`<div class="gr">${gr(s).map(g=>`<span style="background:${mcol(g)}">♪ ${esc(g)}</span>`).join('')}</div>`:''}${!cong&&s.cong?`<div class="cg">${esc(s.cong)}</div>`:''}${n&&p.some(x=>x.toLowerCase().includes(n))&&s.data>=TODAY?`<div class="mini"><a href="${gcal('Escala: '+(s.culto||'Culto'),s.data,s.hora,(cfg().info||{})[s.cong]?.end||'',ppl(s).join(', '))}" target="_blank" rel="noopener">${IC('bell')}Agenda</a>${sentA.has(s.id)?`<button class="sent" disabled>Aviso enviado</button>`:`<button data-aus="${esc(s.id)}">${IC('x')}Não posso ir</button>`}</div>`:''}</div></div>`};
+const semIni=d=>{const x=toD(d);x.setDate(x.getDate()-x.getDay());return x};
+const byDay=l=>{let h='',last='';const grp={};for(const s of l){const k=iso(semIni(s.data));(grp[k]=grp[k]||[]).push(s)}
+  for(const k of Object.keys(grp).sort()){const a=toD(k),b=new Date(a);b.setDate(b.getDate()+6);const n=grp[k].length;h+=`<div class="sem">Semana de ${a.getDate()}${a.getMonth()!==b.getMonth()?' de '+MES[a.getMonth()]:''} a ${b.getDate()} de ${MES[b.getMonth()]}<small>${n} culto${n>1?'s':''}</small></div>`+grp[k].map(escCard).join('')}return h};
 const escSort=(a,b)=>(a.data+(a.hora||'99')).localeCompare(b.data+(b.hora||'99'));
 
 function rInicio(){
-  if(!loaded){$('#hero').innerHTML='<div class="sk" style="height:150px;margin:0"></div>';$('#prox').innerHTML=SK(2);$('#semana').innerHTML=SK(2);$('#carr').innerHTML='';return}
+  if(!loaded){$('#hero').innerHTML='<div class="sk" style="height:150px;margin:0"></div>';$('#carr').innerHTML='';return}
   const nowT=pad(new Date().getHours())+':'+pad(new Date().getMinutes());
   const nx=futuros().find(e=>e.data>TODAY||!e.hora||e.hora>=nowT||(+e.hora.slice(0,2)+2)*60+ +e.hora.slice(3)>=new Date().getHours()*60+new Date().getMinutes());
-  {const a=avVis()[0];$('#avHome').innerHTML=a?avCard(a,false):''}
-  $('#hero').innerHTML=nx?`<span class="lb"><i></i>${nx.data===TODAY?(nx.hora&&nx.hora<=nowT?'Acontecendo agora':'Hoje'):'Próximo culto'}</span><h3>${esc(nx.titulo)}</h3>${cdTxt(nx)}<div class="meta"><div>${IC('cal')}${nx.data===TODAY?'Hoje':fmt(nx.data,{weekday:'long',day:'numeric',month:'long'})}${nx.hora?' · '+esc(nx.hora):''}</div>${nx.local?`<div>${IC('pin')}${esc(nx.local)}${!cong&&nx.cong&&nx.cong!=='Todas'?' · '+esc(nx.cong):''}</div>`:''}</div><div class="acts">${nx.local?`<a class="btn" href="${maps(nx.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" data-ev="${esc(nx.base||nx.id)}" data-dt="${esc(nx.data)}">Detalhes</button></div>`:`<span class="lb"><i></i>Agenda</span><h3>Nenhum culto marcado</h3><div class="meta"><div>A programação aparece aqui assim que for publicada.</div></div>`;
+  {const av=avVis().slice(0,2);$('#avHome').innerHTML=av.map(a=>avCard(a,false)).join('');$('#avHomeW').hidden=!av.length}
+  const aoV=cfg().aoVivo,ehVivo=!!(aoV&&nx&&nx.data===TODAY&&nx.hora&&(()=>{const m=new Date().getHours()*60+new Date().getMinutes(),h=+nx.hora.slice(0,2)*60+ +nx.hora.slice(3);return m>=h-15&&m<=h+150})());
+  $('#hero').innerHTML=nx?`<span class="lb${ehVivo?' live':''}"><i></i>${ehVivo?'Ao vivo agora':nx.data===TODAY?(nx.hora&&nx.hora<=nowT?'Acontecendo agora':'Hoje'):'Próximo culto'}</span><h3>${esc(nx.titulo)}</h3>${cdTxt(nx)}<div class="meta"><div>${IC('cal')}${nx.data===TODAY?'Hoje':fmt(nx.data,{weekday:'long',day:'numeric',month:'long'})}${nx.hora?' · '+esc(nx.hora):''}</div>${nx.local?`<div>${IC('pin')}${esc(nx.local)}${!cong&&nx.cong&&nx.cong!=='Todas'?' · '+esc(nx.cong):''}</div>`:''}</div><div class="acts">${ehVivo?`<a class="btn live" href="${esc(aoV)}" target="_blank" rel="noopener">${IC('play')}Assistir ao vivo</a>`:''}${nx.local?`<a class="btn${ehVivo?' gh':''}" href="${maps(nx.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" data-ev="${esc(nx.base||nx.id)}" data-dt="${esc(nx.data)}">Detalhes</button></div>`:`<span class="lb"><i></i>Agenda</span><h3>Nenhum culto marcado</h3><div class="meta"><div>A programação aparece aqui assim que for publicada.</div></div>`;
   const vis=S.banners.filter(x=>!x.ate||x.ate>=TODAY);const b=vis.length?[...vis].sort((p,q)=>(p.ordem??99)-(q.ordem??99)||String(p.id).localeCompare(q.id)):[{titulo:'Bem-vindo!',sub:'Os avisos da igreja aparecem aqui.',cor:'#1546b8'}];
   $('#carr').innerHTML=b.map(x=>hasMedia(x)?`<div class="ban pic">${media(x,x.titulo||'Banner')}</div>`:`<div class="ban" style="background:linear-gradient(140deg,${okCol(x.cor)},#1a0a12)"><h3>${esc(x.titulo)}</h3>${x.sub?`<p>${esc(x.sub)}</p>`:''}</div>`).join('');
   $('#dots').innerHTML=b.length>1?b.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join(''):'';
-  const seen=new Set();const f=futuros().filter(e=>!e.base||(!seen.has(e.base)&&seen.add(e.base))).slice(0,3);
-  $('#prox').innerHTML=f.length?f.map(evRow).join(''):'<div class="empty">Nenhum evento marcado.</div>';
-  const fim=iso(new Date(now.getFullYear(),now.getMonth(),now.getDate()+7));
-  const w=S.escalas.filter(s=>s.data>=TODAY&&s.data<=fim&&inCong(s)).sort(escSort);
-  $('#semana').innerHTML=escLocked()?'<div class="empty">As escalas pedem o código da igreja. <a href="#escalas" style="color:var(--wine);font-weight:700">Abrir escalas</a></div>':w.length?byDay(w.slice(0,4)):'<div class="empty">A escala desta semana ainda não foi publicada.</div>';
+  rMinha();rVers();carCur();
   rSemana();
   $('#aviso').textContent=usingSample?'':'';
 }
 
+
+const inic=s=>{const w=String(s).replace(/^(pr|pb|dc|ev|pra|presb|miss|irm[aã]?|diác|aux|coop)\.?\s+/i,'').split(/\s+/).filter(Boolean);return ((w[0]||'?')[0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase()};
+const corP=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return ['#1546b8','#0f9d7a','#b8432f','#7c3aed','#c48a12','#0e7490','#be185d','#4d7c0f'][h%8]};
+function rMinha(){const box=$('#minha');if(!box)return;if(escLocked()){box.innerHTML='';return}const n=me.trim().toLowerCase();
+  if(!n){box.innerHTML=`<button class="minha vazio" data-go="escalas"><span class="av2">${IC('users')}</span><div><small style="color:var(--wine)">SUAS ESCALAS</small><b>Descubra quando você está escalado</b><span style="color:var(--mut)">Toque e busque pelo seu nome</span></div>${IC('chev')}</button>`;return}
+  const l=S.escalas.filter(s=>s.data>=TODAY&&inCong(s)&&ppl(s).some(x=>x.toLowerCase().includes(n))).sort(escSort);
+  if(!l.length){box.innerHTML='';return}const s=l[0],ou=ppl(s).filter(x=>!x.toLowerCase().includes(n)).slice(0,2);
+  const dia=s.data===TODAY?'Hoje':cap(fmt(s.data,{weekday:'long'}).split('-')[0]);
+  box.innerHTML=`<button class="minha" data-minha="${esc(s.data)}"><span class="av2">${esc(inic(me))}</span><div><small>SUA PRÓXIMA ESCALA</small><b>${dia}${s.hora?', '+esc(s.hora):''} · ${esc(s.culto||'Culto')}</b><span>${ou.length?'com '+esc(ou.join(', ')):''}${gr(s).length?(ou.length?' · ':'')+'Louvor: '+esc(gr(s).join(', ')):''}${l.length>1?' · +'+(l.length-1)+' depois':''}</span></div>${IC('chev')}</button>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-minha]');if(!b)return;const d=b.dataset.minha;ey=+d.slice(0,4);emo=+d.slice(5,7)-1;location.hash='escalas'});
+const VERS=[['Alegrei-me quando me disseram: Vamos à casa do Senhor.','Salmos 122:1'],['O Senhor é o meu pastor; nada me faltará.','Salmos 23:1'],['Lâmpada para os meus pés é a tua palavra, e luz para o meu caminho.','Salmos 119:105'],['Entrega o teu caminho ao Senhor; confia nele, e ele tudo fará.','Salmos 37:5'],['Deus é o nosso refúgio e fortaleza, socorro bem presente na angústia.','Salmos 46:1'],['Posso todas as coisas naquele que me fortalece.','Filipenses 4:13'],['Buscai primeiro o Reino de Deus, e a sua justiça.','Mateus 6:33'],['Vinde a mim, todos os que estais cansados e oprimidos, e eu vos aliviarei.','Mateus 11:28'],['Eu sou o caminho, e a verdade, e a vida.','João 14:6'],['Porque Deus amou o mundo de tal maneira que deu o seu Filho unigênito.','João 3:16'],['Não temas, porque eu sou contigo.','Isaías 41:10'],['Os que esperam no Senhor renovarão as suas forças.','Isaías 40:31'],['Confia no Senhor de todo o teu coração.','Provérbios 3:5'],['Todas as coisas contribuem juntamente para o bem daqueles que amam a Deus.','Romanos 8:28'],['A alegria do Senhor é a vossa força.','Neemias 8:10'],['Esforça-te, e tem bom ânimo; o Senhor teu Deus é contigo.','Josué 1:9'],['Eu e a minha casa serviremos ao Senhor.','Josué 24:15'],['O amor é paciente, o amor é bondoso.','1 Coríntios 13:4'],['Lançando sobre ele toda a vossa ansiedade, porque ele tem cuidado de vós.','1 Pedro 5:7'],['Orai sem cessar.','1 Tessalonicenses 5:17'],['Em tudo dai graças.','1 Tessalonicenses 5:18'],['Bem-aventurados os limpos de coração, porque eles verão a Deus.','Mateus 5:8'],['Vós sois a luz do mundo.','Mateus 5:14'],['Onde estiverem dois ou três reunidos em meu nome, aí estou eu no meio deles.','Mateus 18:20'],['A paz vos deixo, a minha paz vos dou.','João 14:27'],['As misericórdias do Senhor se renovam cada manhã.','Lamentações 3:22-23'],['Este é o dia que fez o Senhor; regozijemo-nos e alegremo-nos nele.','Salmos 118:24'],['Bendize, ó minha alma, ao Senhor.','Salmos 103:1'],['Sede fortes e corajosos.','Deuteronômio 31:6'],['O Senhor pelejará por vós, e vos calareis.','Êxodo 14:14'],['Grandes coisas fez o Senhor por nós, e por isso estamos alegres.','Salmos 126:3']];
+function rVers(){const box=$('#vers');if(!box)return;const d=new Date(),i=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)%VERS.length;const [v,rf]=VERS[i];
+  box.innerHTML=`<div class="vers"><small>VERSÍCULO DO DIA</small><q>${esc(v)}</q><b>${esc(rf)}</b><button data-vshare="1">${IC('share')}Compartilhar</button></div>`}
+async function compartilhar(txt){try{if(navigator.share){await navigator.share({text:txt});return}}catch(_){return}open('https://wa.me/?text='+encodeURIComponent(txt),'_blank')}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-vshare],[data-shareapp],[data-wa]');if(!t)return;
+  if(t.dataset.vshare){const d=new Date(),i=Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)%VERS.length;compartilhar(`“${VERS[i][0]}” — ${VERS[i][1]}\n\n${cfg().nome}`)}
+  else if(t.dataset.shareapp)compartilhar(`Baixe o app da ${cfg().nome}: eventos, avisos e escalas no celular.\n${location.origin+location.pathname.replace(/index\.html$/,'')}`);
+  else compartilhar(t.dataset.wa)});
 function cdTxt(e){if(!e||!e.hora)return '';const t=toD(e.data);t.setHours(+e.hora.slice(0,2),+e.hora.slice(3));const m=Math.round((t-new Date())/60000);if(m<=0||m>36*60)return '';const h=Math.floor(m/60),mm=m%60;return `<span class="cd">Começa em ${h?h+'h'+(mm?' '+mm+'min':''):mm+' min'}</span>`}
 let wkSel=null;
 function rSemana(){const all=sorted().filter(inCong);const ds=[];for(let i=0;i<7;i++){const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);ds.push(iso(d))}
   if(!wkSel||!ds.includes(wkSel))wkSel=ds.find(d=>all.some(e=>e.data===d))||ds[0];
-  $('#wk').innerHTML=ds.map(d=>{const n=all.filter(e=>e.data===d).length;return `<button class="${d===TODAY?'td ':''}${n?'on':''}" data-wk="${d}" aria-label="${fmt(d,{weekday:'long',day:'numeric'})}${n?', '+n+' evento(s)':''}" ${d===wkSel?'aria-pressed="true" style="outline:2px solid var(--acc);outline-offset:1px"':''}><small>${DIAS[toD(d).getDay()].slice(0,3)}</small><b>${toD(d).getDate()}</b><i></i></button>`}).join('');
+  $('#wk').innerHTML=ds.map(d=>{const n=all.filter(e=>e.data===d).length;return `<button class="${d===TODAY?'td ':''}${n?'on':''}" data-wk="${d}" aria-label="${fmt(d,{weekday:'long',day:'numeric'})}${n?', '+n+' evento(s)':''}" ${d===wkSel?'aria-pressed="true" style="outline:2px solid var(--acc);outline-offset:1px"':''}><small>${DIAS[toD(d).getDay()].slice(0,3)}</small><b>${toD(d).getDate()}</b><span class="wkd">${all.filter(e=>e.data===d).slice(0,3).map(e=>`<i style="background:${d===TODAY?'#fff':e.cong&&CC[e.cong]?ccol(e.cong):'var(--acc)'}"></i>`).join('')}</span></button>`}).join('');
   const l=all.filter(e=>e.data===wkSel);$('#wkl').innerHTML=l.length?l.map(evRow).join(''):`<div class="empty">Nada marcado para ${wkSel===TODAY?'hoje':fmt(wkSel,{weekday:'long'})}.</div>`}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-wk]');if(b){wkSel=b.dataset.wk;rSemana()}});
-let carT=null;function carAuto(){clearInterval(carT);carT=setInterval(()=>{const c=$('#carr');if(!c||!c.children.length||c.children.length<2||document.hidden||!$('#inicio').classList.contains('on'))return;if(c.matches(':hover'))return;const w=c.firstElementChild.offsetWidth+12;const i=Math.round(c.scrollLeft/w);const n=(i+1)%c.children.length;const v=c.children[i]?.querySelector('video');if(v&&!v.paused&&!v.ended)return;c.scrollTo({left:n*w,behavior:'smooth'})},6000)}
+let carT=null;function carAuto(){clearInterval(carT);carT=setInterval(()=>{const c=$('#carr');if(!c||!c.children.length||c.children.length<2||document.hidden||!$('#inicio').classList.contains('on'))return;if(c.matches(':hover'))return;const w=c.firstElementChild.offsetWidth+10;const i=Math.round(c.scrollLeft/w);const n=(i+1)%c.children.length;const v=c.children[i]?.querySelector('video');if(v&&!v.paused&&!v.ended)return;c.scrollTo({left:n*w,behavior:'smooth'})},6000)}
 carAuto();['touchstart','pointerdown'].forEach(ev=>document.addEventListener(ev,e=>{if(e.target.closest('#carr'))carAuto()},{passive:true}));
 const TEMAS=['auto','light','dark'];let tema='auto';try{tema=localStorage.getItem('tema')||'auto'}catch(e){}
 function aplTema(){if(tema==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',tema);const b=$('#tema');if(b){b.innerHTML=`<svg class="ic"><use href="#i-${tema==='auto'?'auto':tema==='light'?'sun':'moon'}"/></svg>`;b.setAttribute('aria-label','Tema: '+(tema==='auto'?'automático':tema==='light'?'claro':'escuro'))}}
 aplTema();$('#tema').addEventListener('click',()=>{tema=TEMAS[(TEMAS.indexOf(tema)+1)%3];try{localStorage.setItem('tema',tema)}catch(e){}aplTema()});
-$('#carr').addEventListener('scroll',e=>{const c=e.target,i=Math.round(c.scrollLeft/(c.firstElementChild?.offsetWidth+12||1));$$('#dots i').forEach((d,k)=>d.classList.toggle('on',k===i))},{passive:true});
+function carCur(){const c=$('#carr');if(!c||!c.children.length)return;const w=c.firstElementChild.offsetWidth+10;const i=Math.max(0,Math.min(c.children.length-1,Math.round(c.scrollLeft/(w||1))));[...c.children].forEach((x,k)=>x.classList.toggle('cur',k===i));$$('#dots i').forEach((d,k)=>d.classList.toggle('on',k===i))}
+$('#carr').addEventListener('scroll',carCur,{passive:true});
+$('#carr').addEventListener('click',e=>{const b=e.target.closest('.ban.pic');if(!b)return;const im=b.querySelector('img');if(!im)return;if(!b.classList.contains('cur')){b.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});return}const v=document.createElement('div');v.className='viewer';v.innerHTML=`<img src="${im.src}" alt="${esc(im.alt||'')}"><button aria-label="Fechar">✕</button>`;v.onclick=()=>v.remove();document.body.append(v)});
 
 function rEventos(){
   if(!loaded){$('#posters').innerHTML='<div class="sk" style="height:260px"></div><div class="sk" style="height:260px"></div>';return}
   const seen=new Set();const f=futuros().filter(e=>!e.base||(!seen.has(e.base)&&seen.add(e.base)));
-  $('#posters').innerHTML=f.length?f.map(e=>`<button class="post" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}">${art(e)}<div class="cap"><b>${esc(e.titulo)}</b>${fmt(e.data,{weekday:'short',day:'numeric',month:'short'})}${e.hora?' · '+esc(e.hora):''}${!cong&&cpill(e.cong)?'<br>'+cpill(e.cong):''}</div></button>`).join(''):'<div class="empty" style="grid-column:1/-1">Nenhum evento futuro.</div>';
+  $('#posters').innerHTML=f.length?f.map(e=>`<div class="tl"${e.cong&&CC[e.cong]?` style="--cc:${ccol(e.cong)}"`:''}><div class="tld"><b>${toD(e.data).getDate()}</b><small>${MES[toD(e.data).getMonth()].slice(0,3)}</small><i></i></div><button class="tlc" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}">${hasMedia(e)?art(e):''}<div class="tx"><b>${esc(e.titulo)}</b><span>${cap(e.semanal?'Todos os '+DIAS[toD(e.data).getDay()]:fmt(e.data,{weekday:'long'}))}${e.hora?' · '+esc(e.hora):''}${e.cong&&e.cong!=='Todas'?` · <em>${esc(e.cong)}</em>`:' · Todas as congregações'}</span></div></button></div>`).join(''):'<div class="empty">Nenhum evento futuro.</div>';
 }
 
 function rCal(){
@@ -816,7 +897,7 @@ function rEscalas(){
   $('#emsg').innerHTML=msgs.map(m=>`<div class="mmsg">${!cong&&m.cong?`<b>${esc(m.cong)}: </b>`:''}${esc(m.texto)}</div>`).join('');
   const n=me.trim().toLowerCase();
   const l=mesL.filter(s=>(minF==='Todos'||gr(s).includes(minF))&&hit(s,n)).sort(escSort);
-  let h=byDay(l);
+  let h=byDay(l);if(h&&n){const mine=mesL.filter(s=>ppl(s).some(x=>x.toLowerCase().includes(n))).sort(escSort);if(mine.length)h=`<div class="voce"><span class="av2" style="width:40px;height:40px;border-radius:20px;background:#0b2160;color:#fff;display:grid;place-items:center;font:800 14px Archivo;flex:none">${esc(inic(me))}</span><div><b>Você está escalado ${mine.length} ${mine.length>1?'vezes':'vez'}</b><span>${mine.slice(0,3).map(s=>fmt(s.data,{weekday:'short',day:'numeric'})+' · '+esc(s.culto||'Culto')).join(' · ')}</span></div></div>`+h}
   if(!h){const has=S.escalas.filter(inCong).map(s=>String(s.data).slice(0,7)).filter(k=>k<key).sort().pop();
     h=`<div class="empty">${n&&mesL.length?'Nenhuma escala de “'+esc(me)+'” neste mês.':'A escala de '+MES[emo]+' ainda não foi publicada.'}${has&&!mesL.length?`<br><br><button class="btn gh" data-gom="${has}">Ver ${MES[+has.slice(5)-1]}</button>`:''}</div>`}
   if(loaded)$('#escL').innerHTML=h;
@@ -830,9 +911,16 @@ function rBadge(){const n=avVis().filter(a=>!lidos.has(a.id)).length;$('#badge')
 function marcar(ids){let ch=false;ids.forEach(i=>{if(!lidos.has(i)){lidos.add(i);ch=true}});if(ch){try{localStorage.setItem('avLidos',JSON.stringify([...lidos].slice(-300)))}catch(_){}}rBadge()}
 function rAvisos(){if(!loaded){$('#avL').innerHTML=SK(3);return}const l=avVis();$('#avL').innerHTML=l.length?l.map(a=>avCard(a,true)).join(''):'<div class="empty">Nenhum aviso no momento.</div>';setTimeout(()=>marcar(l.map(a=>a.id)),1500)}
 function rIgreja(){const c=cfg(),inf=c.info||{};
-  $('#igL').innerHTML=c.congs.map(n=>{const i=inf[n]||{};return `<div class="card"><h3>${esc(n)}</h3>${i.end||i.resp?`<div class="meta">${i.end?`<div>${IC('pin')}${esc(i.end)}</div>`:''}${i.resp?`<div>${IC('users')}${esc(i.resp)}</div>`:''}</div>${i.end?`<div class="mini"><a href="${maps(i.end)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a></div>`:''}`:'<div class="meta"><div>Informações em breve.</div></div>'}</div>`}).join('')}
+  const DS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  $('#igL').innerHTML=c.congs.map(n=>{const i=inf[n]||{};const cc=ccol(n),dk=CDK[n]?`rgb(${CDK[n]})`:'#0b2160';const hs=(c.prog||[]).filter(x=>x.cong===n).sort((a,b)=>a.dia-b.dia||String(a.hora).localeCompare(b.hora));
+    return `<div class="cg2" style="--cc:${cc};--cd:${dk}"><div class="hd"><b>${esc(n)}</b>${i.resp?`<span>${esc(i.resp)}</span>`:''}</div><div class="bd2">${i.end?`<div class="ad">${IC('pin')}${esc(i.end)}</div>`:'<div class="ad">Endereço em breve.</div>'}${hs.length?`<div class="hrs">${hs.map(x=>`<span>${DS[x.dia]} ${esc(String(x.hora).replace(':00','h').replace(':','h'))}</span>`).join('')}</div>`:''}${i.end?`<a class="btn gh" href="${maps(i.end)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}</div></div>`}).join('')}
+let pgDia=null;document.addEventListener('click',e=>{const b=e.target.closest('[data-pgd]');if(b){pgDia=+b.dataset.pgd;rProg()}});
 function rProg(){const c=cfg(),pg=(c.prog||[]).filter(x=>inCong(x));
   if(!pg.length){$('#pgL').innerHTML='<div class="empty">A programação semanal ainda não foi cadastrada.</div>';return}
+  if(pgDia===null)pgDia=new Date().getDay();const DS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  $('#pgD').innerHTML=DS.map((d,i)=>`<button class="${i===pgDia?'on':''}" data-pgd="${i}">${d}</button>`).join('');
+  const l=pg.filter(x=>x.dia===pgDia).sort((a,b)=>String(a.hora).localeCompare(b.hora));
+  $('#pgL').innerHTML=`<div class="h2" style="margin-top:6px">${cap(DN[pgDia])}</div>`+(l.length?l.map(x=>`<div class="pg2" style="--cc:${ccol(x.cong)}"><b>${esc(x.hora)}</b><div>${esc(x.nome)}<small>${esc(x.cong)}</small></div></div>`).join(''):'<div class="empty">Nenhum culto fixo neste dia.</div>');return;
   const cs=[...new Set(pg.map(x=>x.cong))];
   $('#pgL').innerHTML=cs.map(cn=>`<div class="card"><h3>${esc(cn)}</h3>${[0,1,2,3,4,5,6].map(d=>{const l=pg.filter(x=>x.cong===cn&&x.dia===d).sort((a,b)=>String(a.hora).localeCompare(b.hora));return l.length?`<div class="dayt">${cap(DN[d])}</div>`+l.map(x=>`<div class="wk"><b>${esc(x.hora)}</b><span>${esc(x.nome)}</span></div>`).join(''):''}).join('')}</div>`).join('')}
 function rRecebidos(){const box=$('#rcL');
@@ -883,17 +971,18 @@ function setCapa(){const w=$('.hwrap');if(!w)return;const c=cfg(),inf=(c.info||{
     w.prepend(d);requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('on')))}
   old.forEach(o=>{o.classList.remove('on');setTimeout(()=>o.remove(),800)})}
 function rHead(){const c=cfg();$('#nome').textContent=c.nome;document.title=c.nome;if(cong&&!c.congs.includes(cong))cong='';
-  $('#cnome').innerHTML=(cong?`<i class="cdot" style="--cc:${ccol(cong)};margin-right:6px"></i>`:'')+esc(cong||'Todas');setCapa();const hh=new Date().getHours();$('#hi').textContent=hh<12?'Bom dia!':hh<18?'Boa tarde!':'Boa noite!';$('#hoje').textContent=cap(now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
+  $('#cnome').innerHTML=(cong?`<i class="cdot" style="--cc:${ccol(cong)};margin-right:6px"></i>`:'')+esc(cong||'Todas');setCapa();const hh=new Date().getHours();{const g=hh<12?'Bom dia':hh<18?'Boa tarde':'Boa noite';const ws=me.trim().split(/\s+/).filter(w=>w.length>2&&!/^(pr|pb|dc|ev|pra|irm[aã]?|miss)\.?$/i.test(w));const nm=ws[0]?ws[0][0].toUpperCase()+ws[0].slice(1).toLowerCase():'';$('#hi').textContent=nm?`${g}, ${nm}!`:g+'!'}$('#hoje').textContent=cap(now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
   $$('.selC').forEach(sl=>{const v0=sl.value;sl.innerHTML=(sl.dataset.all?['Todas',...c.congs]:c.congs).map(x=>`<option>${esc(x)}</option>`).join('');if(v0&&[...sl.options].some(o=>o.value===v0))sl.value=v0});
-  const f=$('#fig');if(f.hidden||!f.dataset.filled){f.elements.nome.value=c.nome;f.elements.congs.value=c.congs.join('\n');f.elements.info.value=Object.entries(c.info||{}).map(([k,v])=>[k,v.end||'',v.resp||''].join('; ')).join('\n');f.elements.codigo.value=c.codigo||'';f.elements.prog.value=(c.prog||[]).map(x=>[x.cong,DN[x.dia],x.hora,x.nome].join('; ')).join('\n');f.dataset.filled='1'}}
+  const f=$('#fig');if(f.hidden||!f.dataset.filled){f.elements.nome.value=c.nome;f.elements.aoVivo.value=c.aoVivo||'';f.elements.congs.value=c.congs.join('\n');f.elements.info.value=Object.entries(c.info||{}).map(([k,v])=>[k,v.end||'',v.resp||''].join('; ')).join('\n');f.elements.codigo.value=c.codigo||'';f.elements.prog.value=(c.prog||[]).map(x=>[x.cong,DN[x.dia],x.hora,x.nome].join('; ')).join('\n');f.dataset.filled='1'}}
 function render(){if(loaded)hideSplash();rHead();rBadge();const v=cur();$('.app').classList.toggle('home',v==='inicio');$$('main section').forEach(s=>s.classList.toggle('on',s.id===v));$$('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v||(a.dataset.v==='mais'&&['igreja','programacao','oracao','admin','avisos'].includes(v))));R[v]()}
 addEventListener('hashchange',()=>{$('#modal').classList.remove('on');render();scrollTo(0,0)});
 
 function openEv(id,dt){const b=S.eventos.find(x=>x.id===id);if(!b)return;const e=dt?{...b,data:dt}:b;
   const when=e.semanal?'Todos os '+DIAS[toD(e.data).getDay()]+(dt?' · próximo em '+fmt(e.data,{day:'numeric',month:'long'}):''):fmt(e.data,{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-  $('#sheet').innerHTML=`<span class="grab"></span>${art(e,hasMedia(e)?'full':'')}<div class="bd"><h2>${esc(e.titulo)}</h2><div class="meta"><div>${IC('cal')}<span>${cap(when)}</span></div>${e.hora?`<div>${IC('clock')}${esc(e.hora)}</div>`:''}${e.local?`<div>${IC('pin')}${esc(e.local)}</div>`:''}${e.cong&&e.cong!=='Todas'?`<div>${IC('church')}${esc(e.cong)}</div>`:''}</div>${e.desc?`<p>${esc(e.desc).replace(/\n/g,'<br>')}</p>`:''}<div class="acts" style="margin-top:16px">${e.local?`<a class="btn" href="${maps(e.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" id="cp">${IC('copy')}Copiar convite</button></div><a class="btn gh" style="width:100%;margin-top:8px;display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none" href="${gcal(e.titulo,e.data,e.hora,e.local,e.desc,e.semanal)}" target="_blank" rel="noopener">${IC('bell')}Adicionar à agenda</a><button class="btn gh" id="fx" style="width:100%;margin-top:8px;background:none">Fechar</button><div class="msg" id="cpm" style="text-align:center"></div></div>`;
+  $('#sheet').innerHTML=`<span class="grab"></span>${art(e,hasMedia(e)?'full':'')}<div class="bd"><h2>${esc(e.titulo)}</h2><div class="meta"><div>${IC('cal')}<span>${cap(when)}</span></div>${e.hora?`<div>${IC('clock')}${esc(e.hora)}</div>`:''}${e.local?`<div>${IC('pin')}${esc(e.local)}</div>`:''}${e.cong&&e.cong!=='Todas'?`<div>${IC('church')}${esc(e.cong)}</div>`:''}</div>${e.desc?`<p>${esc(e.desc).replace(/\n/g,'<br>')}</p>`:''}<div class="acts4"><a class="btn" href="${gcal(e.titulo,e.data,e.hora,e.local,e.desc,e.semanal)}" target="_blank" rel="noopener">${IC('cal')}Pôr na agenda</a><button class="btn wa" id="wa">${IC('chat')}WhatsApp</button>${e.local?`<a class="btn gh" href="${maps(e.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" id="cp">${IC('copy')}Copiar convite</button></div><button class="btn gh" id="fx" style="width:100%;margin-top:8px;background:none">Fechar</button><div class="msg" id="cpm" style="text-align:center"></div></div>`;
   $('#modal').classList.add('on');$('#sheet').scrollTop=0;
   $('#fx').onclick=closeM;
+  $('#wa').onclick=()=>compartilhar(`*${e.titulo}*\n${cap(when)}${e.hora?' às '+e.hora:''}${e.local?'\n'+e.local:''}${e.desc?'\n\n'+e.desc:''}\n\n${cfg().nome}`);
   $('#cp').onclick=async()=>{const t=`*${e.titulo}*\n${when}${e.hora?' às '+e.hora:''}${e.local?'\n'+e.local:''}${e.desc?'\n\n'+e.desc:''}\n\n${cfg().nome}`;try{await navigator.clipboard.writeText(t);$('#cpm').textContent='Convite copiado — cole no WhatsApp.'}catch(_){$('#cpm').textContent='Não foi possível copiar aqui.'}};
 }
 function openCong(){const c=cfg();$('#sheet').innerHTML=`<div class="bd" style="padding-top:24px"><h2 style="font-size:22px;margin-bottom:6px">Sua congregação</h2><p style="color:var(--mut);margin:0 0 16px;font-size:14.5px">O app mostra os eventos e as escalas da congregação escolhida.</p>${['',...c.congs].map(x=>`<button class="opt${x===cong?' on':''}" data-cong="${esc(x)}"><span class="on-l"><i class="cdot" style="--cc:${ccol(x)}"></i>${esc(x||'Todas as congregações')}</span>${x===cong?'<svg class="ic"><use href="#i-chev"/></svg>':''}</button>`).join('')}</div>`;$('#modal').classList.add('on')}
@@ -912,7 +1001,7 @@ function openAus(id){const s=S.escalas.find(x=>x.id===id);if(!s)return;
 $('#for').addEventListener('submit',async ev=>{ev.preventDefault();const f=ev.target,m=f.querySelector('.msg'),b=f.querySelector('.btn');b.disabled=true;m.textContent='Enviando…';
   try{const it={texto:f.elements.texto.value.trim(),nome:f.elements.nome.value.trim(),cong:f.elements.cong.value,quando:new Date().toISOString()};const r=await addMine('oracoes',it,it.nome);
     if(r==='demo')(S.oracoes=S.oracoes||[]).push({nome:it.nome,itens:[it]});
-    f.elements.texto.value='';m.textContent='Pedido enviado. Estaremos orando por você.'}
+    f.elements.texto.value='';m.textContent='';$('#orOk').innerHTML=`<div class="okmsg">${IC('heart')}<b>Pedido recebido!</b><div style="color:var(--mut);font-weight:600">Os pastores vão orar por você. Deus abençoe.</div></div>`;setTimeout(()=>{const o=$('#orOk');if(o)o.innerHTML=''},12000)}
   catch(err){m.textContent=err&&(err.code==='invalid_argument'||err.code==='nouser')?'Seu acesso não permite enviar por aqui.':'Não deu certo. Tente de novo.'}
   b.disabled=false});
 function closeM(){$('#modal').classList.remove('on')}
@@ -1142,7 +1231,7 @@ $('#fig').addEventListener('submit',async e=>{e.preventDefault();const f=e.targe
   const congs=[...new Set(f.elements.congs.value.split('\n').map(x=>x.trim()).filter(Boolean))].slice(0,20);if(!congs.length){m.textContent='Informe ao menos a sede.';return}
   m.textContent='Salvando…';try{const info={};f.elements.info.value.split('\n').map(l=>l.split(';').map(x=>x.trim())).filter(a=>a[0]).forEach(a=>{info[a[0]]={end:a[1]||'',resp:a[2]||''}});
   const prog=f.elements.prog.value.split('\n').map(l=>l.split(';').map(x=>x.trim())).filter(a=>a.length>=4).map(a=>({cong:a[0],dia:DN.findIndex(d=>d.normalize('NFD').replace(/[\u0300-\u036f]/g,'').startsWith(a[1].toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').slice(0,3))),hora:a[2],nome:a.slice(3).join('; ')})).filter(x=>x.dia>=0);
-  await db.doc('config/igreja').set({nome:f.elements.nome.value.trim()||DEFCFG.nome,congs,info,prog,codigo:f.elements.codigo.value.trim()});m.textContent='Salvo!'}catch(err){m.textContent='Não deu certo. Tente de novo.'}});
+  await db.doc('config/igreja').set({nome:f.elements.nome.value.trim()||DEFCFG.nome,congs,info,prog,codigo:f.elements.codigo.value.trim(),aoVivo:/^https:\/\//.test(f.elements.aoVivo.value.trim())?f.elements.aoVivo.value.trim():''});m.textContent='Salvo!'}catch(err){m.textContent='Não deu certo. Tente de novo.'}});
 function useSample(){usingSample=true;loaded=true;const d=JSON.parse(JSON.stringify(SAMPLE));for(const k in d)setCol(k,d[k]);render()}
 render();setTimeout(rPush,1500);
 (async()=>{
