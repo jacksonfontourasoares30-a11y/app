@@ -320,6 +320,17 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 #onb .ft{margin-top:auto;padding-top:22px;display:grid;gap:6px}#onb .go{border:0;border-radius:16px;min-height:54px;background:#d9a52b;color:#0b2160;font:800 16.5px Manrope,system-ui;cursor:pointer}#onb .go:disabled{opacity:.6}
 #onb .sk{border:0;background:none;color:#fff;opacity:.72;font:700 14px Manrope,system-ui;min-height:44px;cursor:pointer}
 #onb .nt{font-size:12.5px;font-weight:600;opacity:.65;text-align:center;margin:2px 0 0}
+/* ===== iPhone: instalar na tela de início ===== */
+#iosb{position:fixed;left:10px;right:10px;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 78px);z-index:120;max-width:536px;margin:0 auto;background:var(--card);border-radius:18px;box-shadow:0 14px 34px -10px rgb(11 33 96/.42),0 0 0 1px var(--line);padding:13px 40px 13px 14px;display:flex;gap:11px;align-items:flex-start;animation:iosbIn .45s ease both}
+@keyframes iosbIn{from{opacity:0;transform:translateY(18px)}}
+#iosb.out{opacity:0;transform:translateY(14px);transition:opacity .28s,transform .28s}
+#iosb>.ic{width:26px;height:26px;color:var(--wine);flex:none;margin-top:1px}
+#iosb b{font:800 14.5px Archivo,system-ui;color:var(--ink);display:block}
+#iosb p{margin:3px 0 0;font:600 12.9px/1.5 Manrope,system-ui;color:var(--mut)}
+#iosb p b.in{display:inline;font:800 12.9px Manrope,system-ui;color:var(--ink)}
+#iosb .shi{width:15px;height:15px;vertical-align:-3px;color:var(--wine)}
+#iosb .x{position:absolute;top:7px;right:7px;width:30px;height:30px;border:0;background:none;color:var(--mut);font-size:15px;cursor:pointer;border-radius:15px}
+
 
 /* liderança home */
 .ahd{border-radius:22px;padding:18px;color:#fff;background:linear-gradient(150deg,#0b2160,#1d4fc4);margin-bottom:14px;box-shadow:0 14px 30px -16px #0b2160}
@@ -675,7 +686,7 @@ async function entrarGoogle(){try{localStorage.setItem('voltar','admin')}catch(_
 async function sair(){await SB.auth.signOut();await carregarSessao();refreshAll();render()}
 function rLock(){const L=$('#lock');
   L.innerHTML=eu.email&&!eu.papel?`<b>O e-mail ${esc(eu.email)} não está autorizado.</b><br>Peça ao administrador do app para cadastrar seu e-mail na equipe.<div class="mini"><button data-sair="1">Sair</button></div>`
-  :`<b style="color:var(--ink)">Área da liderança</b><br>Entre com a sua conta Google. Só os e-mails cadastrados pelo administrador conseguem publicar.<button class="btn" data-entrar="1" style="width:100%;margin-top:14px">Entrar com Google</button>`;
+  :`<b style="color:var(--ink)">Área da liderança</b><br>Entre com a sua conta Google. Só os e-mails cadastrados pelo administrador conseguem publicar.<button class="btn" data-entrar="1" style="width:100%;margin-top:14px">Entrar com Google</button>${(typeof ehIOS==='function'&&ehIOS())?'<small style="display:block;margin-top:10px;font-size:12.4px;line-height:1.5;color:var(--mut)">Não conseguiu entrar no iPhone? Abra <b>adcarlosbarbosa.github.io</b> no Safari, entre com o Google por lá e depois volte pelo ícone do app.</small>':''}`;
   const who=$('#quem');if(who)who.innerHTML=eu.papel?`Conectado como <b>${esc(eu.nome||eu.email)}</b> · ${esc((PAPEIS[eu.papel]||{}).nome||eu.papel)} <button data-sair="1" class="mini-b">Sair</button>`:''}
 
 const MES=['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
@@ -917,7 +928,7 @@ function onbIni(){let ok=false;try{ok=localStorage.getItem('onbOk')==='1'}catch(
 function onbR(){const el=$('#onb');if(!el)return;const N=onbPassos(),dots=`<div class="stp">${Array.from({length:N},(_,i)=>`<i class="${i===onbP?'on':''}"></i>`).join('')}</div>`,tp=(t,h,p)=>`<div class="tp"><small>PASSO ${onbP+1} DE ${N}</small><h2>${h}</h2><p>${p}</p></div>`;
   if(onbP===0)el.innerHTML=dots+tp(0,'Seja bem-vindo!<br>Como você se chama?','Assim o app mostra as escalas em que você está.')+`<div class="bd"><input id="onbN" maxlength="60" autocomplete="name" placeholder="Seu nome, como aparece na escala" value="${esc(onbN)}"><p class="nt">Fica guardado só no seu celular.</p></div><div class="ft"><button class="go" data-onb="1">Continuar</button><button class="sk" data-onb="1" data-pula="1">Pular</button></div>`;
   else if(onbP===1){const cs=['',...(cfg().congs||[])];el.innerHTML=dots+tp(1,'Qual é a sua<br>congregação?','O app mostra primeiro os cultos e as escalas dela.')+`<div class="bd">${cs.map(n=>`<button class="cgo${n===onbC?' on':''}" data-onbc="${esc(n)}"><i style="background:${n?ccol(n):'#d9a52b'}"></i>${n?esc(n):'Todas as congregações'}<b>✓</b></button>`).join('')}</div><div class="ft"><button class="go" data-onb="1">Continuar</button></div>`}
-  else el.innerHTML=dots+tp(2,'Receba as novidades','Escalas, avisos e eventos chegam direto no seu celular.')+`<div class="bd"><div class="bel">${IC('bell')}</div><p class="nt" style="font-size:13.5px">Na próxima tela, toque em <b>Permitir</b>.</p></div><div class="ft"><button class="go" data-onbpush="1">Ativar notificações</button><button class="sk" data-onbfim="1">Agora não</button></div>`;
+  else el.innerHTML=dots+tp(2,'Receba as novidades','Escalas, avisos e eventos chegam direto no seu celular.')+`<div class="bd"><div class="bel">${IC('bell')}</div><p class="nt" style="font-size:13.5px">Na próxima tela, toque em <b>Permitir</b>.${typeof ehIOS==='function'&&ehIOS()?' No iPhone é preciso iOS 16.4 ou mais novo.':''}</p></div><div class="ft"><button class="go" data-onbpush="1">Ativar notificações</button><button class="sk" data-onbfim="1">Agora não</button></div>`;
   const i=$('#onbN');if(i)i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();onbAv()}})}
 function onbAv(){if(onbP===0){const i=$('#onbN');onbN=i?i.value.trim():onbN}onbP++;if(onbP>=onbPassos())onbFim();else onbR()}
 function onbFim(){me=onbN||me;cong=onbC;try{localStorage.setItem('meuNome',me);localStorage.setItem('minhaCong',cong);localStorage.setItem('onbOk','1')}catch(_){}
@@ -929,6 +940,20 @@ document.addEventListener('click',async e=>{const t=e.target.closest('[data-onb]
   if(t.dataset.onbfim){try{localStorage.setItem('pushFechado','1')}catch(_){}return onbFim()}
   if(t.dataset.onbpush){t.disabled=true;t.textContent='Aguarde…';cong=onbC;try{await pushAtivar()}catch(_){}onbFim()}});
 setTimeout(onbIni,0);
+/* ===== iPhone: instalar na tela de início ===== */
+const ehIOS=()=>{try{return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}catch(_){return false}};
+const appInstalado=()=>{try{return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(_){return false}};
+const ehSafari=()=>{try{return /^((?!chrome|crios|fxios|edgios|opios|android).)*safari/i.test(navigator.userAgent)}catch(_){return false}};
+const SHSVG='<svg class="shi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m0 0L8.3 6.7M12 3l3.7 3.7"/><path d="M5.5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5v-6.5"/></svg>';
+function iosBanner(){if(!ehIOS()||appInstalado())return;let f=false;try{f=localStorage.getItem('iosbFechado')==='1'}catch(_){}if(f||$('#iosb'))return;
+  const el=document.createElement('div');el.id='iosb';
+  el.innerHTML=`<svg class="ic" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15.5V3m0 0L8 7m4-4 4 4"/><path d="M5 12.5V19a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6.5"/></svg><div>`+(ehSafari()
+   ?`<b>Instale o app no seu iPhone</b><p>Toque em <b class="in">Compartilhar</b> ${SHSVG} na barra de baixo e depois em <b class="in">Adicionar à Tela de Início</b>. O app passa a abrir pelo ícone e pode receber as notificações.</p>`
+   :`<b>Abra no Safari para instalar</b><p>Para deixar o app na tela de início, abra este mesmo endereço no <b class="in">Safari</b>. Depois toque em Compartilhar ${SHSVG} e em <b class="in">Adicionar à Tela de Início</b>.</p>`)
+   +`</div><button class="x" data-iosx="1" aria-label="Fechar">✕</button>`;
+  document.body.append(el)}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-iosx]');if(!t)return;e.preventDefault();try{localStorage.setItem('iosbFechado','1')}catch(_){}const el=$('#iosb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),300)}});
+setTimeout(iosBanner,1100);
 const spT0=Date.now();let spDone=false,spRun=true;const spHj=new Date().toDateString();let spRap=false;try{spRap=localStorage.getItem('spDia')===spHj;localStorage.setItem('spDia',spHj)}catch(_){}const spOf=spRap?2.3:0;
 (function(){const cv=$('#spcv');if(!cv)return;const fit=()=>{const r=Math.min(devicePixelRatio||1,2.5);cv.width=Math.round(innerWidth*r);cv.height=Math.round(innerHeight*r)};fit();addEventListener('resize',fit);const red=matchMedia('(prefers-reduced-motion: reduce)').matches;go();function go(){let draw;try{draw=adIntro(cv,adAssets(cv))}catch(_){return}const t1=performance.now();const f=()=>{if(!spRun)return;draw(red?4:spOf+(performance.now()-t1)/1000);if(!red)requestAnimationFrame(f)};f();if(red){spRun=true;setInterval(()=>spRun&&draw(4),400)}}$('#splash').addEventListener('click',()=>{spMin=0;if(spDone)hideNow()})})();
 let spMin=matchMedia('(prefers-reduced-motion: reduce)').matches?900:spRap?1100:3600;
@@ -1347,8 +1372,14 @@ async function pushAtivar(){if(!pushOk())return false;const p=await Notification
 async function pushDesativar(){if(pushSub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}try{await pushSub.unsubscribe()}catch(_){}pushSub=null}rPush()}
 let pushFix=false;async function pushCorrige(){if(pushFix||!pushSub)return;pushFix=true;const pub=await pushChave();if(!pub)return;const k=pushSub.options&&pushSub.options.applicationServerKey;const kb=k?btoa(String.fromCharCode(...new Uint8Array(k))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''):'';if(kb!==pub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}await pushSub.unsubscribe();const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(pub)})}await pushSalvar()}
 async function rPush(){const st=await pushEstado();if(st==='on')pushCorrige().catch(()=>{});const c=$('#pushC'),m=$('#pushM');let fech=false;try{fech=localStorage.getItem('pushFechado')==='1'}catch(_){}
-  if(c){c.hidden=!(st==='off'&&!fech);c.innerHTML=st==='off'?`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Receba as novidades no celular</b><small>Escalas, avisos e eventos da sua congregação</small></div><button class="btn" data-pushon="1">Ativar</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`:''}
-  if(m){m.hidden=st==='nao';$('#pushMs').textContent=st==='on'?'Ativadas. Toque para desligar.':st==='bloq'?'Bloqueadas. Libere nas configurações do celular (Apps → AD Carlos Barbosa → Notificações).':'Desativadas. Toque para ativar.'}}
+  const ios=typeof ehIOS==='function'&&ehIOS(),inst=typeof appInstalado==='function'&&appInstalado();
+  const bx=(t,d)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
+  if(c){let h='';
+    if(st==='off'&&!fech)h=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Receba as novidades no celular</b><small>Escalas, avisos e eventos da sua congregação</small></div><button class="btn" data-pushon="1">Ativar</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
+    else if(st==='bloq'&&!fech)h=bx('Notificações bloqueadas',ios?'Libere em Ajustes → Notificações → AD Carlos Barbosa.':'Libere nas configurações do celular: Apps → AD Carlos Barbosa → Notificações.');
+    else if(st==='nao'&&ios&&inst&&!fech)h=bx('Notificações no iPhone','Seu iPhone precisa de iOS 16.4 ou mais novo para receber os avisos.');
+    c.hidden=!h;c.innerHTML=h}
+  if(m){m.hidden=st==='nao';$('#pushMs').textContent=st==='on'?'Ativadas. Toque para desligar.':st==='bloq'?'Bloqueadas. Libere nas configurações do celular.':'Desativadas. Toque para ativar.'}}
 document.addEventListener('click',async e=>{const t=e.target.closest('[data-pushon],[data-pushx],[data-push]');if(!t)return;e.preventDefault();
   if(t.dataset.pushx){try{localStorage.setItem('pushFechado','1')}catch(_){}rPush()}
   else if(t.dataset.pushon){t.disabled=true;t.textContent='…';try{await pushAtivar()}catch(_){t.disabled=false;t.textContent='Ativar'}}
