@@ -225,6 +225,16 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 @media(prefers-reduced-motion:no-preference){main section.on{animation:in .28s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}.sheet{animation:up .25s ease}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
 
 /* ===== layout v3 ===== */
+/* aviso urgente */
+#urg:not(:empty){margin:-60px 0 12px;position:relative;z-index:2;display:grid;gap:8px}#urg:not(:empty)+.hero{margin-top:0}
+.urg{display:flex;gap:12px;align-items:flex-start;border-radius:20px;padding:15px 14px 14px;color:#fff;background:linear-gradient(135deg,#b91c1c,#e11d2a);box-shadow:0 14px 30px -12px #b91c1c;text-align:left;width:100%;border:0;font:inherit;position:relative;animation:urgIn .5s ease both}
+@keyframes urgIn{from{opacity:0;transform:translateY(-8px)}}
+.urg .ui{width:40px;height:40px;border-radius:13px;background:#ffffff26;display:grid;place-items:center;flex:none;font:800 22px Archivo,system-ui}
+.urg small{display:block;font:800 11px Manrope,system-ui;letter-spacing:.08em;opacity:.92}.urg b{display:block;font:800 17px/1.25 Archivo,system-ui;margin:2px 0 3px}.urg p{margin:0;font-size:13.5px;font-weight:600;opacity:.95;line-height:1.4}
+.urg .ok{margin-top:10px;border:0;border-radius:10px;background:#ffffff26;color:#fff;font:800 12.5px Manrope,system-ui;padding:7px 12px;cursor:pointer}
+.av-card.urgente{background:linear-gradient(135deg,#b91c1c,#e11d2a)!important;color:#fff!important;border-color:transparent!important}.av-card.urgente *{color:#fff!important}.av-card.urgente .av-top{opacity:.95}
+#adm label.urgsw{display:flex!important;flex-direction:row!important}.urgsw{display:flex;gap:12px;align-items:center;border:2px solid light-dark(#fecaca,#5b1a1a);background:light-dark(#fff5f5,#2a1010);border-radius:14px;padding:12px 14px;font-weight:600;cursor:pointer}.urgsw b{display:block;color:#b91c1c;font-size:14.5px}.urgsw small{color:var(--mut);font-size:12.5px}.urgsw input{width:22px;height:22px;accent-color:#dc2626;flex:none}
+
 /* boas-vindas */
 #onb{position:fixed;inset:0;z-index:150;color:#fff;background:radial-gradient(120% 70% at 50% 0%,#2b4db3,#0b1430 75%);display:flex;flex-direction:column;padding:max(28px,env(safe-area-inset-top)) 22px max(22px,env(safe-area-inset-bottom));transition:opacity .4s,transform .4s;overflow-y:auto}
 #onb.out{opacity:0;transform:scale(1.03);pointer-events:none}
@@ -350,6 +360,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 </div>
 <main>
   <section id="inicio">
+    <div id="urg"></div>
     <div class="hero" id="hero"></div>
     <div id="pushC" hidden></div>
     <div id="minha"></div>
@@ -440,6 +451,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
         <label>Título (opcional)<input name="titulo" maxlength="80" placeholder="Ex.: Reunião de obreiros"></label>
         <label>Mensagem<textarea name="texto" required maxlength="1500" placeholder="Escreva o recado para os irmãos"></textarea></label>
         <label>Imagem (opcional)<input name="img" type="file" accept="image/*"></label>
+        <label class="urgsw"><input name="urgente" type="checkbox"><div><b>⚠ Marcar como urgente</b><small>Aparece em vermelho no topo da tela inicial por 2 dias e a notificação chega com destaque. Use para cancelamentos e mudanças de última hora.</small></div></label>
         <div class="two"><label>Mostrar até<input name="ate" type="date"></label><label style="display:flex;gap:10px;align-items:center;font-weight:500;padding-top:22px"><input name="fixo" type="checkbox" style="width:22px;height:22px"> Fixar no topo</label></div>
         <button class="btn">Enviar aviso</button><div class="msg"></div>
       </form>
@@ -859,13 +871,13 @@ function rInicio(){
   if(!loaded){$('#hero').innerHTML='<div class="sk" style="height:150px;margin:0"></div>';$('#carr').innerHTML='';return}
   const nowT=pad(new Date().getHours())+':'+pad(new Date().getMinutes());
   const nx=futuros().find(e=>e.data>TODAY||!e.hora||e.hora>=nowT||(+e.hora.slice(0,2)+2)*60+ +e.hora.slice(3)>=new Date().getHours()*60+new Date().getMinutes());
-  {const av=avVis().slice(0,2);$('#avHome').innerHTML=av.map(a=>avCard(a,false)).join('');$('#avHomeW').hidden=!av.length}
+  {const av=avVis().filter(a=>!(urgVivo(a)&&!urgOk.has(a.id))).slice(0,2);$('#avHome').innerHTML=av.map(a=>avCard(a,false)).join('');$('#avHomeW').hidden=!av.length}
   const aoV=cfg().aoVivo,ehVivo=!!(aoV&&nx&&nx.data===TODAY&&nx.hora&&(()=>{const m=new Date().getHours()*60+new Date().getMinutes(),h=+nx.hora.slice(0,2)*60+ +nx.hora.slice(3);return m>=h-15&&m<=h+150})());
   $('#hero').innerHTML=nx?`<span class="lb${ehVivo?' live':''}"><i></i>${ehVivo?'Ao vivo agora':nx.data===TODAY?(nx.hora&&nx.hora<=nowT?'Acontecendo agora':'Hoje'):'Próximo culto'}</span><h3>${esc(nx.titulo)}</h3>${cdTxt(nx)}<div class="meta"><div>${IC('cal')}${nx.data===TODAY?'Hoje':fmt(nx.data,{weekday:'long',day:'numeric',month:'long'})}${nx.hora?' · '+esc(nx.hora):''}</div>${nx.local?`<div>${IC('pin')}${esc(nx.local)}${!cong&&nx.cong&&nx.cong!=='Todas'?' · '+esc(nx.cong):''}</div>`:''}</div><div class="acts">${ehVivo?`<a class="btn live" href="${esc(aoV)}" target="_blank" rel="noopener">${IC('play')}Assistir ao vivo</a>`:''}${nx.local?`<a class="btn${ehVivo?' gh':''}" href="${maps(nx.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" data-ev="${esc(nx.base||nx.id)}" data-dt="${esc(nx.data)}">Detalhes</button></div>`:`<span class="lb"><i></i>Agenda</span><h3>Nenhum culto marcado</h3><div class="meta"><div>A programação aparece aqui assim que for publicada.</div></div>`;
   const vis=S.banners.filter(x=>!x.ate||x.ate>=TODAY);const b=vis.length?[...vis].sort((p,q)=>(p.ordem??99)-(q.ordem??99)||String(p.id).localeCompare(q.id)):[{titulo:'Bem-vindo!',sub:'Os avisos da igreja aparecem aqui.',cor:'#1546b8'}];
   $('#carr').innerHTML=b.map(x=>hasMedia(x)?`<div class="ban pic">${media(x,x.titulo||'Banner')}</div>`:`<div class="ban" style="background:linear-gradient(140deg,${okCol(x.cor)},#1a0a12)"><h3>${esc(x.titulo)}</h3>${x.sub?`<p>${esc(x.sub)}</p>`:''}</div>`).join('');
   $('#dots').innerHTML=b.length>1?b.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join(''):'';
-  rMinha();rVers();carCur();
+  rMinha();rVers();carCur();rUrg();
   rSemana();
   $('#aviso').textContent=usingSample?'':'';
 }
@@ -956,9 +968,15 @@ function rEscalas(){
 }
 
 let lidos=new Set();try{lidos=new Set(JSON.parse(localStorage.getItem('avLidos')||'[]'))}catch(e){}
-const avVis=()=>S.avisos.filter(a=>a&&a.texto&&(!a.ate||a.ate>=TODAY)&&inCong(a)).sort((a,b)=>(b.fixo?1:0)-(a.fixo?1:0)||String(b.criado||'').localeCompare(a.criado||''));
+const avVis=()=>S.avisos.filter(a=>a&&a.texto&&(!a.ate||a.ate>=TODAY)&&inCong(a)).sort((a,b)=>(urgVivo(b)?1:0)-(urgVivo(a)?1:0)||(b.fixo?1:0)-(a.fixo?1:0)||String(b.criado||'').localeCompare(a.criado||''));
+
+const urgVivo=a=>!!(a&&a.urgente&&(a.ate?a.ate>=TODAY:(!a.criado||Date.now()-new Date(a.criado)<48*36e5)));
+let urgOk=new Set();try{urgOk=new Set(JSON.parse(localStorage.getItem('urgOk')||'[]'))}catch(_){}
+function rUrg(){const box=$('#urg');if(!box)return;const l=avVis().filter(a=>urgVivo(a)&&!urgOk.has(a.id)).slice(0,2);
+  box.innerHTML=l.map(a=>`<div class="urg" role="alert"><span class="ui">!</span><div style="flex:1;min-width:0"><small>URGENTE · ${esc(String(a.de||'Liderança').toUpperCase())}${!cong&&a.cong&&a.cong!=='Todas'?' · '+esc(a.cong.toUpperCase()):''}</small>${a.titulo?`<b>${esc(a.titulo)}</b>`:''}<p>${esc(String(a.texto).slice(0,220))}</p><button class="ok" data-urgok="${esc(a.id)}">Entendi</button></div></div>`).join('')}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-urgok]');if(!b)return;urgOk.add(b.dataset.urgok);try{localStorage.setItem('urgOk',JSON.stringify([...urgOk].slice(-100)))}catch(_){}marcar([b.dataset.urgok]);rUrg()});
 const quando=a=>{if(!a.criado)return'';const d=new Date(a.criado),h=Math.round((Date.now()-d)/36e5);return h<1?'agora':h<24?'há '+h+'h':d.toLocaleDateString('pt-BR',{day:'numeric',month:'short'})};
-const avCard=(a,full)=>`<button class="av-card${full?' full':''}${lidos.has(a.id)?'':' new'}" data-avid="${esc(a.id)}"><div class="av-top">${IC('mega')}${esc(a.de||'Liderança')}${a.fixo?'<b class="pin">Fixado</b>':''}<span>${quando(a)}</span></div>${a.titulo?`<h4>${esc(a.titulo)}</h4>`:''}<p>${esc(a.texto)}</p>${full&&hasMedia(a)?media(a,a.titulo||'Aviso'):''}${full&&!cong&&a.cong&&a.cong!=='Todas'?`<div style="margin-top:8px;font-size:13px;color:var(--mut);font-weight:600">Para: ${esc(a.cong)}</div>`:''}</button>`;
+const avCard=(a,full)=>`<button class="av-card${full?' full':''}${urgVivo(a)?' urgente':''}${lidos.has(a.id)?'':' new'}" data-avid="${esc(a.id)}"><div class="av-top">${IC('mega')}${esc(a.de||'Liderança')}${a.fixo?'<b class="pin">Fixado</b>':''}<span>${quando(a)}</span></div>${a.titulo?`<h4>${esc(a.titulo)}</h4>`:''}<p>${esc(a.texto)}</p>${full&&hasMedia(a)?media(a,a.titulo||'Aviso'):''}${full&&!cong&&a.cong&&a.cong!=='Todas'?`<div style="margin-top:8px;font-size:13px;color:var(--mut);font-weight:600">Para: ${esc(a.cong)}</div>`:''}</button>`;
 function rBadge(){const n=avVis().filter(a=>!lidos.has(a.id)).length;$('#badge').textContent=n?String(n>9?'9+':n):''}
 function marcar(ids){let ch=false;ids.forEach(i=>{if(!lidos.has(i)){lidos.add(i);ch=true}});if(ch){try{localStorage.setItem('avLidos',JSON.stringify([...lidos].slice(-300)))}catch(_){}}rBadge()}
 function rAvisos(){if(!loaded){$('#avL').innerHTML=SK(3);return}const l=avVis();$('#avL').innerHTML=l.length?l.map(a=>avCard(a,true)).join(''):'<div class="empty">Nenhum aviso no momento.</div>';setTimeout(()=>marcar(l.map(a=>a.id)),1500)}
@@ -1133,7 +1151,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('[data-push
   else{try{const st=await pushEstado();if(st==='on')await pushDesativar();else if(st==='off')await pushAtivar();else rPush()}catch(_){rPush()}}});
 async function notificar(o){if(typeof SB==='undefined'||papel==='lider'||!o)return;try{const {data:{session}}=await SB.auth.getSession();if(!session)return;await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify(o)})}catch(_){}}
 function msgDe(col,o){const lugar=o.cong&&o.cong!=='Todas'?o.cong:'';
-  if(col==='avisos')return{titulo:o.titulo||'Novo aviso',corpo:String(o.texto||'').slice(0,140),url:'./#avisos',cong:o.cong||''};
+  if(col==='avisos')return{titulo:(o.urgente?'⚠ URGENTE: ':'')+(o.titulo||(o.urgente?String(o.de||'Liderança'):'Novo aviso')),corpo:String(o.texto||'').slice(0,140),url:'./#avisos',cong:o.cong||''};
   if(col==='eventos')return{titulo:'Novo evento: '+o.titulo,corpo:[o.data?fmt(o.data,{weekday:'long',day:'numeric',month:'long'}):'',o.hora,lugar].filter(Boolean).join(' · '),url:'./#eventos',cong:o.cong||''};
   if(col==='escalas')return{titulo:'Escala: '+(o.culto||'novo culto'),corpo:[o.data?fmt(o.data,{weekday:'long',day:'numeric',month:'short'}):'',o.hora,lugar].filter(Boolean).join(' · ')+'. Confira quem está escalado.',url:'./#escalas',cong:o.cong||''};
   return null}
@@ -1153,7 +1171,7 @@ async function submit(form,col,build,after){
 const v=(fd,k)=>String(fd.get(k)||'').trim();
 {const fe=$('#fev');let touched=false;fe.elements.bannerAte.addEventListener('input',()=>touched=true);fe.elements.data.addEventListener('input',()=>{if(!touched&&!fe.elements.semanal.checked)fe.elements.bannerAte.value=fe.elements.data.value});fe.elements.semanal.addEventListener('change',()=>{if(!touched)fe.elements.bannerAte.value=fe.elements.semanal.checked?'':fe.elements.data.value});fe.addEventListener('reset',()=>touched=false)}
 submit($('#fev'),'eventos',fd=>({titulo:v(fd,'titulo'),data:v(fd,'data'),hora:v(fd,'hora'),cong:v(fd,'cong')||'Todas',local:v(fd,'local'),ministerio:v(fd,'ministerio')||'Geral',desc:v(fd,'desc'),semanal:fd.get('semanal')==='on'}),async(o,ref,fd)=>{if(fd.get('comoBanner')!=='on'||!(okMid(o)||okImg(o.img)))return;const bn={titulo:o.titulo,ordem:50,evento:ref.id,status:o.status,autor:o.autor,ate:v(fd,'bannerAte')||(o.semanal?'':o.data),criado:o.criado};if(o.mid){bn.mid=o.mid;bn.mtype=o.mtype}else bn.img=o.img;await db.collection('banners').add(bn)});
-submit($('#fav'),'avisos',fd=>({de:v(fd,'de'),cong:v(fd,'cong')||'Todas',titulo:v(fd,'titulo'),texto:v(fd,'texto'),ate:v(fd,'ate'),fixo:fd.get('fixo')==='on'}));
+submit($('#fav'),'avisos',fd=>({de:v(fd,'de'),cong:v(fd,'cong')||'Todas',titulo:v(fd,'titulo'),texto:v(fd,'texto'),ate:v(fd,'ate'),fixo:fd.get('fixo')==='on',urgente:fd.get('urgente')==='on'}));
 submit($('#fba'),'banners',fd=>({titulo:v(fd,'titulo'),sub:v(fd,'sub'),cor:okCol(v(fd,'cor')),ate:v(fd,'ate')}));
 submit($('#fes'),'escalas',fd=>({cong:v(fd,'cong'),data:v(fd,'data'),hora:v(fd,'hora'),culto:v(fd,'culto'),pessoas:v(fd,'pessoas').split('\n').map(l=>l.trim()).filter(Boolean).slice(0,30),grupo:v(fd,'grupo'),destaque:fd.get('destaque')==='on'}));
 $('#fmm').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,m=f.querySelector('.msg');if(!db){m.textContent='Os dados não estão disponíveis nesta visualização.';return}
