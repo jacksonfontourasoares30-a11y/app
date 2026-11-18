@@ -224,6 +224,7 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 .sim{display:none!important}#quem{font-size:13.5px;color:var(--mut);margin:-6px 0 14px;font-weight:600}.mini-b{border:1px solid var(--line);background:none;color:#c2410c;border-radius:8px;padding:2px 8px;font:700 12.5px Manrope,system-ui,sans-serif;cursor:pointer;margin-left:6px}
 @media(prefers-reduced-motion:no-preference){main section.on{animation:in .28s ease}@keyframes in{from{opacity:0;transform:translateY(8px)}}.sheet{animation:up .25s ease}@keyframes up{from{transform:translateY(30px);opacity:.6}}}
 
+#fav input[readonly]{background:light-dark(#eef1f6,#141c33);color:var(--mut);cursor:not-allowed}
 /* ===== layout v3 ===== */
 /* fotos líderes */
 .pastor .av{overflow:hidden}.pastor .av img{width:100%;height:100%;object-fit:cover}
@@ -524,7 +525,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
       <div id="admHome"></div><button class="admBack" id="admBack" data-ad="home" hidden><svg class="ic"><use href="#i-chev"/></svg>Voltar ao painel</button><div class="admT" id="admT" hidden></div>
       <div class="seg" hidden><button class="on" data-ad="av">Aviso</button><button data-ad="ev">Evento</button><button data-ad="ba">Banner</button><button data-ad="es">Escala</button><button data-ad="ap">Para aprovar<i id="apN"></i></button><button data-ad="ig">Igreja</button><button data-ad="eq">Equipe</button><button data-ad="rc">Recebidos</button></div>
       <form class="adm" id="fav" hidden>
-        <div class="two"><label>De<input name="de" required maxlength="50" list="remet" placeholder="Pastor Ageu"></label><label>Para<select name="cong" class="selC" data-all="1"></select></label></div>
+        <div class="two"><label>De<input name="de" required maxlength="50" list="remet" placeholder="Pastor Ageu"><span class="note" id="deN" style="margin:0;text-align:left;font-weight:500"></span></label><label>Para<select name="cong" class="selC" data-all="1"></select></label></div>
         <label>Título (opcional)<input name="titulo" maxlength="80" placeholder="Ex.: Reunião de obreiros"></label>
         <label>Mensagem<textarea name="texto" required maxlength="1500" placeholder="Escreva o recado para os irmãos"></textarea></label>
         <label>Imagem (opcional)<input name="img" type="file" accept="image/*"></label>
@@ -1174,6 +1175,15 @@ document.addEventListener('change',async e=>{if(e.target.id!=='fotI')return;cons
   try{const bl=await sqBlob(file);let v;if(assets){const up=await assets.upload(bl);v=up.id}else{v=await new Promise(r=>{const fr=new FileReader();fr.onload=()=>r(fr.result);fr.readAsDataURL(bl)})}
     let o={};try{o=JSON.parse(f.elements.fotos.value||'{}')}catch(_){}o[fotK]=v;f.elements.fotos.value=JSON.stringify(o);rFotL();m.textContent='Foto pronta! Toque em Salvar para publicar.'}
   catch(_){m.textContent='Não deu certo com essa foto. Tente outra.'}});
+
+function deFix(){const f=$('#fav');if(!f)return;const i=f.elements.de,n=$('#deN');
+  let nome='';try{nome=(typeof eu!=='undefined'&&eu&&(eu.nome||eu.email))||''}catch(_){}
+  if(!nome)try{nome=PAPEIS[papel].autor}catch(_){}
+  if(papel==='admin'){i.readOnly=false;i.setAttribute('list','remet');if(!i.value)i.value=nome;
+    if(n)n.textContent='Como administrador, você pode assinar por outro.'}
+  else{i.value=nome;i.readOnly=true;i.removeAttribute('list');
+    if(n)n.textContent='Seus avisos saem com este nome.'}}
+$('#fav').addEventListener('reset',()=>setTimeout(deFix,0));
 function rIgreja(){const c=cfg(),inf=c.info||{};{const pa=$('#pastAv'),F=c.fotos||{};if(pa)pa.innerHTML=F.pastor?`<img src="${fotoSrc(F.pastor)}" alt="Pastores presidentes">`:'AO'}
   const DS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   $('#igL').innerHTML=c.congs.map(n=>{const i=inf[n]||{};const cc=ccol(n),dk=CDK[n]?`rgb(${CDK[n]})`:'#0b2160';const hs=(c.prog||[]).filter(x=>x.cong===n).sort((a,b)=>a.dia-b.dia||String(a.hora).localeCompare(b.hora));
@@ -1229,7 +1239,7 @@ function rAdmin(){
   $('#apL').hidden=adTab!=='ap';$('#eqL').hidden=adTab!=='eq';
   if(adTab==='ap'||adTab==='eq'){$$('#adm form.adm').forEach(f=>{if(f.id!=='feq')f.hidden=true});$('#orsep').hidden=true;$('#rcL').hidden=true;$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;$$('.seg [data-ad]').forEach(b=>b.classList.toggle('on',b.dataset.ad===adTab));adTab==='ap'?rAprovar():rEquipe();return}
   $$('.seg [data-ad]').forEach(b=>b.classList.toggle('on',b.dataset.ad===adTab));
-  $('#fav').hidden=adTab!=='av';$('#fev').hidden=adTab!=='ev';$('#fba').hidden=adTab!=='ba';$('#fes').hidden=adTab!=='es';$('#fimp').hidden=adTab!=='es';$('#orsep').hidden=adTab!=='es';$('#fmm').hidden=adTab!=='es';$('#fig').hidden=adTab!=='ig';$('#rcL').hidden=adTab!=='rc';if(adTab==='rc'){rRecebidos();$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;return}if(adTab==='ig'){$('#fig').dataset.filled='';$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;return}$('#admL').previousElementSibling.hidden=false;$('#admL').previousElementSibling.textContent=papel==='lider'?'Publicados e enviados':'Publicados';
+  $('#fav').hidden=adTab!=='av';if(adTab==='av')deFix();$('#fev').hidden=adTab!=='ev';$('#fba').hidden=adTab!=='ba';$('#fes').hidden=adTab!=='es';$('#fimp').hidden=adTab!=='es';$('#orsep').hidden=adTab!=='es';$('#fmm').hidden=adTab!=='es';$('#fig').hidden=adTab!=='ig';$('#rcL').hidden=adTab!=='rc';if(adTab==='rc'){rRecebidos();$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;return}if(adTab==='ig'){$('#fig').dataset.filled='';$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;return}$('#admL').previousElementSibling.hidden=false;$('#admL').previousElementSibling.textContent=papel==='lider'?'Publicados e enviados':'Publicados';
   $('#mins').innerHTML=[...new Set(['Geral','Louvor','Recepção','Mídia','Infantil','Jovens',...S.escalas.map(s=>s.ministerio),...S.eventos.map(e=>e.ministerio)].filter(Boolean))].map(m=>`<option value="${esc(m)}">`).join('');
   $('#grupos').innerHTML=[...new Set(S.escalas.flatMap(gr))].map(m=>`<option value="${esc(m)}">`).join('');
   const col={av:'avisos',ev:'eventos',ba:'banners',es:'escalas'}[adTab];
