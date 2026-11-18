@@ -1158,6 +1158,7 @@ function msgDe(col,o){const lugar=o.cong&&o.cong!=='Todas'?o.cong:'';
   if(col==='avisos')return{titulo:(o.urgente?'⚠ URGENTE: ':'')+(o.titulo||(o.urgente?String(o.de||'Liderança'):'Novo aviso')),corpo:String(o.texto||'').slice(0,140),url:'./#avisos',cong:o.cong||''};
   if(col==='eventos')return{titulo:'Novo evento: '+o.titulo,corpo:[o.data?fmt(o.data,{weekday:'long',day:'numeric',month:'long'}):'',o.hora,lugar].filter(Boolean).join(' · '),url:'./#eventos',cong:o.cong||''};
   if(col==='escalas')return{titulo:'Escala: '+(o.culto||'novo culto'),corpo:[o.data?fmt(o.data,{weekday:'long',day:'numeric',month:'short'}):'',o.hora,lugar].filter(Boolean).join(' · ')+'. Confira quem está escalado.',url:'./#escalas',cong:o.cong||''};
+  if(col==='banners'&&!o.evento)return{titulo:'Novo cartaz'+(o.titulo?': '+o.titulo:''),corpo:o.sub||'Toque para ver nos destaques do app.',url:'./#inicio',cong:''};
   return null}
 /* ===== fim notificações ===== */
 const stamp=o=>({...o,status:papel==='lider'?'pendente':'publicado',autor:eu.nome||eu.email});
