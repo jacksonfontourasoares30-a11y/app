@@ -432,6 +432,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .cg2 a.btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;min-height:42px}
 /* mais */
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tiles a{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:16px 6px 13px;text-decoration:none;color:var(--ink);display:grid;justify-items:center;gap:8px;font:800 13px Manrope,system-ui;text-align:center;cursor:pointer}
+.tiles a small{font:700 10.5px Manrope,system-ui;color:var(--mut);margin-top:-4px}
 .tiles a span{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:var(--rose);color:var(--wine)}.tiles a span .ic{width:24px;height:24px}
 .lid{display:flex;gap:12px;align-items:center;margin-top:12px;border-radius:18px;padding:15px;background:linear-gradient(135deg,#0b2160,#1546b8);color:#fff;text-decoration:none}.lid b{display:block}.lid small{opacity:.85;font-size:12.5px;font-weight:600}.lid .ic{width:26px;height:26px;color:#f3c65a;flex:none}
 .shr{display:flex;gap:12px;align-items:center;margin-top:10px;border-radius:18px;padding:14px;background:var(--card);box-shadow:var(--sh);width:100%;border:0;font:inherit;color:var(--ink);text-align:left;cursor:pointer}.shr .ic{width:24px;height:24px;color:#25d366;flex:none}.shr small{display:block;color:var(--mut);font-size:12.5px;font-weight:600}
@@ -1002,7 +1003,9 @@ document.addEventListener('click',async e=>{const t=e.target.closest('[data-onb]
 setTimeout(onbIni,0);
 /* ===== iPhone: instalar na tela de início ===== */
 const ehIOS=()=>{try{return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}catch(_){return false}};
-const appInstalado=()=>{try{return window.matchMedia('(display-mode: standalone)').matches||navigator.standalone===true}catch(_){return false}};
+let REFAPP=false;try{REFAPP=/^android-app:\/\//.test(document.referrer||'')}catch(_){}
+const dmod=q=>{try{return window.matchMedia('(display-mode: '+q+')').matches}catch(_){return false}};
+const appInstalado=()=>{try{return REFAPP||dmod('standalone')||dmod('minimal-ui')||dmod('fullscreen')||navigator.standalone===true}catch(_){return false}};
 const ehSafari=()=>{try{return /^((?!chrome|crios|fxios|edgios|opios|android).)*safari/i.test(navigator.userAgent)}catch(_){return false}};
 const SHSVG='<svg class="shi" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V3m0 0L8.3 6.7M12 3l3.7 3.7"/><path d="M5.5 12.5V19a1.5 1.5 0 0 0 1.5 1.5h10a1.5 1.5 0 0 0 1.5-1.5v-6.5"/></svg>';
 function iosBanner(){if(!ehIOS()||appInstalado())return;let f=false;try{f=localStorage.getItem('iosbFechado')==='1'}catch(_){}if(f||$('#iosb'))return;
@@ -1515,7 +1518,7 @@ const b64u=s=>{const b=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').r
 async function pushChave(){if(pushPub)return pushPub;const r=await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"chave":1}'});pushPub=(await r.json()).pub;return pushPub}
 async function pushEstado(){if(!pushOk())return'nao';try{const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()}catch(_){}return pushSub&&Notification.permission==='granted'?'on':Notification.permission==='denied'?'bloq':'off'}
 async function pushSalvar(){if(!pushSub)return;const j=pushSub.toJSON();await SB.rpc('push_inscrever',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_cong:cong||''})}
-async function pushAtivar(){if(!pushOk())return false;if(typeof noNav==='function'&&noNav()){pushParaApp();return false}const p=await Notification.requestPermission();if(p!=='granted'){rPush();return false}
+async function pushAtivar(){if(!pushOk())return false;const p=await Notification.requestPermission();if(p!=='granted'){rPush();return false}
   const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(await pushChave())});await pushSalvar();rPush();return true}
 async function pushDesativar(){if(pushSub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}try{await pushSub.unsubscribe()}catch(_){}pushSub=null}rPush()}
 let pushFix=false;async function pushCorrige(){if(pushFix||!pushSub)return;pushFix=true;const pub=await pushChave();if(!pub)return;const k=pushSub.options&&pushSub.options.applicationServerKey;const kb=k?btoa(String.fromCharCode(...new Uint8Array(k))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''):'';if(kb!==pub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}await pushSub.unsubscribe();const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(pub)})}await pushSalvar()}
@@ -1531,7 +1534,7 @@ async function rPush(){const st=await pushEstado();if(st==='on')pushCorrige().ca
     else if(st==='bloq'&&!fech)h=bx('Notificações bloqueadas',ios?'Libere em Ajustes → Notificações → AD Carlos Barbosa.':'Libere nas configurações do celular: Apps → AD Carlos Barbosa → Notificações.');
     else if(st==='nao'&&ios&&inst&&!fech)h=bx('Notificações no iPhone','Seu iPhone precisa de iOS 16.4 ou mais novo para receber os avisos.');
     c.hidden=!h;c.innerHTML=h}
-  if(m){m.hidden=st==='nao';$('#pushMs').textContent=nav?(st==='on'?'Vindo pelo navegador. Toque para passar para o app.':'Disponíveis no app. Toque para instalar.'):st==='on'?'Ativadas. Toque para desligar.':st==='bloq'?'Bloqueadas. Libere nas configurações do celular.':'Desativadas. Toque para ativar.'}}
+  if(m){m.hidden=st==='nao';const ms=$('#pushMs');if(ms){ms.style.display='';ms.textContent=st==='on'?'Ativadas':st==='bloq'?'Bloqueadas':'Desativadas'}}}
 async function pushParaApp(){try{await temApp()}catch(_){}
   if(temAppC){try{if(await pushEstado()==='on')await pushDesativar()}catch(_){}}
   irApp()}
@@ -1539,7 +1542,10 @@ document.addEventListener('click',async e=>{const t=e.target.closest('[data-push
   if(t.dataset.pushx){try{localStorage.setItem('pushFechado','1')}catch(_){}rPush()}
   else if(t.dataset.pushapp){t.disabled=true;t.textContent='…';try{await pushParaApp()}catch(_){rPush()}}
   else if(t.dataset.pushon){t.disabled=true;t.textContent='…';try{await pushAtivar()}catch(_){t.disabled=false;t.textContent='Ativar'}}
-  else{try{if(typeof noNav==='function'&&noNav()){await pushParaApp();return}const st=await pushEstado();if(st==='on')await pushDesativar();else if(st==='off')await pushAtivar();else rPush()}catch(_){rPush()}}});
+  else{try{const st=await pushEstado();if(st==='on')await pushDesativar();else if(st==='off')await pushAtivar();else rPush()}
+    catch(err){pushErro(err);rPush()}}});
+function pushErro(err){try{const c=$('#pushC');if(!c)return;c.hidden=false;
+  c.innerHTML=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Não deu para ligar agora</b><small>${esc(String(err&&err.message||err||'erro'))}</small></div><button class="btn" data-pushon="1">Tentar de novo</button></div>`}catch(_){}}
 async function notificar(o){if(typeof SB==='undefined'||papel==='lider'||!o)return;try{const {data:{session}}=await SB.auth.getSession();if(!session)return;await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify(o)})}catch(_){}}
 function msgDe(col,o){const lugar=o.cong&&o.cong!=='Todas'?o.cong:'';
   if(col==='avisos')return{titulo:(o.urgente?'⚠ URGENTE: ':'')+(o.titulo||(o.urgente?String(o.de||'Liderança'):'Novo aviso')),corpo:String(o.texto||'').slice(0,140),url:'./#avisos',cong:o.cong||''};
