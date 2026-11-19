@@ -256,7 +256,21 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 .fp{margin:0 -16px;padding:14px 16px 6px;border-bottom:8px solid light-dark(#eef1f6,#0c1224)}
 .fh{display:flex;align-items:center;gap:10px}.fa{width:38px;height:38px;border-radius:19px;display:grid;place-items:center;color:#fff;font:800 12.5px Archivo,system-ui;flex:none;overflow:hidden}.fa img{width:100%;height:100%;object-fit:cover}
 .fh b{display:block;font:800 14px Manrope,system-ui}.fh small{font:600 12px Manrope,system-ui;color:var(--mut)}
-.ft{margin-left:auto;font:800 10px Manrope,system-ui;letter-spacing:.06em;padding:4px 8px;border-radius:8px;background:light-dark(#e8eefc,#16244d);color:#2f6bff;flex:none}.ft.e{background:light-dark(#fdf3dc,#33270a);color:#c48a12}.ft.u{background:#dc2626;color:#fff}
+.ft{margin-left:auto;font:800 10px Manrope,system-ui;letter-spacing:.06em;padding:4px 8px;border-radius:8px;background:light-dark(#e8eefc,#16244d);color:#2f6bff;flex:none}.ft.c{background:light-dark(#efe7fb,#241a3d);color:light-dark(#6d28d9,#c4b5fd)}
+.nmbox{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:16px;margin:0 0 14px;display:block}
+.nmbox b{display:block;font:800 17px Archivo,system-ui;color:var(--ink)}
+.nmbox span{display:block;font:600 13.5px/1.45 Manrope,system-ui;color:var(--mut);margin-top:4px}
+.nmr{display:flex;gap:8px;margin-top:12px}
+.nmr input{flex:1;min-width:0;border:2px solid var(--line);border-radius:12px;padding:12px;font:600 15px Manrope,system-ui;background:var(--card);color:var(--ink)}
+.nmr input:focus{outline:0;border-color:var(--acc)}
+.nmr .btn{width:auto;min-height:46px;padding:0 18px;font-size:15px;flex:none}
+.fcap{padding:10px 2px 0}
+.fcap b{display:block;font:800 15.5px/1.3 Archivo,system-ui;color:var(--ink)}
+.fcap span{display:block;font:600 13.5px/1.45 Manrope,system-ui;color:var(--mut);margin-top:3px}
+.fx.ban2{color:#fff;min-height:170px;display:grid;align-content:center;gap:6px;padding:22px}
+.fx.ban2 b{font:800 22px/1.2 Archivo,system-ui}
+.fx.ban2 span{font:600 14px Manrope,system-ui;opacity:.9}
+.ft.e{background:light-dark(#fdf3dc,#33270a);color:#c48a12}.ft.u{background:#dc2626;color:#fff}
 .fi{display:block;width:100%;margin-top:10px;border:0;padding:0;border-radius:20px;overflow:hidden;background:var(--card);cursor:pointer}.fi img,.fi video{display:block;width:100%;height:auto;max-height:520px;object-fit:cover}
 .fx{display:block;width:100%;text-align:left;margin-top:10px;border:0;border-radius:16px;padding:13px 14px;background:light-dark(#f4f6fa,#141c33);color:var(--ink);font:600 14px/1.5 Manrope,system-ui;cursor:pointer}
 .fx b{display:block;font:800 15px Archivo,system-ui;margin-bottom:2px}.fx span{display:-webkit-box;-webkit-line-clamp:5;-webkit-box-orient:vertical;overflow:hidden}
@@ -464,8 +478,8 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
     <div class="hero" id="hero"></div>
     <div id="pushC" hidden></div>
     <div id="minha"></div>
-    <div class="h2" id="destH">Destaques</div>
-    <div class="sto" id="sto"></div>
+    <div class="h2" id="destH" hidden>Destaques</div>
+    <div class="sto" id="sto" hidden></div>
     <div class="ftabs" id="ftabs"><button class="on" data-ff="all">Para você</button><button data-ff="aviso">Avisos</button><button data-ff="evento">Eventos</button></div>
     <div id="feed"></div>
     <div hidden><div class="carr" id="carr"></div><div class="dots" id="dots"></div><div class="wk" id="wk"></div><div class="wkl" id="wkl"></div><div id="avHomeW"><div id="avHome"></div></div><div id="vers"></div></div>
@@ -496,6 +510,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
   </section>
   <section id="escalas">
     <div class="ph"><h2>Escalas</h2><p>Quem serve em cada culto.</p></div>
+    <div id="eNome"></div>
     <div class="eseg" id="eseg"><button data-em="minhas">Minhas</button><button data-em="todas">Todas</button></div>
     <div id="eMin"></div>
     <div class="em"><button class="ib" id="eprev" aria-label="Mês anterior"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-chev"/></svg></button><h3 id="emT"></h3><button class="ib" id="enext" aria-label="Próximo mês"><svg class="ic"><use href="#i-chev"/></svg></button></div>
@@ -1071,14 +1086,20 @@ document.addEventListener('keydown',e=>{if(!$('#stv.on'))return;if(e.key==='Esca
 let feedF='all';
 function rFeed(){const box=$('#feed');if(!box)return;const it=[];
   for(const a of avVis())it.push({t:'aviso',k:String(a.criado||''),a});
+  for(const b of S.banners.filter(x=>!x.evento&&(!x.ate||x.ate>=TODAY)))it.push({t:'cartaz',k:String(b.criado||''),b});
   const seen=new Set();for(const e of futuros()){const id=e.base||e.id;if(seen.has(id))continue;seen.add(id);if(e.semanal&&!hasMedia(e))continue;it.push({t:'evento',k:String(S.eventos.find(x=>x.id===id)?.criado||''),e,id})}
   it.sort((p,q)=>(q.a&&urgVivo(q.a)?1:0)-(p.a&&urgVivo(p.a)?1:0)||q.k.localeCompare(p.k));
-  let l=it.filter(x=>feedF==='all'||x.t===feedF).slice(0,24);
+  let l=it.filter(x=>feedF==='all'||x.t===feedF||(feedF==='aviso'&&x.t==='cartaz')).slice(0,24);
   const vI=(()=>{const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)%VERS.length})();
   let h=l.map((x,n)=>{let o='';if(x.t==='aviso'){const a=x.a,u=urgVivo(a);
       const acg=a.cong&&a.cong!=='Todas'&&CC[a.cong]?ccol(a.cong):'';
       o=`<article class="fp"><div class="fh"><span class="fa" style="background:${acg||'#0b2160'}">${fotoDe(a.de)?`<img src="${fotoDe(a.de)}" alt="">`:esc(inic(a.de||'Liderança'))}</span><div><b>${esc(a.de||'Liderança')}</b><small>Aviso · ${esc(a.cong||'Todas')}${quando(a)?' · '+quando(a):''}</small></div><span class="ft${u?' u':''}">${u?'URGENTE':'AVISO'}</span></div>
       <button class="fx${u?' u':acg?' cg':''}"${acg?` style="--c:${acg}"`:''} data-avid="${esc(a.id)}">${a.titulo?`<b>${esc(a.titulo)}</b>`:''}<span>${esc(a.texto)}</span>${a.video?`<em class="avv" data-vurl="${esc(a.video)}">${IC('play')}Assistir vídeo</em>`:''}</button>${hasMedia(a)?`<div class="fi">${media(a,a.titulo||'Aviso')}</div>`:''}</article>`}
+    else if(x.t==='cartaz'){const b=x.b,k='b:'+b.id;
+      o=`<article class="fp"><div class="fh"><span class="fa" style="background:#0b2160"><img src="icon-192.png" alt=""></span><div><b>${esc(cfg().nome||'Igreja')}</b><small>Cartaz${b.criado?' · '+quando({criado:b.criado}):''}</small></div><span class="ft c">CARTAZ</span></div>
+      ${hasMedia(b)?`<button class="fi" data-cartaz="${esc(b.id)}">${media(b,b.titulo||'Cartaz')}</button>`:`<button class="fx ban2" data-cartaz="${esc(b.id)}" style="background:linear-gradient(140deg,${okCol(b.cor)},#111a31)"><b>${esc(b.titulo||'')}</b>${b.sub?`<span>${esc(b.sub)}</span>`:''}</button>`}
+      ${b.titulo||b.sub?`<div class="fcap"><b>${esc(b.titulo||'')}</b>${b.sub?`<span>${esc(b.sub)}</span>`:''}</div>`:''}
+      <div class="fac">${amBtn(k)}<button data-fwb="${esc(b.id)}">${IC('chat')}Enviar</button></div></article>`}
     else{const e=x.e,cg=e.cong&&e.cong!=='Todas'?e.cong:'',k='e:'+x.id;
       o=`<article class="fp"><div class="fh"><span class="fa" style="background:${cg?ccol(cg):'#0b2160'}">${cg?esc(inic(cg)):'<img src="icon-192.png" alt="">'}</span><div><b>${cg?'Congregação '+esc(cg):esc(cfg().nome)}</b><small>Evento · ${cap(fmt(e.data,{weekday:'short',day:'numeric',month:'short'}))}${e.hora?' · '+esc(e.hora):''}</small></div><span class="ft e">EVENTO</span></div>
       ${hasMedia(e)?`<button class="fi" data-ev="${esc(x.id)}" data-dt="${esc(e.data)}">${media(e,e.titulo)}</button>`:`<button class="fx ev" data-ev="${esc(x.id)}" data-dt="${esc(e.data)}" style="--c:${cg?ccol(cg):'#1546b8'}"><small>${cap(fmt(e.data,{weekday:'long',day:'numeric',month:'long'}))}${e.hora?' · '+esc(e.hora):''}</small><b>${esc(e.titulo)}</b>${e.local?`<span>${esc(e.local)}</span>`:''}</button>`}
@@ -1087,8 +1108,9 @@ function rFeed(){const box=$('#feed');if(!box)return;const it=[];
     return o}).join('');
   box.innerHTML=h||`<div class="empty">${feedF==='aviso'?'Nenhum aviso no momento.':feedF==='evento'?'Nenhum evento marcado.':'As novidades da igreja aparecem aqui.'}</div>`;
   $$('#ftabs button').forEach(b=>b.classList.toggle('on',b.dataset.ff===feedF))}
-document.addEventListener('click',e=>{const b=e.target.closest('[data-ff],[data-fwa]');if(!b)return;
+document.addEventListener('click',e=>{const b=e.target.closest('[data-ff],[data-fwa],[data-fwb]');if(!b)return;
   if(b.dataset.ff){feedF=b.dataset.ff;rFeed();return}
+  if(b.dataset.fwb){const bn=S.banners.find(x=>x.id===b.dataset.fwb);if(bn)compartilhar(`*${bn.titulo||'Cartaz'}*${bn.sub?'\n'+bn.sub:''}\n\n${cfg().nome}`);return}
   const ev=S.eventos.find(x=>x.id===b.dataset.fwa);if(ev)compartilhar(`*${ev.titulo}*\n${cap(fmt(b.dataset.dt,{weekday:'long',day:'numeric',month:'long'}))}${ev.hora?' às '+ev.hora:''}${ev.local?'\n'+ev.local:''}${ev.desc?'\n\n'+ev.desc:''}\n\n${cfg().nome}`)});
 setTimeout(amLoad,1500);setInterval(amLoad,120000);
 /* agenda */
@@ -1127,7 +1149,7 @@ function rInicio(){
   const vis=S.banners.filter(x=>!x.ate||x.ate>=TODAY);const b=vis.length?[...vis].sort((p,q)=>(p.ordem??99)-(q.ordem??99)||String(p.id).localeCompare(q.id)):[{titulo:'Bem-vindo!',sub:'Os avisos da igreja aparecem aqui.',cor:'#1546b8'}];
   $('#carr').innerHTML=b.map(x=>hasMedia(x)?`<div class="ban pic">${media(x,x.titulo||'Banner')}</div>`:`<div class="ban" style="background:linear-gradient(140deg,${okCol(x.cor)},#1a0a12)"><h3>${esc(x.titulo)}</h3>${x.sub?`<p>${esc(x.sub)}</p>`:''}</div>`).join('');
   $('#dots').innerHTML=b.length>1?b.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join(''):'';
-  rMinha();rVers();carCur();rUrg();rStories();rFeed();
+  rMinha();rVers();carCur();rUrg();rFeed();
   rSemana();
   $('#aviso').textContent=usingSample?'':'';
 }
@@ -1136,7 +1158,7 @@ function rInicio(){
 const inic=s=>{const w=String(s).replace(/^(pr|pb|dc|ev|pra|presb|miss|irm[aã]?|diác|aux|coop)\.?\s+/i,'').split(/\s+/).filter(Boolean);return ((w[0]||'?')[0]+(w.length>1?w[w.length-1][0]:'')).toUpperCase()};
 const corP=s=>{let h=0;for(const c of String(s))h=(h*31+c.charCodeAt(0))>>>0;return ['#1546b8','#0f9d7a','#b8432f','#7c3aed','#c48a12','#0e7490','#be185d','#4d7c0f'][h%8]};
 function rMinha(){const box=$('#minha');if(!box)return;if(escLocked()){box.innerHTML='';return}const n=me.trim().toLowerCase();
-  if(!n){box.innerHTML=`<button class="minha vazio" data-go="escalas"><span class="av2">${IC('users')}</span><div><small style="color:var(--wine)">SUAS ESCALAS</small><b>Descubra quando você está escalado</b><span style="color:var(--mut)">Toque e busque pelo seu nome</span></div>${IC('chev')}</button>`;return}
+  if(!n){box.innerHTML='';return}
   const l=S.escalas.filter(s=>s.data>=TODAY&&inCong(s)&&ppl(s).some(x=>x.toLowerCase().includes(n))).sort(escSort);
   if(!l.length){box.innerHTML='';return}const s=l[0],ou=ppl(s).filter(x=>!x.toLowerCase().includes(n)).slice(0,2);
   const dia=s.data===TODAY?'Hoje':cap(fmt(s.data,{weekday:'long'}).split('-')[0]);
@@ -1202,6 +1224,12 @@ function rEscalas(){
   if(lk){$('#escLock').innerHTML=`<div class="lockbox"><svg class="ic" style="width:34px;height:34px;color:var(--wine)"><use href="#i-shield"/></svg><h3>Escalas dos irmãos</h3><p>Digite o código da igreja, avisado no culto ou no grupo, para ver as escalas.</p><form id="fcod"><input name="c" required maxlength="20" placeholder="Código" autocomplete="off"><button class="btn">Entrar</button></form><div class="msg" style="margin-top:8px"></div></div>`;
     $('#fcod').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,v=f.elements.c.value.trim();f.nextElementSibling.textContent='Conferindo…';const r=await SB.rpc('codigo_ok',{p_codigo:v});if(r.data===true){escOk=v;escValid=true;try{localStorage.setItem('escCod',v)}catch(_){}refresh('escalas');render()}else f.nextElementSibling.textContent='Código incorreto.'});return}
   if(!loaded){$('#escL').innerHTML=SK(4);}
+  {const en=$('#eNome');if(en){const temNome=!!me.trim();
+    en.hidden=lk||temNome;
+    if(!lk&&!temNome&&!en.innerHTML){
+      en.innerHTML=`<form class="nmbox" id="fenome"><b>Qual é o seu nome?</b><span>Assim o app mostra primeiro os cultos em que você está escalado.</span><div class="nmr"><input name="n" maxlength="60" placeholder="Como aparece na escala" autocomplete="name"><button class="btn">Salvar</button></div></form>`;
+      $('#fenome').addEventListener('submit',ev=>{ev.preventDefault();const v=ev.target.elements.n.value.trim();if(!v)return;
+        me=v;try{localStorage.setItem('meuNome',me)}catch(_){}const bq=$('#busca');if(bq)bq.value=me;escM='minhas';en.hidden=true;render()})}}}
   {const n=me.trim().toLowerCase();if(!escM)escM=n?'minhas':'todas';
    const mine=n?S.escalas.filter(s=>s.data>=TODAY&&inCong(s)&&ppl(s).some(x=>x.toLowerCase().includes(n))).sort(escSort):[];
    const kM=ey+'-'+pad(emo+1),nT=S.escalas.filter(s=>typeof s.data==='string'&&s.data.startsWith(kM)&&inCong(s)).length;
@@ -1363,6 +1391,13 @@ function openEv(id,dt){const b=S.eventos.find(x=>x.id===id);if(!b)return;const e
   $('#wa').onclick=()=>compartilhar(`*${e.titulo}*\n${cap(when)}${e.hora?' às '+e.hora:''}${e.local?'\n'+e.local:''}${e.desc?'\n\n'+e.desc:''}\n\n${cfg().nome}`);
   $('#cp').onclick=async()=>{const t=`*${e.titulo}*\n${when}${e.hora?' às '+e.hora:''}${e.local?'\n'+e.local:''}${e.desc?'\n\n'+e.desc:''}\n\n${cfg().nome}`;try{await navigator.clipboard.writeText(t);$('#cpm').textContent='Convite copiado — cole no WhatsApp.'}catch(_){$('#cpm').textContent='Não foi possível copiar aqui.'}};
 }
+function openCartaz(id){const b=S.banners.find(x=>x.id===id);if(!b)return;
+  $('#sheet').innerHTML=`<span class="grab"></span>${hasMedia(b)?`<div class="art full">${media(b,b.titulo||'Cartaz')}</div>`:`<div class="art" style="background:linear-gradient(150deg,${okCol(b.cor)},#1a0a12)"><div><div class="big">${esc(b.titulo||'Cartaz')}</div>${b.sub?`<div class="sm">${esc(b.sub)}</div>`:''}</div></div>`}
+  <div class="bd"><h2>${esc(b.titulo||'Cartaz')}</h2>${b.sub?`<p style="color:var(--mut);margin:6px 0 0;font-size:14.5px">${esc(b.sub)}</p>`:''}
+  <div class="row2" style="margin-top:16px"><button class="btn" id="bwa">${IC('chat')}Enviar no WhatsApp</button><button class="btn gh" id="bfx">Fechar</button></div></div>`;
+  $('#modal').classList.add('on');$('#sheet').scrollTop=0;
+  $('#bfx').onclick=closeM;
+  $('#bwa').onclick=()=>compartilhar(`*${b.titulo||'Cartaz'}*${b.sub?'\n'+b.sub:''}\n\n${cfg().nome}`)}
 function openCong(){const c=cfg();$('#sheet').innerHTML=`<div class="bd" style="padding-top:24px"><h2 style="font-size:22px;margin-bottom:6px">Sua congregação</h2><p style="color:var(--mut);margin:0 0 16px;font-size:14.5px">O app mostra os eventos e as escalas da congregação escolhida.</p>${['',...c.congs].map(x=>`<button class="opt${x===cong?' on':''}" data-cong="${esc(x)}"><span class="on-l"><i class="cdot" style="--cc:${ccol(x)}"></i>${esc(x||'Todas as congregações')}</span>${x===cong?'<svg class="ic"><use href="#i-chev"/></svg>':''}</button>`).join('')}</div>`;$('#modal').classList.add('on')}
 $('#cbtn').onclick=openCong;
 let uid=null;
@@ -1387,7 +1422,7 @@ $('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeM()});
 addEventListener('keydown',e=>{if(e.key==='Escape')closeM()});
 
 document.addEventListener('click',async e=>{
-  const t=e.target.closest('[data-entrar],[data-sair],[data-papel],[data-apvl],[data-rcl],[data-apv],[data-rcs],[data-rcok],[data-eqdel],[data-avid],[data-aus],[data-gom],[data-cong],[data-ev],[data-go],[data-day],[data-min],[data-cv],[data-ad],[data-del]');if(!t)return;
+  const t=e.target.closest('[data-entrar],[data-sair],[data-papel],[data-apvl],[data-rcl],[data-apv],[data-rcs],[data-rcok],[data-eqdel],[data-avid],[data-cartaz],[data-aus],[data-gom],[data-cong],[data-ev],[data-go],[data-day],[data-min],[data-cv],[data-ad],[data-del]');if(!t)return;
   const d=t.dataset;
   if(d.entrar){t.disabled=true;entrarGoogle()}
   else if(d.sair){sair()}
@@ -1399,6 +1434,7 @@ document.addEventListener('click',async e=>{
   else if(d.rcok){const [c,id]=d.rcok.split('/');const mot=t.closest('.rz').querySelector('textarea').value.trim();t.disabled=true;try{await upd(c,id,{status:'recusado',motivo:mot});if(c==='eventos')for(const bn of ALL.banners.filter(x=>x.evento===id))await upd('banners',bn.id,{status:'recusado',motivo:mot});render()}catch(_){t.disabled=false}}
   else if(d.eqdel){try{if(db)await db.doc('equipe/'+d.eqdel).delete();else S.equipe=S.equipe.filter(x=>x.id!==d.eqdel);rEquipe()}catch(_){}}
   else if(d.avid){if(cur()==='avisos'){marcar([d.avid]);t.classList.remove('new')}else{location.hash='avisos'}}
+  else if(d.cartaz){openCartaz(d.cartaz)}
   else if(d.aus){openAus(d.aus)}
   else if(d.gom){ey=+d.gom.slice(0,4);emo=+d.gom.slice(5)-1;rEscalas()}
   else if(d.cong!==undefined){cong=d.cong;try{localStorage.setItem('minhaCong',cong)}catch(_){}closeM();render();if(pushSub)pushSalvar().catch(()=>{})}
