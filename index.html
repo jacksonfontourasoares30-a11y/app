@@ -1017,19 +1017,25 @@ setTimeout(iosBanner,1100);
 /* ===== abrir pelo app (Android) ===== */
 const PKG='br.com.adcarlosbarbosa.app';
 const LOJA='https://play.google.com/store/apps/details?id='+PKG;
+const ehAndroid=()=>{try{return /Android/i.test(navigator.userAgent)}catch(_){return false}};
+const noNav=()=>ehAndroid()&&!appInstalado();
+let temAppC=null;
+async function temApp(){if(temAppC!==null)return temAppC;temAppC=false;
+  try{if(navigator.getInstalledRelatedApps){const l=await navigator.getInstalledRelatedApps();temAppC=l.some(a=>a&&a.id===PKG)}}catch(_){}
+  return temAppC}
+function irApp(){try{if(temAppC){location.href='intent://'+location.host+location.pathname+location.hash+'#Intent;scheme=https;package='+PKG+';S.browser_fallback_url='+encodeURIComponent(LOJA)+';end';return}}catch(_){}
+  try{window.open(LOJA,'_blank','noopener')}catch(_){location.href=LOJA}}
 async function appBar(){
   try{
     if(appInstalado()||ehIOS())return;
-    if(!/Android/i.test(navigator.userAgent))return;
+    if(!ehAndroid())return;
     let f=false;try{f=localStorage.getItem('appbFechado')==='1'}catch(_){}
     if(f||$('#appb'))return;
-    let tem=false;
-    try{if(navigator.getInstalledRelatedApps){const l=await navigator.getInstalledRelatedApps();tem=l.some(a=>a&&a.id===PKG)}}catch(_){}
+    const tem=await temApp();
     const el=document.createElement('div');el.id='appb';
     el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Você já tem o app':'Instale o app da igreja'}</b><small>${tem?'Abra por ele: tela inteira':'Avisa quando tiver recado novo'}</small></div><a class="btn" id="appbA" href="${tem?'#':LOJA}"${tem?'':' target="_blank" rel="noopener"'}>${tem?'Abrir':'Instalar'}</a><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
     document.body.append(el);
-    if(tem){const a=$('#appbA');if(a)a.addEventListener('click',ev=>{ev.preventDefault();
-      location.href='intent://'+location.host+location.pathname+location.hash+'#Intent;scheme=https;package='+PKG+';S.browser_fallback_url='+encodeURIComponent(LOJA)+';end'})}
+    if(tem){const a=$('#appbA');if(a)a.addEventListener('click',ev=>{ev.preventDefault();irApp()})}
   }catch(_){}}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-appbx]');if(!t)return;e.preventDefault();try{localStorage.setItem('appbFechado','1')}catch(_){}const el=$('#appb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),300)}});
 setTimeout(appBar,1400);
@@ -1504,23 +1510,31 @@ const b64u=s=>{const b=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').r
 async function pushChave(){if(pushPub)return pushPub;const r=await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"chave":1}'});pushPub=(await r.json()).pub;return pushPub}
 async function pushEstado(){if(!pushOk())return'nao';try{const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()}catch(_){}return pushSub&&Notification.permission==='granted'?'on':Notification.permission==='denied'?'bloq':'off'}
 async function pushSalvar(){if(!pushSub)return;const j=pushSub.toJSON();await SB.rpc('push_inscrever',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_cong:cong||''})}
-async function pushAtivar(){if(!pushOk())return false;const p=await Notification.requestPermission();if(p!=='granted'){rPush();return false}
+async function pushAtivar(){if(!pushOk())return false;if(typeof noNav==='function'&&noNav()){pushParaApp();return false}const p=await Notification.requestPermission();if(p!=='granted'){rPush();return false}
   const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(await pushChave())});await pushSalvar();rPush();return true}
 async function pushDesativar(){if(pushSub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}try{await pushSub.unsubscribe()}catch(_){}pushSub=null}rPush()}
 let pushFix=false;async function pushCorrige(){if(pushFix||!pushSub)return;pushFix=true;const pub=await pushChave();if(!pub)return;const k=pushSub.options&&pushSub.options.applicationServerKey;const kb=k?btoa(String.fromCharCode(...new Uint8Array(k))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''):'';if(kb!==pub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}await pushSub.unsubscribe();const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(pub)})}await pushSalvar()}
 async function rPush(){const st=await pushEstado();if(st==='on')pushCorrige().catch(()=>{});const c=$('#pushC'),m=$('#pushM');let fech=false;try{fech=localStorage.getItem('pushFechado')==='1'}catch(_){}
   const ios=typeof ehIOS==='function'&&ehIOS(),inst=typeof appInstalado==='function'&&appInstalado();
+  const nav=typeof noNav==='function'&&noNav();if(nav)try{await temApp()}catch(_){}
   const bx=(t,d)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
+  const bapp=(t,d,r)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="btn" data-pushapp="1">${r}</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   if(c){let h='';
-    if(st==='off'&&!fech)h=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Receba as novidades no celular</b><small>Escalas, avisos e eventos da sua congregação</small></div><button class="btn" data-pushon="1">Ativar</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
+    if(nav&&st==='on'&&!fech)h=bapp('Seus avisos vêm pelo navegador','Por isso aparece o endereço do site na notificação. No app fica só o nome da igreja.',temAppC?'Passar para o app':'Instalar o app');
+    else if(nav&&st!=='on'&&!fech)h=bapp('Os avisos ficam no app','Instale o app da igreja para receber escalas, avisos e eventos no celular.',temAppC?'Abrir o app':'Instalar');
+    else if(st==='off'&&!fech)h=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Receba as novidades no celular</b><small>Escalas, avisos e eventos da sua congregação</small></div><button class="btn" data-pushon="1">Ativar</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
     else if(st==='bloq'&&!fech)h=bx('Notificações bloqueadas',ios?'Libere em Ajustes → Notificações → AD Carlos Barbosa.':'Libere nas configurações do celular: Apps → AD Carlos Barbosa → Notificações.');
     else if(st==='nao'&&ios&&inst&&!fech)h=bx('Notificações no iPhone','Seu iPhone precisa de iOS 16.4 ou mais novo para receber os avisos.');
     c.hidden=!h;c.innerHTML=h}
-  if(m){m.hidden=st==='nao';$('#pushMs').textContent=st==='on'?'Ativadas. Toque para desligar.':st==='bloq'?'Bloqueadas. Libere nas configurações do celular.':'Desativadas. Toque para ativar.'}}
-document.addEventListener('click',async e=>{const t=e.target.closest('[data-pushon],[data-pushx],[data-push]');if(!t)return;e.preventDefault();
+  if(m){m.hidden=st==='nao';$('#pushMs').textContent=nav?(st==='on'?'Vindo pelo navegador. Toque para passar para o app.':'Disponíveis no app. Toque para instalar.'):st==='on'?'Ativadas. Toque para desligar.':st==='bloq'?'Bloqueadas. Libere nas configurações do celular.':'Desativadas. Toque para ativar.'}}
+async function pushParaApp(){try{await temApp()}catch(_){}
+  if(temAppC){try{if(await pushEstado()==='on')await pushDesativar()}catch(_){}}
+  irApp()}
+document.addEventListener('click',async e=>{const t=e.target.closest('[data-pushon],[data-pushx],[data-pushapp],[data-push]');if(!t)return;e.preventDefault();
   if(t.dataset.pushx){try{localStorage.setItem('pushFechado','1')}catch(_){}rPush()}
+  else if(t.dataset.pushapp){t.disabled=true;t.textContent='…';try{await pushParaApp()}catch(_){rPush()}}
   else if(t.dataset.pushon){t.disabled=true;t.textContent='…';try{await pushAtivar()}catch(_){t.disabled=false;t.textContent='Ativar'}}
-  else{try{const st=await pushEstado();if(st==='on')await pushDesativar();else if(st==='off')await pushAtivar();else rPush()}catch(_){rPush()}}});
+  else{try{if(typeof noNav==='function'&&noNav()){await pushParaApp();return}const st=await pushEstado();if(st==='on')await pushDesativar();else if(st==='off')await pushAtivar();else rPush()}catch(_){rPush()}}});
 async function notificar(o){if(typeof SB==='undefined'||papel==='lider'||!o)return;try{const {data:{session}}=await SB.auth.getSession();if(!session)return;await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify(o)})}catch(_){}}
 function msgDe(col,o){const lugar=o.cong&&o.cong!=='Todas'?o.cong:'';
   if(col==='avisos')return{titulo:(o.urgente?'⚠ URGENTE: ':'')+(o.titulo||(o.urgente?String(o.de||'Liderança'):'Novo aviso')),corpo:String(o.texto||'').slice(0,140),url:'./#avisos',cong:o.cong||''};
