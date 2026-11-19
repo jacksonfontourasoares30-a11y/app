@@ -356,6 +356,15 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 #iosb p b.in{display:inline;font:800 12.9px Manrope,system-ui;color:var(--ink)}
 #iosb .shi{width:15px;height:15px;vertical-align:-3px;color:var(--wine)}
 #iosb .x{position:absolute;top:7px;right:7px;width:30px;height:30px;border:0;background:none;color:var(--mut);font-size:15px;cursor:pointer;border-radius:15px}
+/* barra: abrir pelo app */
+#appb{position:fixed;left:10px;right:10px;bottom:calc(max(12px,env(safe-area-inset-bottom)) + 78px);z-index:120;max-width:536px;margin:0 auto;background:var(--card);border-radius:18px;box-shadow:0 14px 34px -10px rgb(11 33 96/.42),0 0 0 1px var(--line);padding:12px 38px 12px 13px;display:flex;gap:11px;align-items:center;animation:iosbIn .45s ease both}
+#appb.out{opacity:0;transform:translateY(14px);transition:opacity .28s,transform .28s}
+#appb>img{width:38px;height:38px;border-radius:11px;flex:none}
+#appb>div{flex:1;min-width:0}
+#appb b{display:block;font:800 14.5px Archivo,system-ui;color:var(--ink)}
+#appb small{display:block;font:600 12.4px/1.4 Manrope,system-ui;color:var(--mut);margin-top:2px}
+#appb .btn{width:auto;min-height:38px;padding:0 16px;font-size:14px;flex:none;text-decoration:none;display:inline-flex;align-items:center}
+#appb .x{position:absolute;top:6px;right:6px;width:30px;height:30px;border:0;background:none;color:var(--mut);font-size:15px;cursor:pointer;border-radius:15px}
 /* ===== barra de atualização ===== */
 #verb{position:fixed;left:10px;right:10px;top:max(10px,env(safe-area-inset-top));z-index:160;max-width:536px;margin:0 auto;background:var(--card);border-radius:16px;box-shadow:0 16px 36px -10px rgb(11 33 96/.5),0 0 0 1px var(--line);padding:11px 12px 11px 14px;display:flex;gap:10px;align-items:center;animation:verbIn .4s ease both}
 @keyframes verbIn{from{opacity:0;transform:translateY(-16px)}}
@@ -1005,6 +1014,25 @@ function iosBanner(){if(!ehIOS()||appInstalado())return;let f=false;try{f=localS
   document.body.append(el)}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-iosx]');if(!t)return;e.preventDefault();try{localStorage.setItem('iosbFechado','1')}catch(_){}const el=$('#iosb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),300)}});
 setTimeout(iosBanner,1100);
+/* ===== abrir pelo app (Android) ===== */
+const PKG='br.com.adcarlosbarbosa.app';
+const LOJA='https://play.google.com/store/apps/details?id='+PKG;
+async function appBar(){
+  try{
+    if(appInstalado()||ehIOS())return;
+    if(!/Android/i.test(navigator.userAgent))return;
+    let f=false;try{f=localStorage.getItem('appbFechado')==='1'}catch(_){}
+    if(f||$('#appb'))return;
+    let tem=false;
+    try{if(navigator.getInstalledRelatedApps){const l=await navigator.getInstalledRelatedApps();tem=l.some(a=>a&&a.id===PKG)}}catch(_){}
+    const el=document.createElement('div');el.id='appb';
+    el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Você já tem o app':'Instale o app da igreja'}</b><small>${tem?'Abra por ele: tela inteira':'Avisa quando tiver recado novo'}</small></div><a class="btn" id="appbA" href="${tem?'#':LOJA}"${tem?'':' target="_blank" rel="noopener"'}>${tem?'Abrir':'Instalar'}</a><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
+    document.body.append(el);
+    if(tem){const a=$('#appbA');if(a)a.addEventListener('click',ev=>{ev.preventDefault();
+      location.href='intent://'+location.host+location.pathname+location.hash+'#Intent;scheme=https;package='+PKG+';S.browser_fallback_url='+encodeURIComponent(LOJA)+';end'})}
+  }catch(_){}}
+document.addEventListener('click',e=>{const t=e.target.closest('[data-appbx]');if(!t)return;e.preventDefault();try{localStorage.setItem('appbFechado','1')}catch(_){}const el=$('#appb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),300)}});
+setTimeout(appBar,1400);
 /* ===== versão nova do app ===== */
 let verTag=null,verUlt=0,verAviso=false;
 async function verChecar(){if(verAviso)return;try{if(navigator.onLine===false)return}catch(_){}
