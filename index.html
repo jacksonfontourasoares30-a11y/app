@@ -45,6 +45,13 @@ main section.on{display:block}
 .hero .lb i{width:8px;height:8px;border-radius:9px;background:var(--acc);box-shadow:0 0 0 4px #d9a52b33}
 .hero.cg .lb{color:var(--cc)}
 .hero.cg .lb i{background:var(--cc);box-shadow:0 0 0 4px color-mix(in srgb,var(--cc) 22%,transparent)}
+.hero .hmais{border-top:1px solid var(--line);padding-top:9px;display:grid;gap:2px}
+.hero .hmais>small{font:800 10.5px Manrope,system-ui;letter-spacing:.1em;color:var(--mut);margin-bottom:3px}
+.hero .hl{display:flex;align-items:center;gap:9px;width:100%;border:0;background:none;padding:7px 4px;text-align:left;cursor:pointer;border-radius:10px;min-height:38px}
+.hero .hl:active{background:light-dark(#f2f5fb,#141c33)}
+.hero .hl i{width:9px;height:9px;border-radius:5px;background:var(--c,#d9a52b);flex:none}
+.hero .hl b{font:800 13.5px Manrope,system-ui;color:var(--ink);flex:none}
+.hero .hl span{font:600 13px Manrope,system-ui;color:var(--mut);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
 .hero h3{font-size:23px;font-weight:800}
 .meta{display:grid;gap:6px;color:var(--mut);font-size:14.5px;font-weight:600}
 .meta div{display:flex;gap:8px;align-items:center}.meta .ic{color:var(--wine)}
@@ -1109,9 +1116,14 @@ function rInicio(){
   const nx=futuros().find(e=>e.data>TODAY||!e.hora||e.hora>=nowT||(+e.hora.slice(0,2)+2)*60+ +e.hora.slice(3)>=new Date().getHours()*60+new Date().getMinutes());
   {const av=avVis().filter(a=>!(urgVivo(a)&&!urgOk.has(a.id))).slice(0,2);$('#avHome').innerHTML=av.map(a=>avCard(a,false)).join('');$('#avHomeW').hidden=!av.length}
   const aoV=cfg().aoVivo,ehVivo=!!(aoV&&nx&&nx.data===TODAY&&nx.hora&&(()=>{const m=new Date().getHours()*60+new Date().getMinutes(),h=+nx.hora.slice(0,2)*60+ +nx.hora.slice(3);return m>=h-15&&m<=h+150})());
+  const kEv=e=>String(e.base||e.id)+'@'+String(e.hora||'');
+  let maisHoje=[];
+  if(nx&&nx.data===TODAY){const vis=new Set([kEv(nx)]);
+    for(const e of futuros()){if(e.data!==TODAY)continue;const k=kEv(e);if(vis.has(k))continue;vis.add(k);maisHoje.push(e)}
+    maisHoje.sort((p,q)=>String(p.hora||'99').localeCompare(String(q.hora||'99')));maisHoje=maisHoje.slice(0,4)}
   {const hc=nx&&nx.cong&&nx.cong!=='Todas'&&CC[nx.cong]?ccol(nx.cong):'';const he=$('#hero');
-   he.classList.toggle('cg',!!hc&&!ehVivo);if(hc)he.style.setProperty('--cc',hc);else he.style.removeProperty('--cc')}
-  $('#hero').innerHTML=nx?`<span class="lb${ehVivo?' live':''}"><i></i>${ehVivo?'Ao vivo agora':nx.data===TODAY?(nx.hora&&nx.hora<=nowT?'Acontecendo agora':'Hoje'):'Próximo culto'}</span><h3>${esc(nx.titulo)}</h3>${cdTxt(nx)}<div class="meta"><div>${IC('cal')}${nx.data===TODAY?'Hoje':fmt(nx.data,{weekday:'long',day:'numeric',month:'long'})}${nx.hora?' · '+esc(nx.hora):''}</div>${nx.local?`<div>${IC('pin')}${esc(nx.local)}${!cong&&nx.cong&&nx.cong!=='Todas'?' · '+esc(nx.cong):''}</div>`:''}</div><div class="acts">${ehVivo?`<a class="btn live" href="${esc(aoV)}" target="_blank" rel="noopener">${IC('play')}Assistir ao vivo</a>`:''}${nx.local?`<a class="btn${ehVivo?' gh':''}" href="${maps(nx.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" data-ev="${esc(nx.base||nx.id)}" data-dt="${esc(nx.data)}">Detalhes</button></div>`:`<span class="lb"><i></i>Agenda</span><h3>Nenhum culto marcado</h3><div class="meta"><div>A programação aparece aqui assim que for publicada.</div></div>`;
+   he.classList.toggle('cg',!!hc&&!ehVivo&&!maisHoje.length);if(hc&&!maisHoje.length)he.style.setProperty('--cc',hc);else he.style.removeProperty('--cc')}
+  $('#hero').innerHTML=nx?`<span class="lb${ehVivo?' live':''}"><i></i>${ehVivo?'Ao vivo agora':nx.data===TODAY?(nx.hora&&nx.hora<=nowT?'Acontecendo agora':'Hoje'):'Próximo culto'}</span><h3>${esc(nx.titulo)}</h3>${cdTxt(nx)}<div class="meta"><div>${IC('cal')}${nx.data===TODAY?'Hoje':fmt(nx.data,{weekday:'long',day:'numeric',month:'long'})}${nx.hora?' · '+esc(nx.hora):''}</div>${nx.local?`<div>${IC('pin')}${esc(nx.local)}${!cong&&nx.cong&&nx.cong!=='Todas'?' · '+esc(nx.cong):''}</div>`:(!cong&&nx.cong&&nx.cong!=='Todas'?`<div>${IC('pin')}${esc(nx.cong)}</div>`:'')}</div>${maisHoje.length?`<div class="hmais"><small>TAMBÉM HOJE</small>${maisHoje.map(e=>`<button class="hl" style="--c:${e.cong&&CC[e.cong]?ccol(e.cong):'#d9a52b'}" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}"><i></i><b>${esc(e.hora||'—')}</b><span>${esc(e.titulo)}${e.cong&&e.cong!=='Todas'?' · '+esc(e.cong):''}</span></button>`).join('')}</div>`:''}<div class="acts">${ehVivo?`<a class="btn live" href="${esc(aoV)}" target="_blank" rel="noopener">${IC('play')}Assistir ao vivo</a>`:''}${nx.local?`<a class="btn${ehVivo?' gh':''}" href="${maps(nx.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" data-ev="${esc(nx.base||nx.id)}" data-dt="${esc(nx.data)}">Detalhes</button></div>`:`<span class="lb"><i></i>Agenda</span><h3>Nenhum culto marcado</h3><div class="meta"><div>A programação aparece aqui assim que for publicada.</div></div>`;
   const vis=S.banners.filter(x=>!x.ate||x.ate>=TODAY);const b=vis.length?[...vis].sort((p,q)=>(p.ordem??99)-(q.ordem??99)||String(p.id).localeCompare(q.id)):[{titulo:'Bem-vindo!',sub:'Os avisos da igreja aparecem aqui.',cor:'#1546b8'}];
   $('#carr').innerHTML=b.map(x=>hasMedia(x)?`<div class="ban pic">${media(x,x.titulo||'Banner')}</div>`:`<div class="ban" style="background:linear-gradient(140deg,${okCol(x.cor)},#1a0a12)"><h3>${esc(x.titulo)}</h3>${x.sub?`<p>${esc(x.sub)}</p>`:''}</div>`).join('');
   $('#dots').innerHTML=b.length>1?b.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join(''):'';
