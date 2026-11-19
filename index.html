@@ -1130,7 +1130,8 @@ function rFeed(){const box=$('#feed');if(!box)return;const it=[];
   const vI=(()=>{const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)%VERS.length})();
   let h=l.map((x,n)=>{let o='';if(x.t==='aviso'){const a=x.a,u=urgVivo(a);
       const acg=cCor(a.cong);
-      o=`<article class="fp"><div class="fh"><span class="fa" style="background:${acg||'#0b2160'}">${fotoDe(a.de)?`<img src="${fotoDe(a.de)}" alt="">`:esc(inic(a.de||'Liderança'))}</span><div><b>${esc(a.de||'Liderança')}</b><small>Aviso · ${esc(a.cong||'Todas')}${quando(a)?' · '+quando(a):''}</small></div><span class="ft${u?' u':''}">${u?'URGENTE':'AVISO'}</span></div>
+      const aig=ehDeIgreja(a.de);
+      o=`<article class="fp"><div class="fh"><span class="fa" style="background:${aig?'#0b2160':(acg||'#0b2160')}">${aig?'<img src="icon-192.png" alt="">':fotoDe(a.de)?`<img src="${fotoDe(a.de)}" alt="">`:esc(inic(a.de||'Liderança'))}</span><div><b>${esc(a.de||'Liderança')}</b><small>Aviso · ${esc(a.cong||'Todas')}${quando(a)?' · '+quando(a):''}</small></div><span class="ft${u?' u':''}">${u?'URGENTE':'AVISO'}</span></div>
       <button class="fx${u?' u':acg?' cg':''}"${acg?` style="--c:${acg}"`:''} data-avid="${esc(a.id)}">${a.titulo?`<b>${esc(a.titulo)}</b>`:''}<span>${esc(a.texto)}</span>${a.video?`<em class="avv" data-vurl="${esc(a.video)}">${IC('play')}Assistir vídeo</em>`:''}</button>${hasMedia(a)?`<div class="fi">${media(a,a.titulo||'Aviso')}</div>`:''}</article>`}
     else if(x.t==='cartaz'){const b=x.b,k='b:'+b.id;
       o=`<article class="fp"><div class="fh"><span class="fa" style="background:#0b2160"><img src="icon-192.png" alt=""></span><div><b>${esc(cfg().nome||'Igreja')}</b><small>Cartaz${b.criado?' · '+quando({criado:b.criado}):''}</small></div><span class="ft c">CARTAZ</span></div>
@@ -1317,6 +1318,8 @@ function fotoDe(nome){const c=cfg(),F=c.fotos||{},n=String(nome||'').toLowerCase
   const ws=t=>String(t||'').split(/[\s,:;]+/).filter(w=>w.length>2&&!TIT.test(w)).map(w=>w.toLowerCase());
   if(F.pastor&&(/\bpastor(es)?\b|presidente/.test(n)||ws(infoK(c.info,c.congs[0])?.resp||'Ageu Liane').concat(['ageu','liane']).some(w=>n.includes(w))))return fotoSrc(F.pastor);
   for(const k of c.congs||[]){const fk=fotoK(F,k);if(fk&&ws(infoK(c.info,k)?.resp).some(w=>n.includes(w)))return fotoSrc(fk)}return''}
+const DEIG=()=>String((cfg().nome||'').trim()||'AD Carlos Barbosa');
+const ehDeIgreja=d=>{const n=ncg(d);if(!n)return false;return n===ncg(DEIG())||n==='igreja'};
 function rFotL(){const f=$('#fig');if(!f)return;let o={};try{o=JSON.parse(f.elements.fotos.value||'{}')}catch(_){}
   const rows=[['pastor','Pastores presidentes']].concat((cfg().congs||[]).map(k=>[k,'Dirigentes · '+k]));
   $('#fotL').innerHTML=rows.map(([k,l])=>`<div class="fotr"><span class="fav">${fotoK(o,k)?`<img src="${fotoSrc(fotoK(o,k))}" alt="">`:esc(inic(l.replace('Dirigentes · ','')))}</span><div>${esc(l)}<small>${fotoK(o,k)?'Foto colocada':'Sem foto'}</small></div><button type="button" class="btn gh" data-fotk="${esc(k)}">${fotoK(o,k)?'Trocar':'Escolher foto'}</button>${fotoK(o,k)?`<button type="button" class="fx2" data-fotx="${esc(k)}" aria-label="Remover foto">✕</button>`:''}</div>`).join('')}
@@ -1335,7 +1338,9 @@ function deFix(){const f=$('#fav');if(!f)return;const i=f.elements.de,n=$('#deN'
   let nome='';try{nome=(typeof eu!=='undefined'&&eu&&(eu.nome||eu.email))||''}catch(_){}
   if(!nome)try{nome=PAPEIS[papel].autor}catch(_){}
   if(papel==='admin'){i.readOnly=false;i.setAttribute('list','remet');if(!i.value)i.value=nome;
-    if(n)n.textContent='Como administrador, você pode assinar por outro.'}
+    try{const dl=$('#remet'),ig=DEIG();
+      if(dl&&![...dl.options].some(o=>ncg(o.value||o.textContent)===ncg(ig))){const op=document.createElement('option');op.value=ig;dl.insertBefore(op,dl.firstChild)}}catch(_){}
+    if(n)n.textContent='Você pode assinar por outro. Escolhendo '+DEIG()+', o aviso sai em nome da igreja, com o logo.'}
   else{i.value=nome;i.readOnly=true;i.removeAttribute('list');
     if(n)n.textContent='Seus avisos saem com este nome.'}}
 $('#fav').addEventListener('reset',()=>setTimeout(deFix,0));
