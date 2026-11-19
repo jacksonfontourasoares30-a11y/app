@@ -750,7 +750,7 @@ const DEFCFG={nome:'AD Carlos Barbosa',congs:['Sede','Congregação 1','Congrega
 const DN=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
 const cfg=()=>({...DEFCFG,...(S.config||{}),congs:(S.config&&Array.isArray(S.config.congs)&&S.config.congs.length)?S.config.congs:DEFCFG.congs});
 let cong='';try{cong=localStorage.getItem('minhaCong')||''}catch(e){}
-const inCong=x=>!cong||!x.cong||x.cong==='Todas'||x.cong===cong;
+const inCong=x=>!cong||!x.cong||x.cong==='Todas'||x.cong===cong||ncg(x.cong)===ncg(cong);
 let escM='';let assets=null,db=null,canEdit=false,usingSample=false,minF='Todos',calView='mes',adTab='home';
 const now=new Date();let cy=now.getFullYear(),cm=now.getMonth(),ay=cy,sel=null;
 const pad=n=>String(n).padStart(2,'0');
@@ -788,7 +788,10 @@ const futuros=()=>sorted().filter(e=>e.data>=TODAY&&inCong(e));
 const art=(e,cls='')=>{const c=mcol(e.ministerio);return `<div class="art ${cls}" style="background:linear-gradient(150deg,${c},${c}cc 60%,#1a0a12)">${hasMedia(e)?media(e,e.titulo):cross+`<div class="sm">${esc(e.ministerio||'Geral')}</div>`}${hasMedia(e)?'':`<div><div class="big">${esc(e.titulo)}</div><div class="sm" style="margin-top:8px">${fmt(e.data,{day:'numeric',month:'long'})}${e.hora?' · '+esc(e.hora):''}</div></div>`}</div>`};
 
 const CC={'Sede':'#2f6bff','CEAD':'#c48a12','Arco Verde':'#b8432f','Vitória':'#7b8494'};
-const ccol=c=>CC[c]||'#d9a52b';
+const ncg=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'').replace(/[^a-z0-9]/g,'');
+const CCN=Object.fromEntries(Object.entries(CC).map(([k,v])=>[ncg(k),v]));
+const cCor=c=>(!c||c==='Todas')?'':(CC[c]||CCN[ncg(c)]||'');
+const ccol=c=>cCor(c)||'#d9a52b';
 const cpill=c=>c&&c!=='Todas'?`<span class="cpill" style="--cc:${ccol(c)}">${esc(c)}</span>`:'';
 function adIntro(cv, I, opt) {
 opt = opt || {};
@@ -1027,13 +1030,13 @@ let spMin=matchMedia('(prefers-reduced-motion: reduce)').matches?900:spRap?1100:
 function hideNow(){const el=$('#splash');if(el&&!el.classList.contains('out')){el.classList.add('out');setTimeout(()=>{spRun=false;el.remove()},600)}}
 function hideSplash(){if(spDone)return;spDone=true;const w=Math.max(0,spMin-(Date.now()-spT0));setTimeout(hideNow,w)}
 setTimeout(()=>{spDone=true;hideNow()},7000);
-const evRow=e=>`<button class="ev" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}"${e.cong&&CC[e.cong]?` style="--cc:${ccol(e.cong)}"`:''}><div class="dt"><b>${toD(e.data).getDate()}</b><span>${MES[toD(e.data).getMonth()].slice(0,3)}</span></div><div><h3>${esc(e.titulo)}</h3><p>${e.semanal?'Todos os '+DIAS[toD(e.data).getDay()]:fmt(e.data,{weekday:'long'})}${e.hora?' · '+esc(e.hora):''}${e.local?' · '+esc(e.local):''}</p>${!cong?cpill(e.cong):''}</div>${IC('chev')}</button>`;
+const evRow=e=>`<button class="ev" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}"${cCor(e.cong)?` style="--cc:${cCor(e.cong)}"`:''}><div class="dt"><b>${toD(e.data).getDate()}</b><span>${MES[toD(e.data).getMonth()].slice(0,3)}</span></div><div><h3>${esc(e.titulo)}</h3><p>${e.semanal?'Todos os '+DIAS[toD(e.data).getDay()]:fmt(e.data,{weekday:'long'})}${e.hora?' · '+esc(e.hora):''}${e.local?' · '+esc(e.local):''}</p>${!cong?cpill(e.cong):''}</div>${IC('chev')}</button>`;
 const gr=s=>{const g=s.grupo||(s.itens?s.ministerio:'');return String(g||'').split(/\s*[,;]\s*|\s+e\s+/i).map(x=>x.trim()).filter(Boolean)};
 const ppl=s=>Array.isArray(s.pessoas)?s.pessoas.map(String):Array.isArray(s.itens)?s.itens.map(i=>(i.f?i.f+': ':'')+i.n):[];
 const hit=(s,n)=>!n||ppl(s).concat(gr(s)).some(x=>x.toLowerCase().includes(n));
 const escCard=s=>{const n=me.trim().toLowerCase();const p=ppl(s);
   const eu=n&&p.some(x=>x.toLowerCase().includes(n));
-  return `<div class="cl${s.destaque?' hl':''}${eu?' eu':''}"${s.cong&&CC[s.cong]?` style="--cc:${ccol(s.cong)}"`:''}>${s.hora?`<div class="hr">${esc(s.hora)}</div>`:''}<div style="flex:1;min-width:0"><h4>${esc(s.culto||s.ministerio||'Culto')}</h4><div class="dd">${cap(fmt(s.data,{weekday:'long',day:'numeric',month:'short'}))}</div>${p.length?`<div class="pps">${p.map(x=>{const m=n&&x.toLowerCase().includes(n);return `<div${m?' class="me"':''}><i style="background:${m?'#0b2160':corP(x)}">${esc(inic(x))}</i>${m?'Você · ':''}${esc(x)}</div>`}).join('')}</div>`:''}${gr(s).length?`<div class="gr">${gr(s).map(g=>`<span style="background:${mcol(g)}">♪ ${esc(g)}</span>`).join('')}</div>`:''}${!cong&&s.cong?`<div class="cg">${esc(s.cong)}</div>`:''}${n&&p.some(x=>x.toLowerCase().includes(n))&&s.data>=TODAY?`<div class="mini"><a href="${gcal('Escala: '+(s.culto||'Culto'),s.data,s.hora,(cfg().info||{})[s.cong]?.end||'',ppl(s).join(', '))}" target="_blank" rel="noopener">${IC('bell')}Agenda</a>${sentA.has(s.id)?`<button class="sent" disabled>Aviso enviado</button>`:`<button data-aus="${esc(s.id)}">${IC('x')}Não posso ir</button>`}</div>`:''}</div></div>`};
+  return `<div class="cl${s.destaque?' hl':''}${eu?' eu':''}"${cCor(s.cong)?` style="--cc:${cCor(s.cong)}"`:''}>${s.hora?`<div class="hr">${esc(s.hora)}</div>`:''}<div style="flex:1;min-width:0"><h4>${esc(s.culto||s.ministerio||'Culto')}</h4><div class="dd">${cap(fmt(s.data,{weekday:'long',day:'numeric',month:'short'}))}</div>${p.length?`<div class="pps">${p.map(x=>{const m=n&&x.toLowerCase().includes(n);return `<div${m?' class="me"':''}><i style="background:${m?'#0b2160':corP(x)}">${esc(inic(x))}</i>${m?'Você · ':''}${esc(x)}</div>`}).join('')}</div>`:''}${gr(s).length?`<div class="gr">${gr(s).map(g=>`<span style="background:${mcol(g)}">♪ ${esc(g)}</span>`).join('')}</div>`:''}${!cong&&s.cong?`<div class="cg">${esc(s.cong)}</div>`:''}${n&&p.some(x=>x.toLowerCase().includes(n))&&s.data>=TODAY?`<div class="mini"><a href="${gcal('Escala: '+(s.culto||'Culto'),s.data,s.hora,infoK(cfg().info,s.cong)?.end||'',ppl(s).join(', '))}" target="_blank" rel="noopener">${IC('bell')}Agenda</a>${sentA.has(s.id)?`<button class="sent" disabled>Aviso enviado</button>`:`<button data-aus="${esc(s.id)}">${IC('x')}Não posso ir</button>`}</div>`:''}</div></div>`};
 const semIni=d=>{const x=toD(d);x.setDate(x.getDate()-x.getDay());return x};
 const byDay=l=>{let h='',last='';const grp={};for(const s of l){const k=iso(semIni(s.data));(grp[k]=grp[k]||[]).push(s)}
   for(const k of Object.keys(grp).sort()){const a=toD(k),b=new Date(a);b.setDate(b.getDate()+6);const n=grp[k].length;h+=`<div class="sem">Semana de ${a.getDate()}${a.getMonth()!==b.getMonth()?' de '+MES[a.getMonth()]:''} a ${b.getDate()} de ${MES[b.getMonth()]}<small>${n} culto${n>1?'s':''}</small></div>`+grp[k].map(escCard).join('')}return h};
@@ -1092,7 +1095,7 @@ function rFeed(){const box=$('#feed');if(!box)return;const it=[];
   let l=it.filter(x=>feedF==='all'||x.t===feedF||(feedF==='aviso'&&x.t==='cartaz')).slice(0,24);
   const vI=(()=>{const d=new Date();return Math.floor((d-new Date(d.getFullYear(),0,0))/864e5)%VERS.length})();
   let h=l.map((x,n)=>{let o='';if(x.t==='aviso'){const a=x.a,u=urgVivo(a);
-      const acg=a.cong&&a.cong!=='Todas'&&CC[a.cong]?ccol(a.cong):'';
+      const acg=cCor(a.cong);
       o=`<article class="fp"><div class="fh"><span class="fa" style="background:${acg||'#0b2160'}">${fotoDe(a.de)?`<img src="${fotoDe(a.de)}" alt="">`:esc(inic(a.de||'Liderança'))}</span><div><b>${esc(a.de||'Liderança')}</b><small>Aviso · ${esc(a.cong||'Todas')}${quando(a)?' · '+quando(a):''}</small></div><span class="ft${u?' u':''}">${u?'URGENTE':'AVISO'}</span></div>
       <button class="fx${u?' u':acg?' cg':''}"${acg?` style="--c:${acg}"`:''} data-avid="${esc(a.id)}">${a.titulo?`<b>${esc(a.titulo)}</b>`:''}<span>${esc(a.texto)}</span>${a.video?`<em class="avv" data-vurl="${esc(a.video)}">${IC('play')}Assistir vídeo</em>`:''}</button>${hasMedia(a)?`<div class="fi">${media(a,a.titulo||'Aviso')}</div>`:''}</article>`}
     else if(x.t==='cartaz'){const b=x.b,k='b:'+b.id;
@@ -1118,12 +1121,12 @@ let agSel=null;
 function rAgenda(){if(!agSel)agSel=TODAY;const d0=toD(agSel);const seg=new Date(d0);seg.setDate(d0.getDate()-((d0.getDay()+6)%7));
   const ds=Array.from({length:7},(_,k)=>{const x=new Date(seg);x.setDate(seg.getDate()+k);return iso(x)});
   const all=sorted().filter(e=>inCong(e));$('#agT').textContent=cap(MES[toD(ds[0]).getMonth()])+(toD(ds[6]).getMonth()!==toD(ds[0]).getMonth()?' / '+MES[toD(ds[6]).getMonth()]:'')+' '+toD(ds[6]).getFullYear();
-  $('#agD').innerHTML=ds.map(d=>{const n=all.filter(e=>e.data===d);return `<button class="${d===agSel?'on':''}${d===TODAY?' td':''}" data-agd="${d}"><small>${DIAS[toD(d).getDay()].slice(0,3).toUpperCase()}</small><b>${toD(d).getDate()}</b><span>${n.slice(0,3).map(e=>`<i style="background:${e.cong&&CC[e.cong]?ccol(e.cong):'#d9a52b'}"></i>`).join('')}</span></button>`}).join('');
+  $('#agD').innerHTML=ds.map(d=>{const n=all.filter(e=>e.data===d);return `<button class="${d===agSel?'on':''}${d===TODAY?' td':''}" data-agd="${d}"><small>${DIAS[toD(d).getDay()].slice(0,3).toUpperCase()}</small><b>${toD(d).getDate()}</b><span>${n.slice(0,3).map(e=>`<i style="background:${cCor(e.cong)||'#d9a52b'}"></i>`).join('')}</span></button>`}).join('');
   const l=all.filter(e=>e.data===agSel).sort((a,b)=>String(a.hora||'99').localeCompare(String(b.hora||'99')));
   const n=me.trim().toLowerCase();const nowT=pad(new Date().getHours())+':'+pad(new Date().getMinutes());let agoraDone=agSel!==TODAY;
   let h=`<div class="agw">${cap(fmt(agSel,{weekday:'long',day:'numeric',month:'long'}))}</div><div class="agtl">`;
   for(const e of l){if(!agoraDone&&(e.hora||'99')>nowT){h+=`<div class="agnow">AGORA · ${nowT}</div>`;agoraDone=true}
-    const c=e.cong&&CC[e.cong]?ccol(e.cong):'#1546b8';const esc1=n&&S.escalas.find(s=>s.data===e.data&&(!e.cong||e.cong==='Todas'||s.cong===e.cong)&&(!s.hora||!e.hora||s.hora===e.hora)&&ppl(s).some(x=>x.toLowerCase().includes(n)));
+    const c=cCor(e.cong)||'#1546b8';const esc1=n&&S.escalas.find(s=>s.data===e.data&&(!e.cong||e.cong==='Todas'||s.cong===e.cong)&&(!s.hora||!e.hora||s.hora===e.hora)&&ppl(s).some(x=>x.toLowerCase().includes(n)));
     const pas=agSel===TODAY&&e.hora&&e.hora<nowT;
     h+=`<button class="agti${pas?' pas':''}" style="--c:${c}" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}"><span class="ah">${esc(e.hora?e.hora.replace(':00','h').replace(':','h'):'—')}</span><span class="adt"></span><span class="acd${esc1?' me':''}"><b>${esc(e.titulo)}</b><small>${IC('pin')}${esc([e.cong&&e.cong!=='Todas'?e.cong:'',e.local].filter(Boolean).join(' · ')||'Todas as congregações')}</small>${esc1?`<span class="app">${ppl(esc1).slice(0,3).map(x=>`<i style="background:${x.toLowerCase().includes(n)?'#0b2160':corP(x)}">${esc(inic(x))}</i>`).join('')}<em>Você está na escala</em></span>`:''}</span></button>`}
   if(!agoraDone&&l.length)h+=`<div class="agnow">AGORA · ${nowT}</div>`;
@@ -1143,9 +1146,9 @@ function rInicio(){
   if(nx&&nx.data===TODAY){const vis=new Set([kEv(nx)]);
     for(const e of futuros()){if(e.data!==TODAY)continue;const k=kEv(e);if(vis.has(k))continue;vis.add(k);maisHoje.push(e)}
     maisHoje.sort((p,q)=>String(p.hora||'99').localeCompare(String(q.hora||'99')));maisHoje=maisHoje.slice(0,4)}
-  {const hc=nx&&nx.cong&&nx.cong!=='Todas'&&CC[nx.cong]?ccol(nx.cong):'';const he=$('#hero');
+  {const hc=nx?cCor(nx.cong):'';const he=$('#hero');
    he.classList.toggle('cg',!!hc&&!ehVivo&&!maisHoje.length);if(hc&&!maisHoje.length)he.style.setProperty('--cc',hc);else he.style.removeProperty('--cc')}
-  $('#hero').innerHTML=nx?`<span class="lb${ehVivo?' live':''}"><i></i>${ehVivo?'Ao vivo agora':nx.data===TODAY?(nx.hora&&nx.hora<=nowT?'Acontecendo agora':'Hoje'):'Próximo culto'}</span><h3>${esc(nx.titulo)}</h3>${cdTxt(nx)}<div class="meta"><div>${IC('cal')}${nx.data===TODAY?'Hoje':fmt(nx.data,{weekday:'long',day:'numeric',month:'long'})}${nx.hora?' · '+esc(nx.hora):''}</div>${nx.local?`<div>${IC('pin')}${esc(nx.local)}${!cong&&nx.cong&&nx.cong!=='Todas'?' · '+esc(nx.cong):''}</div>`:(!cong&&nx.cong&&nx.cong!=='Todas'?`<div>${IC('pin')}${esc(nx.cong)}</div>`:'')}</div>${maisHoje.length?`<div class="hmais"><small>TAMBÉM HOJE</small>${maisHoje.map(e=>`<button class="hl" style="--c:${e.cong&&CC[e.cong]?ccol(e.cong):'#d9a52b'}" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}"><i></i><b>${esc(e.hora||'—')}</b><span>${esc(e.titulo)}${e.cong&&e.cong!=='Todas'?' · '+esc(e.cong):''}</span></button>`).join('')}</div>`:''}<div class="acts">${ehVivo?`<a class="btn live" href="${esc(aoV)}" target="_blank" rel="noopener">${IC('play')}Assistir ao vivo</a>`:''}${nx.local?`<a class="btn${ehVivo?' gh':''}" href="${maps(nx.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" data-ev="${esc(nx.base||nx.id)}" data-dt="${esc(nx.data)}">Detalhes</button></div>`:`<span class="lb"><i></i>Agenda</span><h3>Nenhum culto marcado</h3><div class="meta"><div>A programação aparece aqui assim que for publicada.</div></div>`;
+  $('#hero').innerHTML=nx?`<span class="lb${ehVivo?' live':''}"><i></i>${ehVivo?'Ao vivo agora':nx.data===TODAY?(nx.hora&&nx.hora<=nowT?'Acontecendo agora':'Hoje'):'Próximo culto'}</span><h3>${esc(nx.titulo)}</h3>${cdTxt(nx)}<div class="meta"><div>${IC('cal')}${nx.data===TODAY?'Hoje':fmt(nx.data,{weekday:'long',day:'numeric',month:'long'})}${nx.hora?' · '+esc(nx.hora):''}</div>${nx.local?`<div>${IC('pin')}${esc(nx.local)}${!cong&&nx.cong&&nx.cong!=='Todas'?' · '+esc(nx.cong):''}</div>`:(!cong&&nx.cong&&nx.cong!=='Todas'?`<div>${IC('pin')}${esc(nx.cong)}</div>`:'')}</div>${maisHoje.length?`<div class="hmais"><small>TAMBÉM HOJE</small>${maisHoje.map(e=>`<button class="hl" style="--c:${cCor(e.cong)||'#d9a52b'}" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}"><i></i><b>${esc(e.hora||'—')}</b><span>${esc(e.titulo)}${e.cong&&e.cong!=='Todas'?' · '+esc(e.cong):''}</span></button>`).join('')}</div>`:''}<div class="acts">${ehVivo?`<a class="btn live" href="${esc(aoV)}" target="_blank" rel="noopener">${IC('play')}Assistir ao vivo</a>`:''}${nx.local?`<a class="btn${ehVivo?' gh':''}" href="${maps(nx.local)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}<button class="btn gh" data-ev="${esc(nx.base||nx.id)}" data-dt="${esc(nx.data)}">Detalhes</button></div>`:`<span class="lb"><i></i>Agenda</span><h3>Nenhum culto marcado</h3><div class="meta"><div>A programação aparece aqui assim que for publicada.</div></div>`;
   const vis=S.banners.filter(x=>!x.ate||x.ate>=TODAY);const b=vis.length?[...vis].sort((p,q)=>(p.ordem??99)-(q.ordem??99)||String(p.id).localeCompare(q.id)):[{titulo:'Bem-vindo!',sub:'Os avisos da igreja aparecem aqui.',cor:'#1546b8'}];
   $('#carr').innerHTML=b.map(x=>hasMedia(x)?`<div class="ban pic">${media(x,x.titulo||'Banner')}</div>`:`<div class="ban" style="background:linear-gradient(140deg,${okCol(x.cor)},#1a0a12)"><h3>${esc(x.titulo)}</h3>${x.sub?`<p>${esc(x.sub)}</p>`:''}</div>`).join('');
   $('#dots').innerHTML=b.length>1?b.map((_,i)=>`<i class="${i?'':'on'}"></i>`).join(''):'';
@@ -1176,7 +1179,7 @@ function cdTxt(e){if(!e||!e.hora)return '';const t=toD(e.data);t.setHours(+e.hor
 let wkSel=null;
 function rSemana(){const all=sorted().filter(inCong);const ds=[];for(let i=0;i<7;i++){const d=new Date(now.getFullYear(),now.getMonth(),now.getDate()+i);ds.push(iso(d))}
   if(!wkSel||!ds.includes(wkSel))wkSel=ds.find(d=>all.some(e=>e.data===d))||ds[0];
-  $('#wk').innerHTML=ds.map(d=>{const n=all.filter(e=>e.data===d).length;return `<button class="${d===TODAY?'td ':''}${n?'on':''}" data-wk="${d}" aria-label="${fmt(d,{weekday:'long',day:'numeric'})}${n?', '+n+' evento(s)':''}" ${d===wkSel?'aria-pressed="true" style="outline:2px solid var(--acc);outline-offset:1px"':''}><small>${DIAS[toD(d).getDay()].slice(0,3)}</small><b>${toD(d).getDate()}</b><span class="wkd">${all.filter(e=>e.data===d).slice(0,3).map(e=>`<i style="background:${d===TODAY?'#fff':e.cong&&CC[e.cong]?ccol(e.cong):'var(--acc)'}"></i>`).join('')}</span></button>`}).join('');
+  $('#wk').innerHTML=ds.map(d=>{const n=all.filter(e=>e.data===d).length;return `<button class="${d===TODAY?'td ':''}${n?'on':''}" data-wk="${d}" aria-label="${fmt(d,{weekday:'long',day:'numeric'})}${n?', '+n+' evento(s)':''}" ${d===wkSel?'aria-pressed="true" style="outline:2px solid var(--acc);outline-offset:1px"':''}><small>${DIAS[toD(d).getDay()].slice(0,3)}</small><b>${toD(d).getDate()}</b><span class="wkd">${all.filter(e=>e.data===d).slice(0,3).map(e=>`<i style="background:${d===TODAY?'#fff':cCor(e.cong)||'var(--acc)'}"></i>`).join('')}</span></button>`}).join('');
   const l=all.filter(e=>e.data===wkSel);$('#wkl').innerHTML=l.length?l.map(evRow).join(''):`<div class="empty">Nada marcado para ${wkSel===TODAY?'hoje':fmt(wkSel,{weekday:'long'})}.</div>`}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-wk]');if(b){wkSel=b.dataset.wk;rSemana()}});
 let carT=null;function carAuto(){clearInterval(carT);carT=setInterval(()=>{const c=$('#carr');if(!c||!c.children.length||c.children.length<2||document.hidden||!$('#inicio').classList.contains('on'))return;if(c.matches(':hover'))return;const w=c.firstElementChild.offsetWidth+10;const i=Math.round(c.scrollLeft/w);const n=(i+1)%c.children.length;const v=c.children[i]?.querySelector('video');if(v&&!v.paused&&!v.ended)return;c.scrollTo({left:n*w,behavior:'smooth'})},6000)}
@@ -1191,7 +1194,7 @@ $('#carr').addEventListener('click',e=>{const b=e.target.closest('.ban.pic');if(
 function rEventos(){
   if(!loaded){$('#posters').innerHTML='<div class="sk" style="height:260px"></div><div class="sk" style="height:260px"></div>';return}
   const seen=new Set();const f=futuros().filter(e=>!e.base||(!seen.has(e.base)&&seen.add(e.base)));
-  $('#posters').innerHTML=f.length?f.map(e=>`<div class="tl"${e.cong&&CC[e.cong]?` style="--cc:${ccol(e.cong)}"`:''}><div class="tld"><b>${toD(e.data).getDate()}</b><small>${MES[toD(e.data).getMonth()].slice(0,3)}</small><i></i></div><button class="tlc" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}">${hasMedia(e)?art(e):''}<div class="tx"><b>${esc(e.titulo)}</b><span>${cap(e.semanal?'Todos os '+DIAS[toD(e.data).getDay()]:fmt(e.data,{weekday:'long'}))}${e.hora?' · '+esc(e.hora):''}${e.cong&&e.cong!=='Todas'?` · <em>${esc(e.cong)}</em>`:' · Todas as congregações'}</span></div></button></div>`).join(''):'<div class="empty">Nenhum evento futuro.</div>';
+  $('#posters').innerHTML=f.length?f.map(e=>`<div class="tl"${cCor(e.cong)?` style="--cc:${cCor(e.cong)}"`:''}><div class="tld"><b>${toD(e.data).getDate()}</b><small>${MES[toD(e.data).getMonth()].slice(0,3)}</small><i></i></div><button class="tlc" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}">${hasMedia(e)?art(e):''}<div class="tx"><b>${esc(e.titulo)}</b><span>${cap(e.semanal?'Todos os '+DIAS[toD(e.data).getDay()]:fmt(e.data,{weekday:'long'}))}${e.hora?' · '+esc(e.hora):''}${e.cong&&e.cong!=='Todas'?` · <em>${esc(e.cong)}</em>`:' · Todas as congregações'}</span></div></button></div>`).join(''):'<div class="empty">Nenhum evento futuro.</div>';
 }
 
 function rCal(){
@@ -1209,8 +1212,8 @@ function rCal(){
   let h=['D','S','T','Q','Q','S','S'].map(d=>`<div class="wd">${d}</div>`).join('');
   for(let i=0;i<first;i++)h+='<div class="day out"></div>';
   for(let d=1;d<=days;d++){const s=cy+'-'+pad(cm+1)+'-'+pad(d);const l=all.filter(e=>e.data===s);
-    h+=`<button class="day${s===TODAY?' td':''}${s===sel?' sel':''}" data-day="${s}" aria-label="${d} de ${MES[cm]}${l.length?', '+l.length+' evento(s)':''}">${d}<span class="ds">${l.slice(0,3).map(e=>`<i style="background:${s===sel?'#fff':(e.cong&&CC[e.cong]?ccol(e.cong):mcol(e.ministerio))}"></i>`).join('')}</span></button>`}
-  $('#grid').innerHTML=h;$('#cleg').innerHTML=cong?'':Object.keys(CC).map(k=>`<span><i class="cdot" style="--cc:${CC[k]}"></i>${esc(k)}</span>`).join('');
+    h+=`<button class="day${s===TODAY?' td':''}${s===sel?' sel':''}" data-day="${s}" aria-label="${d} de ${MES[cm]}${l.length?', '+l.length+' evento(s)':''}">${d}<span class="ds">${l.slice(0,3).map(e=>`<i style="background:${s===sel?'#fff':(cCor(e.cong)||mcol(e.ministerio))}"></i>`).join('')}</span></button>`}
+  $('#grid').innerHTML=h;$('#cleg').innerHTML=cong?'':Object.keys(CC).map(k=>`<span><i class="cdot" style="--cc:${ccol(k)}"></i>${esc(k)}</span>`).join('');
   const list=sel&&sel.startsWith(cy+'-'+pad(cm+1))?all.filter(e=>e.data===sel):all.filter(e=>e.data.startsWith(cy+'-'+pad(cm+1)));
   $('#diaT').textContent=sel&&sel.startsWith(cy+'-'+pad(cm+1))?cap(fmt(sel,{weekday:'long',day:'numeric',month:'long'})):'Eventos de '+MES[cm];
   $('#diaL').innerHTML=list.length?list.map(evRow).join(''):'<div class="empty">Nada marcado.</div>';
@@ -1274,13 +1277,15 @@ function rAvisos(){if(!loaded){$('#avL').innerHTML=SK(3);return}const l=avVis();
 /* ===== fotos dos líderes ===== */
 const fotoSrc=v=>!v?'':/^data:image\//.test(v)?v:srcOf({mid:v,mtype:'image'});
 const TIT=/^(pr|pra|pb|presb|dc|diac|diác|ev|miss|irm[aã]?|pastor|pastora|dirigentes?|presidentes?|pastores|e|de|da|do|dos|das)\.?$/i;
+const fotoK=(F,k)=>{if(!F||!k)return'';if(F[k])return F[k];const t=ncg(k);for(const x in F)if(ncg(x)===t)return F[x];return''};
+const infoK=(I,k)=>{if(!I||!k)return null;if(I[k])return I[k];const t=ncg(k);for(const x in I)if(ncg(x)===t)return I[x];return null};
 function fotoDe(nome){const c=cfg(),F=c.fotos||{},n=String(nome||'').toLowerCase();if(!n)return'';
   const ws=t=>String(t||'').split(/[\s,:;]+/).filter(w=>w.length>2&&!TIT.test(w)).map(w=>w.toLowerCase());
-  if(F.pastor&&(/\bpastor(es)?\b|presidente/.test(n)||ws((c.info||{})[c.congs[0]]?.resp||'Ageu Liane').concat(['ageu','liane']).some(w=>n.includes(w))))return fotoSrc(F.pastor);
-  for(const k of c.congs||[]){if(F[k]&&ws((c.info||{})[k]?.resp).some(w=>n.includes(w)))return fotoSrc(F[k])}return''}
+  if(F.pastor&&(/\bpastor(es)?\b|presidente/.test(n)||ws(infoK(c.info,c.congs[0])?.resp||'Ageu Liane').concat(['ageu','liane']).some(w=>n.includes(w))))return fotoSrc(F.pastor);
+  for(const k of c.congs||[]){const fk=fotoK(F,k);if(fk&&ws(infoK(c.info,k)?.resp).some(w=>n.includes(w)))return fotoSrc(fk)}return''}
 function rFotL(){const f=$('#fig');if(!f)return;let o={};try{o=JSON.parse(f.elements.fotos.value||'{}')}catch(_){}
   const rows=[['pastor','Pastores presidentes']].concat((cfg().congs||[]).map(k=>[k,'Dirigentes · '+k]));
-  $('#fotL').innerHTML=rows.map(([k,l])=>`<div class="fotr"><span class="fav">${o[k]?`<img src="${fotoSrc(o[k])}" alt="">`:esc(inic(l.replace('Dirigentes · ','')))}</span><div>${esc(l)}<small>${o[k]?'Foto colocada':'Sem foto'}</small></div><button type="button" class="btn gh" data-fotk="${esc(k)}">${o[k]?'Trocar':'Escolher foto'}</button>${o[k]?`<button type="button" class="fx2" data-fotx="${esc(k)}" aria-label="Remover foto">✕</button>`:''}</div>`).join('')}
+  $('#fotL').innerHTML=rows.map(([k,l])=>`<div class="fotr"><span class="fav">${fotoK(o,k)?`<img src="${fotoSrc(fotoK(o,k))}" alt="">`:esc(inic(l.replace('Dirigentes · ','')))}</span><div>${esc(l)}<small>${fotoK(o,k)?'Foto colocada':'Sem foto'}</small></div><button type="button" class="btn gh" data-fotk="${esc(k)}">${fotoK(o,k)?'Trocar':'Escolher foto'}</button>${fotoK(o,k)?`<button type="button" class="fx2" data-fotx="${esc(k)}" aria-label="Remover foto">✕</button>`:''}</div>`).join('')}
 function sqBlob(file,max=420){return new Promise((res,rej)=>{const img=new Image();img.onload=()=>{const sd=Math.min(img.width,img.height),sx=(img.width-sd)/2,sy=Math.max(0,(img.height-sd)/2-sd*.08);const c=document.createElement('canvas');c.width=c.height=Math.min(max,sd);c.getContext('2d').drawImage(img,sx,Math.max(0,sy),sd,sd,0,0,c.width,c.height);URL.revokeObjectURL(img.src);c.toBlob(w=>{if(w&&w.type==='image/webp')return res(w);c.toBlob(b=>b?res(b):rej(),'image/jpeg',.85)},'image/webp',.82)};img.onerror=rej;img.src=URL.createObjectURL(file)})}
 let fotK='';
 document.addEventListener('click',e=>{const b=e.target.closest('[data-fotk],[data-fotx]');if(!b)return;e.preventDefault();const f=$('#fig');
@@ -1302,7 +1307,7 @@ function deFix(){const f=$('#fav');if(!f)return;const i=f.elements.de,n=$('#deN'
 $('#fav').addEventListener('reset',()=>setTimeout(deFix,0));
 function rIgreja(){const c=cfg(),inf=c.info||{};{const pa=$('#pastAv'),F=c.fotos||{};if(pa)pa.innerHTML=F.pastor?`<img src="${fotoSrc(F.pastor)}" alt="Pastores presidentes">`:'AO'}
   const DS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
-  $('#igL').innerHTML=c.congs.map(n=>{const i=inf[n]||{};const cc=ccol(n),dk=CDK[n]?`rgb(${CDK[n]})`:'#0b2160';const hs=(c.prog||[]).filter(x=>x.cong===n).sort((a,b)=>a.dia-b.dia||String(a.hora).localeCompare(b.hora));
+  $('#igL').innerHTML=c.congs.map(n=>{const i=infoK(inf,n)||{};const cc=ccol(n),dk=(CDK[n]||CDKN[ncg(n)])?`rgb(${CDK[n]||CDKN[ncg(n)]})`:'#0b2160';const hs=(c.prog||[]).filter(x=>ncg(x.cong)===ncg(n)).sort((a,b)=>a.dia-b.dia||String(a.hora).localeCompare(b.hora));
     return `<div class="cg2" style="--cc:${cc};--cd:${dk}"><div class="hd">${(()=>{const F=c.fotos||{},v=F[n]||(n===c.congs[0]?F.pastor:'');return v?`<img class="hdf" src="${fotoSrc(v)}" alt="">`:''})()}<div><b>${esc(n)}</b>${i.resp?`<span>${esc(i.resp)}</span>`:''}</div></div><div class="bd2">${i.end?`<div class="ad">${IC('pin')}${esc(i.end)}</div>`:'<div class="ad">Endereço em breve.</div>'}${hs.length?`<div class="hrs">${hs.map(x=>`<span>${DS[x.dia]} ${esc(String(x.hora).replace(':00','h').replace(':','h'))}</span>`).join('')}</div>`:''}${i.end?`<a class="btn gh" href="${maps(i.end)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}</div></div>`}).join('')}
 let pgDia=null;document.addEventListener('click',e=>{const b=e.target.closest('[data-pgd]');if(b){pgDia=+b.dataset.pgd;rProg()}});
 function rProg(){const c=cfg(),pg=(c.prog||[]).filter(x=>inCong(x));
@@ -1368,15 +1373,20 @@ const VIEWS=Object.keys(R);
 function cur(){const h=location.hash.slice(1);return VIEWS.includes(h)?h:'inicio'}
 
 const CDK={'Sede':'10,30,90','CEAD':'74,48,4','Arco Verde':'70,16,10','Vitória':'34,38,46'};
+const CDKN=Object.fromEntries(Object.entries(CDK).map(([k,v])=>[ncg(k),v]));
 let capaAt=null;
-function setCapa(){const w=$('.hwrap');if(!w)return;const c=cfg(),inf=(c.info||{})[cong]||{};const key=cong?cong+'|'+(inf.foto||''):'';if(key===capaAt)return;capaAt=key;
+function setCapa(){const w=$('.hwrap');if(!w)return;const c=cfg(),inf=infoK(c.info,cong)||{};const key=cong?cong+'|'+(inf.foto||''):'';if(key===capaAt)return;capaAt=key;
   const old=[...w.querySelectorAll('.hbg')];
   if(cong){const col=ccol(cong),rgb=col.match(/\w\w/g).map(h=>parseInt(h,16)).join(','),dk=CDK[cong]||'10,30,90';
     const d=document.createElement('div');d.className='hbg'+(inf.foto?' zoom':'');
     d.style.setProperty('--ov',inf.foto?`linear-gradient(170deg,rgba(${dk},.9) 0%,rgba(${dk},.7) 38%,rgba(${rgb},.5) 100%)`:`radial-gradient(120% 90% at 100% 0,rgba(255,255,255,.14),transparent 55%),linear-gradient(160deg,rgb(${dk}) 0%,rgba(${rgb},1) 135%)`);d.style.setProperty('--img',inf.foto?`url("${inf.foto}")`:'none');
     w.prepend(d);requestAnimationFrame(()=>requestAnimationFrame(()=>d.classList.add('on')))}
   old.forEach(o=>{o.classList.remove('on');setTimeout(()=>o.remove(),800)})}
-function rHead(){const c=cfg();$('#nome').textContent=c.nome;document.title=c.nome;if(cong&&!c.congs.includes(cong))cong='';
+function rHead(){const c=cfg();$('#nome').textContent=c.nome;document.title=c.nome;
+  if(cong&&loaded&&S.config&&Array.isArray(S.config.congs)&&S.config.congs.length){
+    const m=c.congs.find(x=>ncg(x)===ncg(cong));
+    if(m){if(m!==cong){cong=m;try{localStorage.setItem('minhaCong',cong)}catch(_){}}}
+    else{cong='';try{localStorage.removeItem('minhaCong')}catch(_){}}}
   $('#cnome').innerHTML=(cong?`<i class="cdot" style="--cc:${ccol(cong)};margin-right:6px"></i>`:'')+esc(cong||'Todas');setCapa();const hh=new Date().getHours();{const g=hh<12?'Bom dia':hh<18?'Boa tarde':'Boa noite';const ws=me.trim().split(/\s+/).filter(w=>w.length>2&&!/^(pr|pb|dc|ev|pra|irm[aã]?|miss)\.?$/i.test(w));const nm=ws[0]?ws[0][0].toUpperCase()+ws[0].slice(1).toLowerCase():'';$('#hi').textContent=nm?`${g}, ${nm}!`:g+'!'}$('#hoje').textContent=cap(now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
   $$('.selC').forEach(sl=>{const v0=sl.value;sl.innerHTML=(sl.dataset.all?['Todas',...c.congs]:c.congs).map(x=>`<option>${esc(x)}</option>`).join('');if(v0&&[...sl.options].some(o=>o.value===v0))sl.value=v0});
   const f=$('#fig');if(f.hidden||!f.dataset.filled){f.elements.fotos.value=JSON.stringify(c.fotos||{});rFotL();f.elements.nome.value=c.nome;f.elements.aoVivo.value=c.aoVivo||'';f.elements.congs.value=c.congs.join('\n');f.elements.info.value=Object.entries(c.info||{}).map(([k,v])=>[k,v.end||'',v.resp||''].join('; ')).join('\n');f.elements.codigo.value=c.codigo||'';f.elements.prog.value=(c.prog||[]).map(x=>[x.cong,DN[x.dia],x.hora,x.nome].join('; ')).join('\n');f.dataset.filled='1'}}
