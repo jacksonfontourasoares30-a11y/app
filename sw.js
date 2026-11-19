@@ -1,5 +1,5 @@
-const V='adcb-v2';
-const SHELL=['./','index.html','supabase.js','manifest.json','icon-192.png','icon-512.png'];
+const V='adcb-v3';
+const SHELL=['./','index.html','supabase.js','manifest.json','icon-192.png','icon-512.png','badge-96.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(V).then(c=>c.addAll(SHELL)).then(()=>self.skipWaiting()))});
 self.addEventListener('activate',e=>{e.waitUntil(caches.keys().then(k=>Promise.all(k.filter(x=>x!==V&&x!=='adcb-midia').map(x=>caches.delete(x)))).then(()=>self.clients.claim()))});
 self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.method!=='GET')return;
@@ -13,6 +13,10 @@ self.addEventListener('fetch',e=>{const u=new URL(e.request.url);if(e.request.me
       .catch(()=>fetch(e.request).catch(()=>caches.match(e.request).then(m=>m||caches.match('index.html')))))}
 });
 self.addEventListener('push',e=>{let d={};try{d=e.data?e.data.json():{}}catch(_){d={corpo:e.data?e.data.text():''}}
-  e.waitUntil(self.registration.showNotification(d.titulo||'AD Carlos Barbosa',{body:d.corpo||'',icon:'icon-192.png',data:{url:d.url||'./'},lang:'pt-BR'}))});
+  const t=String(d.titulo||'AD Carlos Barbosa'),c=String(d.corpo||''),urg=/urgente/i.test(t);
+  e.waitUntil(self.registration.showNotification(t,{body:c,icon:'icon-192.png',badge:'badge-96.png',
+    data:{url:d.url||'./'},lang:'pt-BR',
+    tag:(t+'|'+c).slice(0,80),renotify:false,requireInteraction:urg,
+    vibrate:urg?[120,60,120,60,240]:[80,40,80]}))});
 self.addEventListener('notificationclick',e=>{e.notification.close();const u=new URL((e.notification.data&&e.notification.data.url)||'./',self.registration.scope).href;
   e.waitUntil(clients.matchAll({type:'window',includeUncontrolled:true}).then(l=>{for(const c of l){if(c.url.startsWith(self.registration.scope)&&'focus' in c){return c.focus().then(w=>w&&w.navigate?w.navigate(u):null).catch(()=>clients.openWindow(u))}}return clients.openWindow(u)}))});
