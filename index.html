@@ -985,7 +985,7 @@ I.grain=rn(160,160,(d,i)=>{const v=128+(Math.random()+Math.random()+Math.random(
 return I}
 
 let onbP=0,onbN='',onbC='';
-function onbPassos(){let app=false;try{app=new URLSearchParams(location.search).has('fcm')||!!localStorage.getItem('fcmToken')}catch(_){}const pz=!app&&typeof pushOk==='function'&&pushOk()&&Notification.permission!=='granted';return pz?3:2}
+function onbPassos(){let app=false,pz=false;try{app=new URLSearchParams(location.search).has('fcm')||!!localStorage.getItem('fcmToken')}catch(_){}try{pz=(app?('Notification' in window):(typeof pushOk==='function'&&pushOk()))&&Notification.permission!=='granted'}catch(_){}return pz?3:2}
 function onbIni(){let ok=false;try{ok=localStorage.getItem('onbOk')==='1'}catch(_){ok=true}if(ok)return;onbN=me;onbC=cong;const el=document.createElement('div');el.id='onb';document.body.append(el);onbR()}
 function onbR(){const el=$('#onb');if(!el)return;const N=onbPassos(),dots=`<div class="stp">${Array.from({length:N},(_,i)=>`<i class="${i===onbP?'on':''}"></i>`).join('')}</div>`,tp=(t,h,p)=>`<div class="tp"><small>PASSO ${onbP+1} DE ${N}</small><h2>${h}</h2><p>${p}</p></div>`;
   if(onbP===0)el.innerHTML=dots+tp(0,'Seja bem-vindo!<br>Como você se chama?','Assim o app mostra as escalas em que você está.')+`<div class="bd"><input id="onbN" maxlength="60" autocomplete="name" placeholder="Seu nome, como aparece na escala" value="${esc(onbN)}"><p class="nt">Fica guardado só no seu celular.</p></div><div class="ft"><button class="go" data-onb="1">Continuar</button><button class="sk" data-onb="1" data-pula="1">Pular</button></div>`;
@@ -1000,7 +1000,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('[data-onb]
   if(t.dataset.pula){onbN='';onbP++;onbR();return}
   if(t.dataset.onb)return onbAv();
   if(t.dataset.onbfim){try{localStorage.setItem('pushFechado','1')}catch(_){}return onbFim()}
-  if(t.dataset.onbpush){t.disabled=true;t.textContent='Aguarde…';cong=onbC;try{await pushAtivar()}catch(_){}onbFim()}});
+  if(t.dataset.onbpush){t.disabled=true;t.textContent='Aguarde…';cong=onbC;try{if(FCM)await Notification.requestPermission();else await pushAtivar()}catch(_){}onbFim()}});
 setTimeout(onbIni,0);
 /* ===== iPhone: instalar na tela de início ===== */
 const ehIOS=()=>{try{return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}catch(_){return false}};
