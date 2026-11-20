@@ -1573,7 +1573,10 @@ document.addEventListener('click',async e=>{const t=e.target.closest('[data-push
     catch(err){pushErro(err);rPush()}}});
 function pushErro(err){try{const c=$('#pushC');if(!c)return;c.hidden=false;
   c.innerHTML=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Não deu para ligar agora</b><small>${esc(String(err&&err.message||err||'erro'))}</small></div><button class="btn" data-pushon="1">Tentar de novo</button></div>`}catch(_){}}
-async function notificar(o){if(typeof SB==='undefined'||papel==='lider'||!o)return;try{const {data:{session}}=await SB.auth.getSession();if(!session)return;await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},body:JSON.stringify(o)})}catch(_){}}
+const FCM_FN=PUSH_FN.replace('/notificar','/fcm');
+async function notificar(o){if(typeof SB==='undefined'||papel==='lider'||!o)return;try{const {data:{session}}=await SB.auth.getSession();if(!session)return;
+  const h={'Content-Type':'application/json','Authorization':'Bearer '+session.access_token},b=JSON.stringify(o);
+  await Promise.allSettled([fetch(PUSH_FN,{method:'POST',headers:h,body:b}),fetch(FCM_FN,{method:'POST',headers:h,body:b})])}catch(_){}}
 function msgDe(col,o){const lugar=o.cong&&o.cong!=='Todas'?o.cong:'';
   if(col==='avisos')return{titulo:(o.urgente?'⚠ URGENTE: ':'')+(o.titulo||(o.urgente?String(o.de||'Liderança'):'Novo aviso')),corpo:String(o.texto||'').slice(0,140),url:'./#avisos',cong:o.cong||''};
   if(col==='eventos')return{titulo:'Novo evento: '+o.titulo,corpo:[o.data?fmt(o.data,{weekday:'long',day:'numeric',month:'long'}):'',o.hora,lugar].filter(Boolean).join(' · '),url:'./#eventos',cong:o.cong||''};
