@@ -432,6 +432,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .cg2 a.btn{display:flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;min-height:42px}
 /* mais */
 .tiles{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.tiles a{background:var(--card);border-radius:18px;box-shadow:var(--sh);padding:16px 6px 13px;text-decoration:none;color:var(--ink);display:grid;justify-items:center;gap:8px;font:800 13px Manrope,system-ui;text-align:center;cursor:pointer}
+#appb.wide small{display:block;line-height:1.45}#appb.wide .btn{display:none}
 .tiles a small{font:700 10.5px Manrope,system-ui;color:var(--mut);margin-top:-4px}
 .tiles a span{width:46px;height:46px;border-radius:15px;display:grid;place-items:center;background:var(--rose);color:var(--wine)}.tiles a span .ic{width:24px;height:24px}
 .lid{display:flex;gap:12px;align-items:center;margin-top:12px;border-radius:18px;padding:15px;background:linear-gradient(135deg,#0b2160,#1546b8);color:#fff;text-decoration:none}.lid b{display:block}.lid small{opacity:.85;font-size:12.5px;font-weight:600}.lid .ic{width:26px;height:26px;color:#f3c65a;flex:none}
@@ -1028,6 +1029,16 @@ async function temApp(){if(temAppC!==null)return temAppC;temAppC=false;
   return temAppC}
 function irApp(){try{if(temAppC){location.href='intent://'+location.host+location.pathname+location.hash+'#Intent;scheme=https;package='+PKG+';S.browser_fallback_url='+encodeURIComponent(LOJA)+';end';return}}catch(_){}
   try{window.open(LOJA,'_blank','noopener')}catch(_){location.href=LOJA}}
+let instEv=null;
+try{window.addEventListener('beforeinstallprompt',e=>{try{e.preventDefault()}catch(_){}instEv=e;try{appBar()}catch(_){}})}catch(_){}
+try{window.addEventListener('appinstalled',()=>{instEv=null;const el=$('#appb');if(el)el.remove()})}catch(_){}
+const PASSOS='Toque nos três pontinhos do navegador e escolha <b>Adicionar à tela de início</b>. O app fica com o ícone do AD, abre em tela cheia e os avisos chegam em nome da igreja.';
+function comoInst(){const el=$('#appb');if(!el)return;
+  el.classList.add('wide');
+  el.innerHTML=`<img src="icon-192.png" alt=""><div><b>Instalar em 2 toques</b><small>${PASSOS}</small></div><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`}
+async function instalarApp(){
+  if(instEv){try{instEv.prompt();const r=await instEv.userChoice;instEv=null;if(r&&r.outcome==='accepted')return true}catch(_){}}
+  comoInst();return false}
 async function appBar(){
   try{
     if(appInstalado()||ehIOS())return;
@@ -1036,9 +1047,10 @@ async function appBar(){
     if(f||$('#appb'))return;
     const tem=await temApp();
     const el=document.createElement('div');el.id='appb';
-    el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Você já tem o app':'Instale o app da igreja'}</b><small>${tem?'Abra por ele: tela inteira':'Avisa quando tiver recado novo'}</small></div><a class="btn" id="appbA" href="${tem?'#':LOJA}"${tem?'':' target="_blank" rel="noopener"'}>${tem?'Abrir':'Instalar'}</a><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
+    el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Você já tem o app':'Instale o app da igreja'}</b><small>${tem?'Abra por ele: tela inteira':'Avisa quando tiver recado novo'}</small></div><button class="btn" id="appbA">${tem?'Abrir':'Instalar'}</button><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
     document.body.append(el);
-    if(tem){const a=$('#appbA');if(a)a.addEventListener('click',ev=>{ev.preventDefault();irApp()})}
+    const a=$('#appbA');
+    if(a)a.addEventListener('click',ev=>{ev.preventDefault();if(tem)irApp();else instalarApp()});
   }catch(_){}}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-appbx]');if(!t)return;e.preventDefault();try{localStorage.setItem('appbFechado','1')}catch(_){}const el=$('#appb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),300)}});
 setTimeout(appBar,1400);
@@ -1528,16 +1540,16 @@ async function rPush(){const st=await pushEstado();if(st==='on')pushCorrige().ca
   const bx=(t,d)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   const bapp=(t,d,r)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="btn" data-pushapp="1">${r}</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   if(c){let h='';
-    if(nav&&st==='on'&&!fech)h=bapp('Seus avisos vêm pelo navegador','Por isso aparece o endereço do site na notificação. No app fica só o nome da igreja.',temAppC?'Passar para o app':'Instalar o app');
-    else if(nav&&st!=='on'&&!fech)h=bapp('Os avisos ficam no app','Instale o app da igreja para receber escalas, avisos e eventos no celular.',temAppC?'Abrir o app':'Instalar');
+    if(nav&&st==='on'&&!fech)h=bapp('Seus avisos vêm pelo navegador','Por isso aparece o endereço do site na notificação. No app fica só o nome da igreja.','Instalar o app');
+    else if(nav&&st!=='on'&&!fech)h=bapp('Os avisos ficam no app','Instale o app da igreja para receber escalas, avisos e eventos no celular.','Instalar');
     else if(st==='off'&&!fech)h=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Receba as novidades no celular</b><small>Escalas, avisos e eventos da sua congregação</small></div><button class="btn" data-pushon="1">Ativar</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
     else if(st==='bloq'&&!fech)h=bx('Notificações bloqueadas',ios?'Libere em Ajustes → Notificações → AD Carlos Barbosa.':'Libere nas configurações do celular: Apps → AD Carlos Barbosa → Notificações.');
     else if(st==='nao'&&ios&&inst&&!fech)h=bx('Notificações no iPhone','Seu iPhone precisa de iOS 16.4 ou mais novo para receber os avisos.');
     c.hidden=!h;c.innerHTML=h}
   if(m){m.hidden=st==='nao';const ms=$('#pushMs');if(ms){ms.style.display='';ms.textContent=st==='on'?'Ativadas':st==='bloq'?'Bloqueadas':'Desativadas'}}}
-async function pushParaApp(){try{await temApp()}catch(_){}
-  if(temAppC){try{if(await pushEstado()==='on')await pushDesativar()}catch(_){}}
-  irApp()}
+async function pushParaApp(){
+  if(typeof instalarApp==='function'){const ok=await instalarApp();if(!ok)rPush();return}
+  try{await temApp()}catch(_){}irApp()}
 document.addEventListener('click',async e=>{const t=e.target.closest('[data-pushon],[data-pushx],[data-pushapp],[data-push]');if(!t)return;e.preventDefault();
   if(t.dataset.pushx){try{localStorage.setItem('pushFechado','1')}catch(_){}rPush()}
   else if(t.dataset.pushapp){t.disabled=true;t.textContent='…';try{await pushParaApp()}catch(_){rPush()}}
