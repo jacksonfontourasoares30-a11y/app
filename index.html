@@ -1033,9 +1033,11 @@ let instEv=null;
 try{window.addEventListener('beforeinstallprompt',e=>{try{e.preventDefault()}catch(_){}instEv=e;try{appBar()}catch(_){}})}catch(_){}
 try{window.addEventListener('appinstalled',()=>{instEv=null;const el=$('#appb');if(el)el.remove()})}catch(_){}
 const PASSOS='Toque nos três pontinhos do navegador e escolha <b>Adicionar à tela de início</b>. O app fica com o ícone do AD, abre em tela cheia e os avisos chegam em nome da igreja.';
-function comoInst(){const el=$('#appb');if(!el)return;
+const PASSOS2='Primeiro desinstale o app antigo da Play Store. Depois toque nos três pontinhos do navegador e escolha <b>Adicionar à tela de início</b>.';
+function comoInst(){let el=$('#appb');
+  if(!el){el=document.createElement('div');el.id='appb';document.body.append(el)}
   el.classList.add('wide');
-  el.innerHTML=`<img src="icon-192.png" alt=""><div><b>Instalar em 2 toques</b><small>${PASSOS}</small></div><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`}
+  el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${temAppC?'Troque pelo app novo':'Instalar em 2 toques'}</b><small>${temAppC?PASSOS2:PASSOS}</small></div><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`}
 async function instalarApp(){
   if(instEv){try{instEv.prompt();const r=await instEv.userChoice;instEv=null;if(r&&r.outcome==='accepted')return true}catch(_){}}
   comoInst();return false}
@@ -1048,10 +1050,10 @@ async function appBar(){
     if(f||$('#appb'))return;
     const tem=await temApp();
     const el=document.createElement('div');el.id='appb';
-    el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Você já tem o app':'Instale o app da igreja'}</b><small>${tem?'Abra por ele: tela inteira':'Avisa quando tiver recado novo'}</small></div><button class="btn" id="appbA">${tem?'Abrir':'Instalar'}</button><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
+    el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Troque pelo app novo':'Instale o app da igreja'}</b><small>${tem?'O da loja faz os avisos chegarem como "Chrome"':'Avisa quando tiver recado novo'}</small></div><button class="btn" id="appbA">Instalar</button><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
     document.body.append(el);
     const a=$('#appbA');
-    if(a)a.addEventListener('click',ev=>{ev.preventDefault();if(tem)irApp();else lojaApp()});
+    if(a)a.addEventListener('click',ev=>{ev.preventDefault();instalarApp()});
   }catch(_){}}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-appbx]');if(!t)return;e.preventDefault();try{localStorage.setItem('appbFechado','1')}catch(_){}const el=$('#appb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),300)}});
 setTimeout(appBar,1400);
@@ -1541,16 +1543,15 @@ async function rPush(){const st=await pushEstado();if(st==='on')pushCorrige().ca
   const bx=(t,d)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   const bapp=(t,d,r)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="btn" data-pushapp="1">${r}</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   if(c){let h='';
-    if(nav&&st==='on'&&!fech)h=bapp('Seus avisos vêm pelo navegador','Por isso aparece o endereço do site na notificação. No app fica só o nome da igreja.',(temAppC?'Passar para o app':'Instalar o app'));
-    else if(nav&&st!=='on'&&!fech)h=bapp('Os avisos ficam no app','Instale o app da igreja para receber escalas, avisos e eventos no celular.',(temAppC?'Abrir o app':'Instalar'));
+    if(nav&&st==='on'&&!fech)h=bapp('Seus avisos vêm pelo navegador','Por isso aparece o endereço do site na notificação. No app fica só o nome da igreja.','Instalar o app');
+    else if(nav&&st!=='on'&&!fech)h=bapp('Os avisos ficam no app','Instale o app da igreja para receber escalas, avisos e eventos no celular.','Instalar');
     else if(st==='off'&&!fech)h=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Receba as novidades no celular</b><small>Escalas, avisos e eventos da sua congregação</small></div><button class="btn" data-pushon="1">Ativar</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
     else if(st==='bloq'&&!fech)h=bx('Notificações bloqueadas',ios?'Libere em Ajustes → Notificações → AD Carlos Barbosa.':'Libere nas configurações do celular: Apps → AD Carlos Barbosa → Notificações.');
     else if(st==='nao'&&ios&&inst&&!fech)h=bx('Notificações no iPhone','Seu iPhone precisa de iOS 16.4 ou mais novo para receber os avisos.');
     c.hidden=!h;c.innerHTML=h}
   if(m){m.hidden=st==='nao';const ms=$('#pushMs');if(ms){ms.style.display='';ms.textContent=st==='on'?'Ativadas':st==='bloq'?'Bloqueadas':'Desativadas'}}}
-async function pushParaApp(){try{await temApp()}catch(_){}
-  if(temAppC){try{if(await pushEstado()==='on')await pushDesativar()}catch(_){}}
-  irApp()}
+async function pushParaApp(){
+  const ok=await instalarApp();if(!ok)rPush()}
 document.addEventListener('click',async e=>{const t=e.target.closest('[data-pushon],[data-pushx],[data-pushapp],[data-push]');if(!t)return;e.preventDefault();
   if(t.dataset.pushx){try{localStorage.setItem('pushFechado','1')}catch(_){}rPush()}
   else if(t.dataset.pushapp){t.disabled=true;t.textContent='…';try{await pushParaApp()}catch(_){rPush()}}
