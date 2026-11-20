@@ -1039,6 +1039,7 @@ function comoInst(){const el=$('#appb');if(!el)return;
 async function instalarApp(){
   if(instEv){try{instEv.prompt();const r=await instEv.userChoice;instEv=null;if(r&&r.outcome==='accepted')return true}catch(_){}}
   comoInst();return false}
+function lojaApp(){try{window.open(LOJA,'_blank','noopener')}catch(_){location.href=LOJA}}
 async function appBar(){
   try{
     if(appInstalado()||ehIOS())return;
@@ -1050,7 +1051,7 @@ async function appBar(){
     el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Você já tem o app':'Instale o app da igreja'}</b><small>${tem?'Abra por ele: tela inteira':'Avisa quando tiver recado novo'}</small></div><button class="btn" id="appbA">${tem?'Abrir':'Instalar'}</button><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
     document.body.append(el);
     const a=$('#appbA');
-    if(a)a.addEventListener('click',ev=>{ev.preventDefault();if(tem)irApp();else instalarApp()});
+    if(a)a.addEventListener('click',ev=>{ev.preventDefault();if(tem)irApp();else lojaApp()});
   }catch(_){}}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-appbx]');if(!t)return;e.preventDefault();try{localStorage.setItem('appbFechado','1')}catch(_){}const el=$('#appb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),300)}});
 setTimeout(appBar,1400);
@@ -1540,16 +1541,16 @@ async function rPush(){const st=await pushEstado();if(st==='on')pushCorrige().ca
   const bx=(t,d)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   const bapp=(t,d,r)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="btn" data-pushapp="1">${r}</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   if(c){let h='';
-    if(nav&&st==='on'&&!fech)h=bapp('Seus avisos vêm pelo navegador','Por isso aparece o endereço do site na notificação. No app fica só o nome da igreja.','Instalar o app');
-    else if(nav&&st!=='on'&&!fech)h=bapp('Os avisos ficam no app','Instale o app da igreja para receber escalas, avisos e eventos no celular.','Instalar');
+    if(nav&&st==='on'&&!fech)h=bapp('Seus avisos vêm pelo navegador','Por isso aparece o endereço do site na notificação. No app fica só o nome da igreja.',(temAppC?'Passar para o app':'Instalar o app'));
+    else if(nav&&st!=='on'&&!fech)h=bapp('Os avisos ficam no app','Instale o app da igreja para receber escalas, avisos e eventos no celular.',(temAppC?'Abrir o app':'Instalar'));
     else if(st==='off'&&!fech)h=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Receba as novidades no celular</b><small>Escalas, avisos e eventos da sua congregação</small></div><button class="btn" data-pushon="1">Ativar</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
     else if(st==='bloq'&&!fech)h=bx('Notificações bloqueadas',ios?'Libere em Ajustes → Notificações → AD Carlos Barbosa.':'Libere nas configurações do celular: Apps → AD Carlos Barbosa → Notificações.');
     else if(st==='nao'&&ios&&inst&&!fech)h=bx('Notificações no iPhone','Seu iPhone precisa de iOS 16.4 ou mais novo para receber os avisos.');
     c.hidden=!h;c.innerHTML=h}
   if(m){m.hidden=st==='nao';const ms=$('#pushMs');if(ms){ms.style.display='';ms.textContent=st==='on'?'Ativadas':st==='bloq'?'Bloqueadas':'Desativadas'}}}
-async function pushParaApp(){
-  if(typeof instalarApp==='function'){const ok=await instalarApp();if(!ok)rPush();return}
-  try{await temApp()}catch(_){}irApp()}
+async function pushParaApp(){try{await temApp()}catch(_){}
+  if(temAppC){try{if(await pushEstado()==='on')await pushDesativar()}catch(_){}}
+  irApp()}
 document.addEventListener('click',async e=>{const t=e.target.closest('[data-pushon],[data-pushx],[data-pushapp],[data-push]');if(!t)return;e.preventDefault();
   if(t.dataset.pushx){try{localStorage.setItem('pushFechado','1')}catch(_){}rPush()}
   else if(t.dataset.pushapp){t.disabled=true;t.textContent='…';try{await pushParaApp()}catch(_){rPush()}}
