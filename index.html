@@ -1021,6 +1021,19 @@ setTimeout(iosBanner,1100);
 /* ===== abrir pelo app (Android) ===== */
 const PKG='br.com.adcarlosbarbosa.app';
 const LOJA='https://play.google.com/store/apps/details?id='+PKG;
+/* ===== notificação pelo app da loja (Firebase) ===== */
+let FCM=null;
+try{const q=new URLSearchParams(location.search);const t=q.get('fcm');
+  if(t){FCM=t;try{localStorage.setItem('fcmToken',t)}catch(_){}
+    q.delete('fcm');const r=location.pathname+(q.toString()?'?'+q:'')+location.hash;
+    try{history.replaceState(null,'',r)}catch(_){}}
+  else{try{FCM=localStorage.getItem('fcmToken')||null}catch(_){}}}catch(_){}
+const ehAppLoja=()=>!!FCM;
+async function fcmSalvar(){if(!FCM||typeof SB==='undefined')return;
+  try{await SB.rpc('fcm_inscrever',{p_token:FCM,p_cong:cong||''})}catch(_){}}
+async function fcmLimparWeb(){try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();
+  if(sub){try{await SB.rpc('push_sair',{p_endpoint:sub.endpoint})}catch(_){}try{await sub.unsubscribe()}catch(_){}pushSub=null}}catch(_){}}
+function abrirAjustesApp(){try{location.href='intent:#Intent;action=android.settings.APP_NOTIFICATION_SETTINGS;S.android.provider.extra.APP_PACKAGE='+PKG+';end'}catch(_){}}
 const ehAndroid=()=>{try{return /Android/i.test(navigator.userAgent)}catch(_){return false}};
 const noNav=()=>ehAndroid()&&!appInstalado();
 let temAppC=null;
@@ -1044,19 +1057,20 @@ async function instalarApp(){
 function lojaApp(){try{window.open(LOJA,'_blank','noopener')}catch(_){location.href=LOJA}}
 async function appBar(){
   try{
-    if(appInstalado()||ehIOS())return;
+    if(appInstalado()||ehIOS()||ehAppLoja())return;
     if(!ehAndroid())return;
     let f=false;try{f=localStorage.getItem('appbFechado')==='1'}catch(_){}
     if(f||$('#appb'))return;
     const tem=await temApp();
     const el=document.createElement('div');el.id='appb';
-    el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Troque pelo app novo':'Instale o app da igreja'}</b><small>${tem?'O da loja faz os avisos chegarem como "Chrome"':'Avisa quando tiver recado novo'}</small></div><button class="btn" id="appbA">Instalar</button><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
+    el.innerHTML=`<img src="icon-192.png" alt=""><div><b>${tem?'Você já tem o app':'Instale o app da igreja'}</b><small>${tem?'Abra por ele: tela inteira':'Avisa quando tiver recado novo'}</small></div><button class="btn" id="appbA">${tem?'Abrir':'Instalar'}</button><button class="x" data-appbx="1" aria-label="Fechar">✕</button>`;
     document.body.append(el);
     const a=$('#appbA');
-    if(a)a.addEventListener('click',ev=>{ev.preventDefault();instalarApp()});
+    if(a)a.addEventListener('click',ev=>{ev.preventDefault();if(tem)irApp();else lojaApp()});
   }catch(_){}}
 document.addEventListener('click',e=>{const t=e.target.closest('[data-appbx]');if(!t)return;e.preventDefault();try{localStorage.setItem('appbFechado','1')}catch(_){}const el=$('#appb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),300)}});
 setTimeout(appBar,1400);
+if(FCM)setTimeout(()=>{fcmSalvar();fcmLimparWeb()},2500);
 /* ===== versão nova do app ===== */
 let verTag=null,verUlt=0,verAviso=false;
 async function verChecar(){if(verAviso)return;try{if(navigator.onLine===false)return}catch(_){}
@@ -1531,15 +1545,15 @@ const pushOk=()=>typeof SB!=='undefined'&&'serviceWorker' in navigator&&'PushMan
 let pushSub=null,pushPub=null;
 const b64u=s=>{const b=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))};
 async function pushChave(){if(pushPub)return pushPub;const r=await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"chave":1}'});pushPub=(await r.json()).pub;return pushPub}
-async function pushEstado(){if(!pushOk())return'nao';try{const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()}catch(_){}return pushSub&&Notification.permission==='granted'?'on':Notification.permission==='denied'?'bloq':'off'}
-async function pushSalvar(){if(!pushSub)return;const j=pushSub.toJSON();await SB.rpc('push_inscrever',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_cong:cong||''})}
+async function pushEstado(){if(ehAppLoja())return'app';if(!pushOk())return'nao';try{const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()}catch(_){}return pushSub&&Notification.permission==='granted'?'on':Notification.permission==='denied'?'bloq':'off'}
+async function pushSalvar(){if(FCM)fcmSalvar();if(!pushSub)return;const j=pushSub.toJSON();await SB.rpc('push_inscrever',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_cong:cong||''})}
 async function pushAtivar(){if(!pushOk())return false;const p=await Notification.requestPermission();if(p!=='granted'){rPush();return false}
   const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(await pushChave())});await pushSalvar();rPush();return true}
 async function pushDesativar(){if(pushSub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}try{await pushSub.unsubscribe()}catch(_){}pushSub=null}rPush()}
 let pushFix=false;async function pushCorrige(){if(pushFix||!pushSub)return;pushFix=true;const pub=await pushChave();if(!pub)return;const k=pushSub.options&&pushSub.options.applicationServerKey;const kb=k?btoa(String.fromCharCode(...new Uint8Array(k))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''):'';if(kb!==pub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}await pushSub.unsubscribe();const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(pub)})}await pushSalvar()}
 async function rPush(){const st=await pushEstado();if(st==='on')pushCorrige().catch(()=>{});const c=$('#pushC'),m=$('#pushM');let fech=false;try{fech=localStorage.getItem('pushFechado')==='1'}catch(_){}
   const ios=typeof ehIOS==='function'&&ehIOS(),inst=typeof appInstalado==='function'&&appInstalado();
-  const nav=typeof noNav==='function'&&noNav();if(nav)try{await temApp()}catch(_){}
+  const nav=(typeof noNav==='function'&&noNav())&&!ehAppLoja();if(nav)try{await temApp()}catch(_){}
   const bx=(t,d)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   const bapp=(t,d,r)=>`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>${t}</b><small>${d}</small></div><button class="btn" data-pushapp="1">${r}</button><button class="x" data-pushx="1" aria-label="Agora não">✕</button></div>`;
   if(c){let h='';
@@ -1549,14 +1563,13 @@ async function rPush(){const st=await pushEstado();if(st==='on')pushCorrige().ca
     else if(st==='bloq'&&!fech)h=bx('Notificações bloqueadas',ios?'Libere em Ajustes → Notificações → AD Carlos Barbosa.':'Libere nas configurações do celular: Apps → AD Carlos Barbosa → Notificações.');
     else if(st==='nao'&&ios&&inst&&!fech)h=bx('Notificações no iPhone','Seu iPhone precisa de iOS 16.4 ou mais novo para receber os avisos.');
     c.hidden=!h;c.innerHTML=h}
-  if(m){m.hidden=st==='nao';const ms=$('#pushMs');if(ms){ms.style.display='';ms.textContent=st==='on'?'Ativadas':st==='bloq'?'Bloqueadas':'Desativadas'}}}
-async function pushParaApp(){
-  const ok=await instalarApp();if(!ok)rPush()}
+  if(m){m.hidden=st==='nao';const ms=$('#pushMs');if(ms){ms.style.display='';ms.textContent=st==='app'?'Ativadas':st==='on'?'Ativadas':st==='bloq'?'Bloqueadas':'Desativadas'}}}
+async function pushParaApp(){try{await temApp()}catch(_){}irApp()}
 document.addEventListener('click',async e=>{const t=e.target.closest('[data-pushon],[data-pushx],[data-pushapp],[data-push]');if(!t)return;e.preventDefault();
   if(t.dataset.pushx){try{localStorage.setItem('pushFechado','1')}catch(_){}rPush()}
   else if(t.dataset.pushapp){t.disabled=true;t.textContent='…';try{await pushParaApp()}catch(_){rPush()}}
   else if(t.dataset.pushon){t.disabled=true;t.textContent='…';try{await pushAtivar()}catch(_){t.disabled=false;t.textContent='Ativar'}}
-  else{try{const st=await pushEstado();if(st==='on')await pushDesativar();else if(st==='off')await pushAtivar();else rPush()}
+  else{try{const st=await pushEstado();if(st==='app'){abrirAjustesApp();return}if(st==='on')await pushDesativar();else if(st==='off')await pushAtivar();else rPush()}
     catch(err){pushErro(err);rPush()}}});
 function pushErro(err){try{const c=$('#pushC');if(!c)return;c.hidden=false;
   c.innerHTML=`<div class="pushc"><svg class="ic"><use href="#i-bell"/></svg><div><b>Não deu para ligar agora</b><small>${esc(String(err&&err.message||err||'erro'))}</small></div><button class="btn" data-pushon="1">Tentar de novo</button></div>`}catch(_){}}
