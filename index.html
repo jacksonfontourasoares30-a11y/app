@@ -1332,7 +1332,7 @@ I.grain=rn(160,160,(d,i)=>{const v=128+(Math.random()+Math.random()+Math.random(
 return I}
 
 let onbP=0,onbN='',onbC='',onbM='',sessPronta=false;
-function onbPassos(){let app=false,pz=false;try{app=new URLSearchParams(location.search).has('fcm')||!!localStorage.getItem('fcmToken')}catch(_){}try{pz=(app?('Notification' in window):(typeof pushOk==='function'&&pushOk()))&&Notification.permission!=='granted'}catch(_){}return pz?3:2}
+function onbPassos(){let app=false,pz=false;try{app=new URLSearchParams(location.search).has('fcm')||!!localStorage.getItem('fcmToken')||emApp()}catch(_){}try{pz=(app?('Notification' in window):(typeof pushOk==='function'&&pushOk()))&&Notification.permission!=='granted'}catch(_){}return pz?3:2}
 function onbIni(){let ok=false;try{ok=localStorage.getItem('onbOk')==='1'}catch(_){ok=true}if(ok)return;onbN=me;onbC=cong;let ld=false;try{ld=localStorage.getItem('onbLider')==='1'}catch(_){}onbM=ld?'esp':'';const el=document.createElement('div');el.id='onb';document.body.append(el);onbR();if(ld){if(sessPronta)onbLidChk();setTimeout(()=>{if(onbM==='esp'){try{localStorage.removeItem('onbLider')}catch(_){}onbM='';onbR()}},20000)}}
 function onbLogo(){const P=AD_P;return `<svg class="onbl" viewBox="0 0 1028 619" aria-hidden="true"><defs><linearGradient id="onbG" x1="380" y1="0" x2="720" y2="619" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f7d77e"/><stop offset=".45" stop-color="#e2b23e"/><stop offset="1" stop-color="#c28d22"/></linearGradient></defs><path fill="#fff" fill-rule="evenodd" d="${P.A}"/><path fill="#fff" fill-rule="evenodd" d="${P.D}"/><path fill="url(#onbG)" fill-rule="evenodd" d="${P.flame}"/></svg>`}
 async function onbGoogle(){try{localStorage.setItem('onbLider','1');localStorage.setItem('voltar','admin')}catch(_){}
@@ -1358,7 +1358,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('[data-onb]
   if(t.dataset.pula){onbN='';onbP++;onbR();return}
   if(t.dataset.onb)return onbAv();
   if(t.dataset.onbfim){try{localStorage.setItem('pushFechado','1')}catch(_){}return onbFim()}
-  if(t.dataset.onbpush){t.disabled=true;t.textContent='Aguarde…';cong=onbC;try{if(FCM)await Notification.requestPermission();else await pushAtivar()}catch(_){}onbFim()}});
+  if(t.dataset.onbpush){t.disabled=true;t.textContent='Aguarde…';cong=onbC;try{if(FCM||emApp())await Notification.requestPermission();else await pushAtivar()}catch(_){}onbFim()}});
 setTimeout(onbIni,0);
 /* ===== iPhone: instalar na tela de início ===== */
 const ehIOS=()=>{try{return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}catch(_){return false}};
@@ -1387,6 +1387,8 @@ try{const q=new URLSearchParams(location.search);const t=q.get('fcm');
     try{history.replaceState(null,'',r)}catch(_){}}
   else{try{FCM=localStorage.getItem('fcmToken')||null}catch(_){}}}catch(_){}
 const ehAppLoja=()=>!!FCM;
+function emApp(){if(FCM)return true;let r=false;try{r=/^android-app:\/\/br\.com\.adcarlosbarbosa\.app/.test(document.referrer||'');if(r)sessionStorage.setItem('emApp','1');else r=sessionStorage.getItem('emApp')==='1'}catch(_){}return r}
+try{emApp()}catch(_){}
 async function fcmSalvar(){if(!FCM||typeof SB==='undefined')return;
   try{await SB.rpc('fcm_inscrever',{p_token:FCM,p_cong:cong||''})}catch(_){}}
 async function fcmLimparWeb(){try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();
@@ -1945,9 +1947,9 @@ const pushOk=()=>typeof SB!=='undefined'&&'serviceWorker' in navigator&&'PushMan
 let pushSub=null,pushPub=null;
 const b64u=s=>{const b=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))};
 async function pushChave(){if(pushPub)return pushPub;const r=await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"chave":1}'});pushPub=(await r.json()).pub;return pushPub}
-async function pushEstado(){if(ehAppLoja())return'app';if(!pushOk())return'nao';try{const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()}catch(_){}return pushSub&&Notification.permission==='granted'?'on':Notification.permission==='denied'?'bloq':'off'}
-async function pushSalvar(){if(FCM){fcmSalvar();return}if(!pushSub)return;const j=pushSub.toJSON();await SB.rpc('push_inscrever',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_cong:cong||''})}
-async function pushAtivar(){if(!pushOk())return false;const p=await Notification.requestPermission();if(p!=='granted'){rPush();return false}
+async function pushEstado(){if(ehAppLoja()||emApp())return'app';if(!pushOk())return'nao';try{const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()}catch(_){}return pushSub&&Notification.permission==='granted'?'on':Notification.permission==='denied'?'bloq':'off'}
+async function pushSalvar(){if(FCM){fcmSalvar();return}if(emApp())return;if(!pushSub)return;const j=pushSub.toJSON();await SB.rpc('push_inscrever',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_cong:cong||''})}
+async function pushAtivar(){if(emApp()){try{await Notification.requestPermission()}catch(_){}return false}if(!pushOk())return false;const p=await Notification.requestPermission();if(p!=='granted'){rPush();return false}
   const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(await pushChave())});await pushSalvar();rPush();return true}
 async function pushDesativar(){if(pushSub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}try{await pushSub.unsubscribe()}catch(_){}pushSub=null}rPush()}
 let pushFix=false;async function pushCorrige(){if(pushFix||!pushSub)return;pushFix=true;const pub=await pushChave();if(!pub)return;const k=pushSub.options&&pushSub.options.applicationServerKey;const kb=k?btoa(String.fromCharCode(...new Uint8Array(k))).replace(/\+/g,'-').replace(/\//g,'_').replace(/=+$/,''):'';if(kb!==pub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}await pushSub.unsubscribe();const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(pub)})}await pushSalvar()}
