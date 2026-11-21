@@ -542,6 +542,19 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .orc .ot{flex:1}.orc b{display:block;font:800 17px Archivo,system-ui;letter-spacing:-.01em}.orc small{display:block;font-size:13.5px;line-height:1.35;color:rgb(255 255 255/.82);margin-top:2px}
 .orc .ob{flex:none;border-radius:12px;padding:9px 13px;background:#d9a52b;color:#0b2160;font:800 13.5px Manrope,system-ui;white-space:nowrap}
 @media(max-width:380px){.orc{gap:11px;padding:14px}.orc .oi{width:40px;height:40px}.orc .ob{padding:8px 10px}}
+.onbl{display:block;width:118px;height:auto;margin:22px auto 0;filter:drop-shadow(0 8px 22px rgb(0 0 0/.35))}
+#onb .esc{display:flex;gap:14px;align-items:center;width:100%;text-align:left;background:#ffffff12;border:2px solid #ffffff24;border-radius:20px;padding:18px 16px;color:#fff;cursor:pointer;font:inherit}
+#onb .esc:active{background:#d9a52b26;border-color:#d9a52b}
+#onb .esc .ei{width:52px;height:52px;border-radius:16px;flex:none;display:grid;place-items:center;background:#ffffff18}
+#onb .esc .ei .ic{width:26px;height:26px;color:#f3c65a}
+#onb .esc.ld .ei{background:#d9a52b}#onb .esc.ld .ei .ic{color:#0b2160}
+#onb .esc span.tx{flex:1}#onb .esc b{display:block;font:800 18px Archivo,system-ui}#onb .esc small{display:block;font-weight:600;font-size:13.5px;opacity:.78;line-height:1.35;margin-top:3px}
+#onb .esc .ch{width:18px;height:18px;opacity:.7}
+#onb .gtag{display:inline-flex;align-items:center;gap:6px;margin-top:8px;background:#fff;color:#1f2937;border-radius:999px;padding:4px 10px 4px 6px;font:800 12px Manrope,system-ui}
+#onb .gtag i{width:16px;height:16px;border-radius:50%;background:conic-gradient(#ea4335 0 25%,#fbbc05 0 50%,#34a853 0 75%,#4285f4 0)}
+#onb .nau{width:84px;height:84px;border-radius:26px;margin:6px auto 4px;display:grid;place-items:center;background:#ffffff14;border:2px solid #ffffff22}#onb .nau .ic{width:40px;height:40px;color:#f3c65a}
+#onb .mail{background:#ffffff14;border-radius:14px;padding:12px;text-align:center;font-weight:800;word-break:break-all}
+#onb .gir{width:44px;height:44px;margin:20px auto;border-radius:50%;border:4px solid #ffffff2a;border-top-color:#d9a52b;animation:onbGir 1s linear infinite}@keyframes onbGir{to{transform:rotate(360deg)}}
 </style>
 </head>
 <body>
@@ -839,7 +852,7 @@ async function carregarSessao(){eu={email:null,nome:'',papel:null};
   try{const {data:{session}}=await SB.auth.getSession();
     if(session&&session.user){eu.email=String(session.user.email||'').toLowerCase();eu.nome=(session.user.user_metadata&&(session.user.user_metadata.full_name||session.user.user_metadata.name))||eu.email;
       const r=await SB.from('equipe').select('*').eq('email',eu.email).maybeSingle();if(r.data){eu.papel=r.data.papel;eu.nome=r.data.nome||eu.nome;eu.dep=r.data.departamento||''}try{const tk=localStorage.getItem('fcmToken');if(tk)SB.rpc('fcm_email',{p_token:tk}).then(()=>{},()=>{})}catch(_){}}}catch(_){}
-  canEdit=!!eu.papel;papel=eu.papel||'lider'}
+  canEdit=!!eu.papel;papel=eu.papel||'lider';sessPronta=true;if(typeof onbLidChk==='function')onbLidChk()}
 async function entrarGoogle(){try{localStorage.setItem('voltar','admin')}catch(_){}
   await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname}})}
 async function sair(){await SB.auth.signOut();await carregarSessao();refreshAll();render()}
@@ -1318,18 +1331,29 @@ I.fog=c}
 I.grain=rn(160,160,(d,i)=>{const v=128+(Math.random()+Math.random()+Math.random()-1.5)*90;d[i]=d[i+1]=d[i+2]=v;d[i+3]=255});
 return I}
 
-let onbP=0,onbN='',onbC='';
+let onbP=0,onbN='',onbC='',onbM='',sessPronta=false;
 function onbPassos(){let app=false,pz=false;try{app=new URLSearchParams(location.search).has('fcm')||!!localStorage.getItem('fcmToken')}catch(_){}try{pz=(app?('Notification' in window):(typeof pushOk==='function'&&pushOk()))&&Notification.permission!=='granted'}catch(_){}return pz?3:2}
-function onbIni(){let ok=false;try{ok=localStorage.getItem('onbOk')==='1'}catch(_){ok=true}if(ok)return;onbN=me;onbC=cong;const el=document.createElement('div');el.id='onb';document.body.append(el);onbR()}
-function onbR(){const el=$('#onb');if(!el)return;const N=onbPassos(),dots=`<div class="stp">${Array.from({length:N},(_,i)=>`<i class="${i===onbP?'on':''}"></i>`).join('')}</div>`,tp=(t,h,p)=>`<div class="tp"><small>PASSO ${onbP+1} DE ${N}</small><h2>${h}</h2><p>${p}</p></div>`;
+function onbIni(){let ok=false;try{ok=localStorage.getItem('onbOk')==='1'}catch(_){ok=true}if(ok)return;onbN=me;onbC=cong;let ld=false;try{ld=localStorage.getItem('onbLider')==='1'}catch(_){}onbM=ld?'esp':'';const el=document.createElement('div');el.id='onb';document.body.append(el);onbR();if(ld){if(sessPronta)onbLidChk();setTimeout(()=>{if(onbM==='esp'){try{localStorage.removeItem('onbLider')}catch(_){}onbM='';onbR()}},20000)}}
+function onbLogo(){const P=AD_P;return `<svg class="onbl" viewBox="0 0 1028 619" aria-hidden="true"><defs><linearGradient id="onbG" x1="380" y1="0" x2="720" y2="619" gradientUnits="userSpaceOnUse"><stop offset="0" stop-color="#f7d77e"/><stop offset=".45" stop-color="#e2b23e"/><stop offset="1" stop-color="#c28d22"/></linearGradient></defs><path fill="#fff" fill-rule="evenodd" d="${P.A}"/><path fill="#fff" fill-rule="evenodd" d="${P.D}"/><path fill="url(#onbG)" fill-rule="evenodd" d="${P.flame}"/></svg>`}
+async function onbGoogle(){try{localStorage.setItem('onbLider','1');localStorage.setItem('voltar','admin')}catch(_){}
+  try{await SB.auth.signInWithOAuth({provider:'google',options:{redirectTo:location.origin+location.pathname,queryParams:{prompt:'select_account'}}})}catch(_){try{localStorage.removeItem('onbLider')}catch(_){}onbM='';onbR()}}
+function onbLidChk(){let f=false;try{f=localStorage.getItem('onbLider')==='1'}catch(_){}if(!f||!$('#onb'))return;try{localStorage.removeItem('onbLider')}catch(_){}
+  if(eu.papel){onbN=me||eu.nome||'';onbC=cong||'';onbM='m';location.hash='admin';if(onbPassos()===3){onbP=2;onbR()}else onbFim();return}
+  onbM=eu.email?'nl':'';onbR()}
+function onbR(){const el=$('#onb');if(!el)return;
+  if(onbM===''){el.innerHTML=onbLogo()+`<div class="tp"><h2>Seja bem-vindo!</h2><p>Como você vai usar o app?</p></div><div class="bd"><button class="esc" data-onbm="m"><span class="ei">${IC('users')}</span><span class="tx"><b>Sou membro</b><small>Cultos, escalas, avisos e eventos da igreja.</small></span><svg class="ic ch"><use href="#i-chev"/></svg></button><button class="esc ld" data-onbm="l"><span class="ei">${IC('shield')}</span><span class="tx"><b>Sou da liderança</b><small>Pastor, líderes de departamento e equipe.</small><span class="gtag"><i></i>Entrar com Google</span></span><svg class="ic ch"><use href="#i-chev"/></svg></button></div><div class="ft"><p class="nt">Na dúvida, escolha <b>Sou membro</b>.</p></div>`;return}
+  if(onbM==='esp'){el.innerHTML=onbLogo()+`<div class="tp"><small>LIDERANÇA</small><h2>Entrando…</h2><p>Conferindo o seu e-mail.</p></div><div class="gir"></div>`;return}
+  if(onbM==='nl'){el.innerHTML=`<div class="tp"><small>LIDERANÇA</small><h2>E-mail ainda<br>não liberado</h2><p>Este e-mail ainda não foi cadastrado pelo pastor.</p></div><div class="bd"><div class="nau">${IC('shield')}</div><div class="mail">${esc(eu.email||'')}</div><p class="nt" style="font-size:13.5px">Peça ao pastor ou à Mídia para liberar seu e-mail. Enquanto isso, você pode usar o app como membro.</p></div><div class="ft"><button class="go" data-onbm="m">Entrar como membro</button><button class="sk" data-onbm="l2">Tentar com outro e-mail</button></div>`;return}const N=onbPassos(),dots=`<div class="stp">${Array.from({length:N},(_,i)=>`<i class="${i===onbP?'on':''}"></i>`).join('')}</div>`,tp=(t,h,p)=>`<div class="tp"><small>PASSO ${onbP+1} DE ${N}</small><h2>${h}</h2><p>${p}</p></div>`;
   if(onbP===0)el.innerHTML=dots+tp(0,'Seja bem-vindo!<br>Como você se chama?','Assim o app mostra as escalas em que você está.')+`<div class="bd"><input id="onbN" maxlength="60" autocomplete="name" placeholder="Seu nome, como aparece na escala" value="${esc(onbN)}"><p class="nt">Fica guardado só no seu celular.</p></div><div class="ft"><button class="go" id="onbGo" data-onb="1"${String(onbN||'').trim().length>=2?'':' disabled'}>Continuar</button></div>`;
   else if(onbP===1){const cs=['',...(cfg().congs||[])];el.innerHTML=dots+tp(1,'Qual é a sua<br>congregação?','O app mostra primeiro os cultos e as escalas dela.')+`<div class="bd">${cs.map(n=>`<button class="cgo${n===onbC?' on':''}" data-onbc="${esc(n)}"><i style="background:${n?ccol(n):'#d9a52b'}"></i>${n?esc(n):'Todas as congregações'}<b>✓</b></button>`).join('')}</div><div class="ft"><button class="go" data-onb="1">Continuar</button></div>`}
   else el.innerHTML=dots+tp(2,'Receba as novidades','Escalas, avisos e eventos chegam direto no seu celular.')+`<div class="bd"><div class="bel">${IC('bell')}</div><p class="nt" style="font-size:13.5px">Na próxima tela, toque em <b>Permitir</b>.${typeof ehIOS==='function'&&ehIOS()?' No iPhone é preciso iOS 16.4 ou mais novo.':''}</p></div><div class="ft"><button class="go" data-onbpush="1">Ativar notificações</button><button class="sk" data-onbfim="1">Agora não</button></div>`;
   const i=$('#onbN');if(i){const ok=()=>i.value.trim().length>=2;i.addEventListener('input',()=>{const g=$('#onbGo');if(g)g.disabled=!ok()});i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(ok())onbAv()}})}}
 function onbAv(){if(onbP===0){const i=$('#onbN');onbN=i?i.value.trim():onbN;if(onbN.length<2){if(i)i.focus();return}}onbP++;if(onbP>=onbPassos())onbFim();else onbR()}
 function onbFim(){me=onbN||me;cong=onbC;try{localStorage.setItem('meuNome',me);localStorage.setItem('minhaCong',cong);localStorage.setItem('onbOk','1')}catch(_){}
-  const b=$('#busca');if(b)b.value=me;render();if(FCM)fcmSalvar();else if(typeof pushSub!=='undefined'&&pushSub)pushSalvar().catch(()=>{});const el=$('#onb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),450)}}
-document.addEventListener('click',async e=>{const t=e.target.closest('[data-onb],[data-onbc],[data-onbpush],[data-onbfim]');if(!t||!t.closest('#onb'))return;e.preventDefault();
+  const b=$('#busca');if(b)b.value=me;render();if(FCM)fcmSalvar().then(()=>{if(eu&&eu.email)SB.rpc('fcm_email',{p_token:FCM}).then(()=>{},()=>{})});else if(typeof pushSub!=='undefined'&&pushSub)pushSalvar().catch(()=>{});const el=$('#onb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),450)}}
+document.addEventListener('click',async e=>{const t=e.target.closest('[data-onb],[data-onbc],[data-onbpush],[data-onbfim],[data-onbm]');if(!t||!t.closest('#onb'))return;e.preventDefault();
+  if(t.dataset.onbm){const m=t.dataset.onbm;if(m==='m'){if(onbM==='nl'){try{await SB.auth.signOut()}catch(_){}if(location.hash==='#admin')location.hash='';}onbM='m';onbP=0;onbR();return}
+    t.disabled=true;if(m==='l2'){try{await SB.auth.signOut()}catch(_){}}onbGoogle();return}
   if(t.dataset.onbc!==undefined){onbC=t.dataset.onbc;$$('#onb .cgo').forEach(x=>x.classList.toggle('on',x===t));return}
   if(t.dataset.pula){onbN='';onbP++;onbR();return}
   if(t.dataset.onb)return onbAv();
