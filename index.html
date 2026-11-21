@@ -537,6 +537,11 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 #lwel h2{font:800 27px/1.18 Manrope,system-ui,sans-serif;margin:24px 0 0;color:#fff}#lwel p{font:600 15px/1.5 Manrope,system-ui,sans-serif;opacity:.92;margin:12px 0 4px}
 #lwel .lws{display:flex;gap:12px;align-items:center;margin-top:14px;font:700 14.5px Manrope,system-ui,sans-serif}#lwel .lws span{width:28px;height:28px;border-radius:50%;background:#ffffff2a;display:grid;place-items:center;flex:none;font:800 13px Manrope,system-ui,sans-serif}
 #lwel button{border:0;border-radius:16px;min-height:54px;background:#d9a52b;color:#0b2160;font:800 16px Manrope,system-ui,sans-serif;cursor:pointer}
+.orc{display:flex;align-items:center;gap:14px;margin:14px 0;padding:16px;border-radius:var(--r);background:linear-gradient(150deg,#1747c9,#0b2160);color:#fff;text-decoration:none;box-shadow:var(--sh)}
+.orc .oi{width:46px;height:46px;border-radius:14px;flex:none;display:grid;place-items:center;background:rgb(255 255 255/.14)}.orc .oi .ic{width:24px;height:24px;color:#f3c75a}
+.orc .ot{flex:1}.orc b{display:block;font:800 17px Archivo,system-ui;letter-spacing:-.01em}.orc small{display:block;font-size:13.5px;line-height:1.35;color:rgb(255 255 255/.82);margin-top:2px}
+.orc .ob{flex:none;border-radius:12px;padding:9px 13px;background:#d9a52b;color:#0b2160;font:800 13.5px Manrope,system-ui;white-space:nowrap}
+@media(max-width:380px){.orc{gap:11px;padding:14px}.orc .oi{width:40px;height:40px}.orc .ob{padding:8px 10px}}
 </style>
 </head>
 <body>
@@ -582,6 +587,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
     <div class="hero" id="hero"></div>
     <div id="pushC" hidden></div>
     <div id="minha"></div>
+    <a class="orc" href="#oracao" hidden><span class="oi"><svg class="ic"><use href="#i-heart"/></svg></span><span class="ot"><b>Precisa de oração?</b><small>Envie seu pedido. O pastor recebe na hora.</small></span><span class="ob">Enviar pedido</span></a>
     <div class="h2" id="destH" hidden>Destaques</div>
     <div class="sto" id="sto" hidden></div>
     <div class="ftabs" id="ftabs"><button class="on" data-ff="all">Para você</button><button data-ff="aviso">Avisos</button><button data-ff="evento">Eventos</button></div>
@@ -1822,7 +1828,7 @@ function rHead(){const c=cfg();$('#nome').textContent=c.nome;document.title=c.no
   $('#cnome').textContent=cong||'Todas';setCapa();const hh=new Date().getHours();{const g=hh<12?'Bom dia':hh<18?'Boa tarde':'Boa noite';const ws=me.trim().split(/\s+/).filter(w=>w.length>2&&!/^(pr|pb|dc|ev|pra|irm[aã]?|miss)\.?$/i.test(w));const nm=ws[0]?ws[0][0].toUpperCase()+ws[0].slice(1).toLowerCase():'';$('#hi').textContent=nm?`${g}, ${nm}!`:g+'!'}$('#hoje').textContent=cap(now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
   $$('.selC').forEach(sl=>{const v0=sl.value;sl.innerHTML=(sl.dataset.all?['Todas',...c.congs]:c.congs).map(x=>`<option>${esc(x)}</option>`).join('');if(v0&&[...sl.options].some(o=>o.value===v0))sl.value=v0});
   const f=$('#fig');if(f.hidden||!f.dataset.filled){f.elements.fotos.value=JSON.stringify(c.fotos||{});rFotL();f.elements.nome.value=c.nome;f.elements.aoVivo.value=c.aoVivo||'';f.elements.congs.value=c.congs.join('\n');f.elements.info.value=Object.entries(c.info||{}).map(([k,v])=>[k,v.end||'',v.resp||''].join('; ')).join('\n');f.elements.codigo.value=c.codigo||'';f.elements.prog.value=(c.prog||[]).map(x=>[x.cong,DN[x.dia],x.hora,x.nome].join('; ')).join('\n');f.dataset.filled='1'}}
-function render(){if(loaded)hideSplash();rHead();rBadge();const v=cur();$('.app').classList.toggle('home',v==='inicio');$$('main section').forEach(s=>s.classList.toggle('on',s.id===v));$$('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v||(a.dataset.v==='mais'&&['igreja','programacao','oracao','admin','avisos','eventos','calendario'].includes(v))));R[v]()}
+function render(){if(loaded)hideSplash();rHead();orcUpd();rBadge();const v=cur();$('.app').classList.toggle('home',v==='inicio');$$('main section').forEach(s=>s.classList.toggle('on',s.id===v));$$('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v||(a.dataset.v==='mais'&&['igreja','programacao','oracao','admin','avisos','eventos','calendario'].includes(v))));R[v]()}
 addEventListener('hashchange',()=>{$('#modal').classList.remove('on');render();scrollTo(0,0)});
 
 function openEv(id,dt){const b=S.eventos.find(x=>x.id===id);if(!b)return;const e=dt?{...b,data:dt}:b;
@@ -1853,10 +1859,19 @@ function openAus(id){const s=S.escalas.find(x=>x.id===id);if(!s)return;
       if(r==='demo'){(S.ausencias=S.ausencias||[]).push({nome:f.elements.nome.value.trim(),itens:[{escala:s.id,culto:s.culto,data:s.data,cong:s.cong,motivo:f.elements.motivo.value.trim(),quando:new Date().toISOString()}]})}
       m.textContent='Aviso enviado. A liderança vai entrar em contato.';setTimeout(()=>{closeM();rEscalas()},1400)}
     catch(err){m.textContent=err&&(err.code==='invalid_argument'||err.code==='nouser')?'Seu acesso não permite enviar. Fale direto com a liderança.':'Não deu certo. Tente de novo.'}})}
+
+var orcSrv={};
+function orcKey(){return String(me||'').trim().toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/\s+/g,' ')}
+async function orcHash(n){const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode('adcb-oracao|'+n));return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('')}
+function orcFeito(){try{return localStorage.getItem('oracaoFeita')==='1'}catch(_){return false}}
+function orcUpd(){const c=$('.orc');if(!c)return;if(orcFeito()){c.hidden=true;return}const n=orcKey();if(!n){c.hidden=false;return}
+  if(orcSrv[n]===undefined){orcSrv[n]='?';orcHash(n).then(h=>SB.rpc('oracao_ja',{p_chave:h})).then(r=>{orcSrv[n]=!!(r&&r.data===true);if(orcSrv[n])try{localStorage.setItem('oracaoFeita','1')}catch(_){}orcUpd()},()=>{orcSrv[n]=false;orcUpd()})}
+  c.hidden=orcSrv[n]!==false}
+function orcMarcar(){try{localStorage.setItem('oracaoFeita','1')}catch(_){}const n=orcKey();if(n){orcSrv[n]=true;orcHash(n).then(h=>SB.rpc('oracao_marcar',{p_chave:h})).catch(()=>{})}orcUpd()}
 $('#for').addEventListener('submit',async ev=>{ev.preventDefault();const f=ev.target,m=f.querySelector('.msg'),b=f.querySelector('.btn');b.disabled=true;m.textContent='Enviando…';
   try{const it={texto:f.elements.texto.value.trim(),nome:f.elements.nome.value.trim(),cong:f.elements.cong.value,quando:new Date().toISOString()};const r=await addMine('oracoes',it,it.nome);
     if(r==='demo')(S.oracoes=S.oracoes||[]).push({nome:it.nome,itens:[it]});
-    f.elements.texto.value='';m.textContent='';$('#orOk').innerHTML=`<div class="okmsg">${IC('heart')}<b>Pedido recebido!</b><div style="color:var(--mut);font-weight:600">Os pastores vão orar por você. Deus abençoe.</div></div>`;setTimeout(()=>{const o=$('#orOk');if(o)o.innerHTML=''},12000)}
+    orcMarcar();f.elements.texto.value='';m.textContent='';$('#orOk').innerHTML=`<div class="okmsg">${IC('heart')}<b>Pedido recebido!</b><div style="color:var(--mut);font-weight:600">Os pastores vão orar por você. Deus abençoe.</div></div>`;setTimeout(()=>{const o=$('#orOk');if(o)o.innerHTML=''},12000)}
   catch(err){m.textContent=err&&(err.code==='invalid_argument'||err.code==='nouser')?'Seu acesso não permite enviar por aqui.':'Não deu certo. Tente de novo.'}
   b.disabled=false});
 function closeM(){$('#modal').classList.remove('on')}
