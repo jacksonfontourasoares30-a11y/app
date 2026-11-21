@@ -89,6 +89,8 @@ header h1{white-space:nowrap}@media(max-width:400px){header h1{font-size:17px}}.
 .opt .cdot{width:10px;height:10px;margin-right:10px}.opt .on-l{display:flex;align-items:center}
 .cleg{display:flex;flex-wrap:wrap;gap:6px 14px;margin:10px 2px 0;font:700 12.5px Manrope,system-ui,sans-serif;color:var(--mut)}.cleg span{display:inline-flex;align-items:center;gap:6px}
 .cbtn .cdot{width:9px;height:9px;box-shadow:0 0 0 2px #ffffff40}
+
+.cbtn .ct{display:flex;flex-direction:column;align-items:flex-start;line-height:1.08;min-width:0;text-align:left}.cbtn .ct small{font:700 9.5px Manrope,system-ui,sans-serif;opacity:.72;letter-spacing:.07em;text-transform:uppercase}.cbtn .ic.pinf{width:18px;height:18px;fill:#ffd23f;stroke:none;opacity:1}.home .gc .cbtn{min-height:38px;padding:0 12px 0 10px;gap:7px}.home .gc .cbtn .ic.pinf{width:17px;height:17px}
 /* tela de abertura */
 #splash{position:fixed;inset:0;z-index:200;background:#01040d;transition:opacity .5s ease,visibility .5s}#splash.out{opacity:0;visibility:hidden}#splash canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 .dots{display:flex;gap:6px;justify-content:center;margin-top:10px}
@@ -549,7 +551,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 <button class="bell tbtn" id="tema" aria-label="Tema: automático"><svg class="ic"><use href="#i-auto"/></svg></button><a class="bell" href="#avisos" aria-label="Avisos"><svg class="ic"><use href="#i-bell"/></svg><i id="badge"></i></a>
 </header>
 <div class="gc"><div class="greet"><h2 id="hi">Olá!</h2><p id="hoje"></p></div>
-<button class="cbtn" id="cbtn" aria-label="Escolher congregação"><svg class="ic"><use href="#i-church"/></svg><span id="cnome">Todas as congregações</span><svg class="ic chev"><use href="#i-down"/></svg></button></div>
+<button class="cbtn" id="cbtn" aria-label="Escolher congregação"><svg class="ic pinf" viewBox="0 0 24 24"><path d="M12 22s-7.5-6.5-7.5-12.2a7.5 7.5 0 0 1 15 0C19.5 15.5 12 22 12 22zm0-9.2a3 3 0 1 0 0-6 3 3 0 0 0 0 6z" fill-rule="evenodd"/></svg><span class="ct"><small>Congregação</small><span id="cnome">Todas</span></span><svg class="ic chev"><use href="#i-down"/></svg></button></div>
 </div>
 <main>
   <section id="inicio">
@@ -1534,7 +1536,7 @@ function rHead(){const c=cfg();$('#nome').textContent=c.nome;document.title=c.no
     const m=c.congs.find(x=>ncg(x)===ncg(cong));
     if(m){if(m!==cong){cong=m;try{localStorage.setItem('minhaCong',cong)}catch(_){}}}
     else{cong='';try{localStorage.removeItem('minhaCong')}catch(_){}}}
-  $('#cnome').innerHTML=(cong?`<i class="cdot" style="--cc:${ccol(cong)};margin-right:6px"></i>`:'')+esc(cong||'Todas');setCapa();const hh=new Date().getHours();{const g=hh<12?'Bom dia':hh<18?'Boa tarde':'Boa noite';const ws=me.trim().split(/\s+/).filter(w=>w.length>2&&!/^(pr|pb|dc|ev|pra|irm[aã]?|miss)\.?$/i.test(w));const nm=ws[0]?ws[0][0].toUpperCase()+ws[0].slice(1).toLowerCase():'';$('#hi').textContent=nm?`${g}, ${nm}!`:g+'!'}$('#hoje').textContent=cap(now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
+  $('#cnome').textContent=cong||'Todas';setCapa();const hh=new Date().getHours();{const g=hh<12?'Bom dia':hh<18?'Boa tarde':'Boa noite';const ws=me.trim().split(/\s+/).filter(w=>w.length>2&&!/^(pr|pb|dc|ev|pra|irm[aã]?|miss)\.?$/i.test(w));const nm=ws[0]?ws[0][0].toUpperCase()+ws[0].slice(1).toLowerCase():'';$('#hi').textContent=nm?`${g}, ${nm}!`:g+'!'}$('#hoje').textContent=cap(now.toLocaleDateString('pt-BR',{weekday:'long',day:'numeric',month:'long'}));
   $$('.selC').forEach(sl=>{const v0=sl.value;sl.innerHTML=(sl.dataset.all?['Todas',...c.congs]:c.congs).map(x=>`<option>${esc(x)}</option>`).join('');if(v0&&[...sl.options].some(o=>o.value===v0))sl.value=v0});
   const f=$('#fig');if(f.hidden||!f.dataset.filled){f.elements.fotos.value=JSON.stringify(c.fotos||{});rFotL();f.elements.nome.value=c.nome;f.elements.aoVivo.value=c.aoVivo||'';f.elements.congs.value=c.congs.join('\n');f.elements.info.value=Object.entries(c.info||{}).map(([k,v])=>[k,v.end||'',v.resp||''].join('; ')).join('\n');f.elements.codigo.value=c.codigo||'';f.elements.prog.value=(c.prog||[]).map(x=>[x.cong,DN[x.dia],x.hora,x.nome].join('; ')).join('\n');f.dataset.filled='1'}}
 function render(){if(loaded)hideSplash();rHead();rBadge();const v=cur();$('.app').classList.toggle('home',v==='inicio');$$('main section').forEach(s=>s.classList.toggle('on',s.id===v));$$('nav a').forEach(a=>a.classList.toggle('on',a.dataset.v===v||(a.dataset.v==='mais'&&['igreja','programacao','oracao','admin','avisos','eventos','calendario'].includes(v))));R[v]()}
