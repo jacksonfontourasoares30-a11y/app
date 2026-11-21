@@ -195,6 +195,10 @@ html body nav a.on svg{width:52px!important;height:52px!important;padding:13px!i
 .hwrap header{gap:8px}.hwrap header>img{width:52px!important;height:auto!important}.hwrap header>div{min-width:0;flex:1}.hwrap header p{white-space:nowrap}.hwrap header h1{font-size:16px!important}
 .hwrap header #tema{display:inline-grid!important;place-items:center;flex:none;width:38px!important;height:38px!important;border-radius:19px!important;background:#ffffff26!important;border:1px solid #ffffff50!important;color:#fff!important}
 .hwrap header .bell+.bell{margin-left:0!important}
+/* telas internas: sem as faixas laterais, azul continuo e tracinho amarelo no titulo */
+#agenda .agh,#escalas .ph,#mais .ph{background:linear-gradient(180deg,#2259da 0%,#2c66e3 55%,#3b7cf0 100%)!important}
+#agenda .agh::before,#agenda .agh::after,#escalas .ph::before,#escalas .ph::after,#mais .ph::before,#mais .ph::after{display:none!important}
+#agenda .agh h2::after,#escalas .ph h2::after,#mais .ph h2::after{content:"";display:block;width:44px;height:5px;border-radius:3px;background:linear-gradient(90deg,#ffc928,#f5a700);margin-top:8px}
 /* luz na chama do logo */
 .hwrap header{position:relative}
 .chama{position:absolute;pointer-events:none;z-index:2;-webkit-mask:var(--chama) center/100% 100% no-repeat;mask:var(--chama) center/100% 100% no-repeat;background:linear-gradient(110deg,transparent 0 42%,rgba(255,246,214,.6) 46%,#fff 50%,rgba(255,246,214,.6) 54%,transparent 58% 100%) 0 0/250% 100% no-repeat;background-position:130% 0;animation:chamaBrilho 5s cubic-bezier(.45,0,.25,1) infinite 1s}
