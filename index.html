@@ -166,6 +166,37 @@ textarea{min-height:96px;resize:vertical}
 .hrow b{display:block;font:800 14.5px Manrope,system-ui;color:var(--ink)}
 .hrow small{display:block;font:700 12.5px Manrope,system-ui;color:var(--c)}
 .hrow .go{flex:none;background:linear-gradient(90deg,#ff7a1a,#ffb21e);color:#fff;font:800 12.5px Manrope,system-ui;border-radius:10px;padding:10px;text-decoration:none;white-space:nowrap}
+/* ===== outras telas no estilo do Inicio ===== */
+.app:not(.home) .hwrap{border-radius:0;padding-bottom:6px;background:linear-gradient(180deg,#1747c9 0%,#2259da 100%)}
+#agenda .agh,#escalas .ph,#mais .ph{position:relative;margin:-20px -16px 0;padding:14px 18px 62px;background:radial-gradient(90% 70% at 95% 0,#ffffff26,transparent 60%),linear-gradient(180deg,#2259da 0%,#3b7cf0 70%,#5a9cf8 100%);color:#fff;border-radius:0 0 30px 30px;isolation:isolate}
+#agenda .agh h2,#escalas .ph h2,#mais .ph h2{color:#fff;font-size:30px}
+#escalas .ph p,#mais .ph p{color:#ffffffd0}
+#agenda .agh::before,#agenda .agh::after,#escalas .ph::before,#escalas .ph::after,#mais .ph::before,#mais .ph::after{content:"";position:absolute;bottom:-34px;width:110px;height:40px;background:linear-gradient(90deg,#ffc928,#f5a700);z-index:-1;border-radius:4px}
+#agenda .agh::before,#escalas .ph::before,#mais .ph::before{left:-40px;transform:skewY(-26deg)}
+#agenda .agh::after,#escalas .ph::after,#mais .ph::after{right:-40px;transform:skewY(26deg)}
+#escalas .ph+*,#mais .ph+*{position:relative;z-index:2;margin-top:-46px!important}
+#agenda .agh *{color:#fff}
+#agenda .agh button{background:#ffffff26!important;border-color:#ffffff40!important}
+#agenda .agm{position:relative;z-index:2;margin:-46px 0 0!important;background:var(--card);border-radius:20px 20px 0 0;padding:10px 10px 2px}
+#agenda .agd{position:relative;z-index:2;margin-top:0!important;background:var(--card);border-radius:0 0 20px 20px;padding:4px 8px 12px;box-shadow:0 14px 30px -16px rgb(23 71 201/.5);margin-bottom:8px}
+#agenda .td.on{background:linear-gradient(165deg,#1747c9,#2a6ae6)!important;color:#fff!important}
+#agenda .td.on *{color:#fff!important}
+.chip.on{background:#1747c9!important;color:#fff!important;border-color:#1747c9!important}
+.eseg .on{color:#1747c9!important;box-shadow:inset 0 -3px 0 #ffc928}
+.lid{background:linear-gradient(90deg,#ff7a1a,#ffb21e)!important;color:#fff!important}
+.lid *{color:#fff!important}
+#escalas .btn:not(.gh){background:linear-gradient(90deg,#ff7a1a,#ffb21e);color:#fff}
+/* barra de baixo: branca, tela atual em bolinha laranja */
+html body nav div{background:light-dark(#fff,#111a31)!important;box-shadow:0 10px 30px -8px rgb(23 71 201/.35),0 0 0 1px var(--line)!important;overflow:visible!important}
+html body nav a{color:var(--mut)!important}
+html body nav a.on{color:var(--wine)!important;background:none!important}
+html body nav a.on svg{width:52px!important;height:52px!important;padding:13px!important;border-radius:26px!important;background:linear-gradient(135deg,#ff7a1a,#ffb21e)!important;stroke:#fff!important;transform:translateY(-18px)!important;box-shadow:0 10px 18px -6px rgb(255 122 26/.7),0 0 0 5px light-dark(#fff,#111a31);margin-bottom:-18px}
+/* topo: so o sino, escrito Avisos (tema foi para a tela Mais) */
+.hwrap header #tema{display:none!important}
+.hwrap header .bell:not(#tema){width:auto!important;padding:0 14px 0 10px!important;gap:6px;display:inline-flex!important;align-items:center;border-radius:22px!important;background:#ffffff26!important;border:1px solid #ffffff50!important;color:#fff!important;font:800 13px Manrope,system-ui}
+.hwrap header .bell:not(#tema)::after{content:"Avisos"}
+.hwrap header .bell i{background:#ffb21e!important;color:#0b2160!important}
+#temaM span{background:#334155}
 nav{position:fixed;bottom:max(12px,env(safe-area-inset-bottom));left:12px;right:12px;display:flex;justify-content:center;z-index:5;pointer-events:none}
 nav div{display:flex;max-width:536px;width:100%;background:light-dark(#ffffffeb,#111a31eb);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-radius:22px;box-shadow:0 10px 30px -10px rgb(11 33 96/.35),0 0 0 1px var(--line);padding:6px;pointer-events:auto}
 nav a{flex:1;min-height:56px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;font:700 11px Manrope,system-ui,sans-serif;color:var(--mut);text-decoration:none;border-radius:16px}
@@ -558,6 +589,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
       <a href="#oracao"><span><svg class="ic"><use href="#i-heart"/></svg></span>Oração</a>
       <a href="#calendario"><span><svg class="ic"><use href="#i-cal"/></svg></span>Calendário</a>
       <a href="#mais" id="pushM" data-push="1" hidden><span><svg class="ic"><use href="#i-bell"/></svg></span>Notificações<small id="pushMs" style="display:none">…</small></a>
+      <a href="#mais" id="temaM"><span><svg class="ic"><use href="#i-sun"/></svg></span>Tema<small id="temaMs">Claro</small></a>
     </div>
     <a class="lid" href="#admin"><svg class="ic"><use href="#i-shield"/></svg><div><b>Área da liderança</b><small>Publicar avisos, eventos e escalas</small></div></a>
     <button class="shr" data-shareapp="1"><svg class="ic"><use href="#i-chat"/></svg><div><b>Compartilhar o app</b><small>Envie o link pelo WhatsApp</small></div></button>
@@ -1278,8 +1310,8 @@ document.addEventListener('click',e=>{const b=e.target.closest('[data-wk]');if(b
 let carT=null;function carAuto(){clearInterval(carT);carT=setInterval(()=>{const c=$('#carr');if(!c||!c.children.length||c.children.length<2||document.hidden||!$('#inicio').classList.contains('on'))return;if(c.matches(':hover'))return;const w=c.firstElementChild.offsetWidth+10;const i=Math.round(c.scrollLeft/w);const n=(i+1)%c.children.length;const v=c.children[i]?.querySelector('video');if(v&&!v.paused&&!v.ended)return;c.scrollTo({left:n*w,behavior:'smooth'})},6000)}
 carAuto();['touchstart','pointerdown'].forEach(ev=>document.addEventListener(ev,e=>{if(e.target.closest('#carr'))carAuto()},{passive:true}));
 const TEMAS=['auto','light','dark'];let tema='light';try{tema=localStorage.getItem('tema')||'light'}catch(e){}
-function aplTema(){if(tema==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',tema);const b=$('#tema');if(b){b.innerHTML=`<svg class="ic"><use href="#i-${tema==='auto'?'auto':tema==='light'?'sun':'moon'}"/></svg>`;b.setAttribute('aria-label','Tema: '+(tema==='auto'?'automático':tema==='light'?'claro':'escuro'))}}
-aplTema();$('#tema').addEventListener('click',()=>{tema=TEMAS[(TEMAS.indexOf(tema)+1)%3];try{localStorage.setItem('tema',tema)}catch(e){}aplTema()});
+function aplTema(){if(tema==='auto')document.documentElement.removeAttribute('data-theme');else document.documentElement.setAttribute('data-theme',tema);const b=$('#tema');if(b){b.innerHTML=`<svg class="ic"><use href="#i-${tema==='auto'?'auto':tema==='light'?'sun':'moon'}"/></svg>`;b.setAttribute('aria-label','Tema: '+(tema==='auto'?'automático':tema==='light'?'claro':'escuro'))}const tm=$('#temaMs');if(tm)tm.textContent=tema==='auto'?'Automático':tema==='light'?'Claro':'Escuro';const tu=document.querySelector('#temaM use');if(tu)tu.setAttribute('href','#i-'+(tema==='auto'?'auto':tema==='light'?'sun':'moon'))}
+$('#temaM')&&$('#temaM').addEventListener('click',e=>{e.preventDefault();$('#tema').click()});aplTema();$('#tema').addEventListener('click',()=>{tema=TEMAS[(TEMAS.indexOf(tema)+1)%3];try{localStorage.setItem('tema',tema)}catch(e){}aplTema()});
 function carCur(){const c=$('#carr');if(!c||!c.children.length)return;const w=c.firstElementChild.offsetWidth+10;const i=Math.max(0,Math.min(c.children.length-1,Math.round(c.scrollLeft/(w||1))));[...c.children].forEach((x,k)=>x.classList.toggle('cur',k===i));$$('#dots i').forEach((d,k)=>d.classList.toggle('on',k===i))}
 $('#carr').addEventListener('scroll',carCur,{passive:true});
 $('#carr').addEventListener('click',e=>{const b=e.target.closest('.ban.pic');if(!b)return;const im=b.querySelector('img');if(!im)return;if(!b.classList.contains('cur')){b.scrollIntoView({behavior:'smooth',inline:'center',block:'nearest'});return}const v=document.createElement('div');v.className='viewer';v.innerHTML=`<img src="${im.src}" alt="${esc(im.alt||'')}"><button aria-label="Fechar">✕</button>`;v.onclick=()=>v.remove();document.body.append(v)});
