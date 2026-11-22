@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Privacidade · AD Carlos Barbosa</title>
+<meta name="description" content="Como o app da Assembleia de Deus de Carlos Barbosa cuida dos seus dados.">
+<meta name="theme-color" content="#1747c9">
+<link rel="icon" href="icon-192.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light dark;--blue:#1747c9;--navy:#0b2160;--gold:#d9a52b;--ink:light-dark(#0e1730,#eef2fb);--mut:light-dark(#4a5568,#a9b4cf);--bg:light-dark(#f3f5fa,#0a1022);--card:light-dark(#fbfbf8,#121a33);--line:light-dark(#e3e8f3,#22304f)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:500 16px/1.55 Manrope,system-ui,sans-serif}
+header{background:linear-gradient(160deg,#1747c9,#0b2160);color:#fff;padding:calc(22px + env(safe-area-inset-top)) 20px 56px}
+header a{color:#fff;text-decoration:none;font-weight:700;opacity:.9;display:inline-flex;align-items:center;gap:6px;font-size:15px}
+header small{display:block;margin-top:22px;color:#f3c65a;font:800 12px Manrope;letter-spacing:.14em;text-transform:uppercase}
+header h1{margin:6px 0 6px;font:800 30px/1.1 Archivo,system-ui,sans-serif}
+header p{margin:0;opacity:.85;font-size:15px}
+main{max-width:640px;margin:-34px auto 0;padding:0 14px 40px}
+.card{background:var(--card);border-radius:22px;padding:20px 20px;margin-bottom:14px;box-shadow:0 1px 2px rgb(14 23 48/.06),0 14px 34px -22px rgb(14 23 48/.35)}
+h2{margin:0 0 10px;font:800 19px/1.2 Archivo,system-ui,sans-serif;display:flex;align-items:center;gap:10px}
+h2 i{flex:none;width:30px;height:30px;border-radius:10px;background:light-dark(#e4ebfb,#1b2a55);color:var(--blue);display:grid;place-items:center;font:800 14px Archivo;font-style:normal}
+p{margin:0 0 8px}
+ul{margin:4px 0 0;padding:0;list-style:none;display:grid;gap:10px}
+li{padding:12px 14px;border:1px solid var(--line);border-radius:14px}
+li b{display:block}
+li span{color:var(--mut);font-size:14.5px}
+.who{display:inline-block;margin-top:6px;background:light-dark(#fff3d6,#2a2210);color:light-dark(#7a5200,#f3c65a);font-weight:800;font-size:12.5px;border-radius:999px;padding:3px 10px}
+.no li{display:flex;gap:10px;align-items:flex-start}
+.no li::before{content:"✕";flex:none;width:22px;height:22px;border-radius:50%;background:light-dark(#fbe3e1,#3a1512);color:#b3261e;display:grid;place-items:center;font-weight:800;font-size:12px;margin-top:1px}
+.mut{color:var(--mut);font-size:14.5px}
+a.mail{color:var(--blue);font-weight:800}
+footer{text-align:center;color:var(--mut);font-size:13px;padding:6px 0 30px}
+</style>
+</head>
+<body>
+<header>
+  <a href="./#mais">‹ Voltar ao app</a>
+  <small>Igreja Assembleia de Deus · Carlos Barbosa</small>
+  <h1>Privacidade e seus dados</h1>
+  <p>O que o app guarda, quem pode ver e por quanto tempo. Em palavras simples.</p>
+</header>
+<main>
+  <div class="card">
+    <h2><i>1</i>O que fica só no seu celular</h2>
+    <p>Seu nome, a congregação que você escolheu e o tema (claro ou escuro). Isso fica guardado apenas no seu celular, para o app achar as suas escalas e mostrar os cultos da sua congregação.</p>
+    <p class="mut">Se você apagar o app ou limpar os dados dele, essas informações somem.</p>
+  </div>
+
+  <div class="card">
+    <h2><i>2</i>O que chega à igreja</h2>
+    <ul>
+      <li><b>Notificações</b><span>Um código do celular e a congregação escolhida, para enviar os avisos e lembretes. Sem nome e sem telefone.</span></li>
+      <li><b>Pedido de oração</b><span>O texto, a congregação e o seu nome, só se você escrever. O nome é opcional.</span><br><span class="who">Quem lê: os pastores e o administrador do app</span></li>
+      <li><b>Aviso de falta (“Não posso ir”)</b><span>Seu nome, o culto e o motivo.</span><br><span class="who">Quem lê: a liderança</span></li>
+      <li><b>Liderança</b><span>Para quem é da liderança: o e-mail e o nome da conta Google cadastrada, e os cartazes e avisos que a pessoa envia.</span></li>
+    </ul>
+  </div>
+
+  <div class="card no">
+    <h2><i>3</i>O que o app não faz</h2>
+    <ul>
+      <li>Não vende nem repassa seus dados a ninguém.</li>
+      <li>Não tem propaganda.</li>
+      <li>Não acompanha o que você faz dentro do app.</li>
+      <li>Não pede login para os membros.</li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><i>4</i>Por quanto tempo guardamos</h2>
+    <p>Pedidos de oração e avisos de falta são apagados automaticamente depois de <b>90 dias</b>.</p>
+    <p>O código de notificação é apagado quando o celular deixa de recebê-las, por exemplo quando o app é desinstalado.</p>
+  </div>
+
+  <div class="card">
+    <h2><i>5</i>Serviços que o app usa</h2>
+    <p class="mut">Para funcionar, o app usa serviços de outras empresas, que seguem as próprias regras de privacidade:</p>
+    <ul>
+      <li><b>Supabase</b><span>Guarda os avisos, eventos, escalas e o que você envia.</span></li>
+      <li><b>Google Firebase</b><span>Entrega as notificações no celular.</span></li>
+      <li><b>Google (fontes, mapas e login da liderança)</b><span>Os mapas só abrem quando você toca em “Como chegar”.</span></li>
+    </ul>
+  </div>
+
+  <div class="card">
+    <h2><i>6</i>Seus direitos</h2>
+    <p>Pela Lei Geral de Proteção de Dados (LGPD), você pode pedir para ver, corrigir ou apagar o que enviou.</p>
+    <p>Fale com a igreja: <a class="mail" href="mailto:jacksonfontourasoares30@gmail.com">jacksonfontourasoares30@gmail.com</a></p>
+  </div>
+  <footer>Atualizado em 22 de novembro de 2026</footer>
+</main>
+</body>
+</html>
