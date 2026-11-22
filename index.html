@@ -555,6 +555,11 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 #onb .nau{width:84px;height:84px;border-radius:26px;margin:6px auto 4px;display:grid;place-items:center;background:#ffffff14;border:2px solid #ffffff22}#onb .nau .ic{width:40px;height:40px;color:#f3c65a}
 #onb .mail{background:#ffffff14;border-radius:14px;padding:12px;text-align:center;font-weight:800;word-break:break-all}
 #onb .gir{width:44px;height:44px;margin:20px auto;border-radius:50%;border:4px solid #ffffff2a;border-top-color:#d9a52b;animation:onbGir 1s linear infinite}@keyframes onbGir{to{transform:rotate(360deg)}}
+.li .lth{width:58px;height:58px;border-radius:12px;object-fit:cover;flex:none;background:light-dark(#e8eeff,#16224a)}
+.li .lth.vz{display:grid;place-items:center;color:var(--mut);font:700 10px Manrope,system-ui,sans-serif;text-align:center;line-height:1.2}
+.li .lmain{flex:1;min-width:0}
+.li .lbt{display:flex;flex-direction:column;gap:6px;flex:none}
+.li button.foto{color:var(--blue,#1546b8);border-color:light-dark(#c9d6f5,#2a3d7a)}
 </style>
 </head>
 <body>
@@ -768,7 +773,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
       <datalist id="mins"></datalist>
       <div id="rcL" hidden></div><div id="apL" hidden></div><div id="eqL" hidden></div>
       <div class="h2">Publicados</div>
-      <div id="admL"></div>
+      <div id="admL"></div><input type="file" accept="image/*" id="fotoTroca" hidden>
     </div>
   </section>
 </main>
@@ -1829,9 +1834,25 @@ function rAdmin(){
   $('#grupos').innerHTML=[...new Set(S.escalas.flatMap(gr))].map(m=>`<option value="${esc(m)}">`).join('');
   const col={av:'avisos',ev:'eventos',ba:'banners',es:'escalas'}[adTab];
   const items=[...ALL[col]].filter(x=>papel!=='lider'||x.autor_email===eu.email||pub(x)).sort((a,b)=>String(b.data||'').localeCompare(String(a.data||'')));
-  $('#admL').innerHTML=items.length?items.map(x=>`<div class="li"><div><b>${esc(x.titulo||x.culto||x.ministerio||(x.texto?String(x.texto).slice(0,40)+'…':'Banner'))}</b><br><span style="color:var(--mut)">${x.cong?esc(x.cong)+' · ':''}${x.semanal&&x.data?'Toda semana, '+DIAS[toD(x.data).getDay()]:x.data?fmt(x.data,{day:'numeric',month:'short',year:'numeric'}):esc(x.sub||'')}${okMid(x)?(x.mtype==='video'?' · vídeo':' · imagem'):''}${x.de?esc(x.de)+' → '+esc(x.cong||'Todas')+(x.fixo?' · fixado':''):''}${x.ate&&!x.data?(x.ate<TODAY?' · <b style="color:#c2410c">expirado</b>':' · até '+fmt(x.ate,{day:'numeric',month:'short'})):''}${x.hora?' · '+esc(x.hora):''}${pubFut(x)?`<br><span class="st prog">Programado · ${esc(pubTxt(x))}</span>`:''}${x.inicio&&x.inicio>TODAY?`<br><span class="st prog">Aparece a partir de ${fmt(x.inicio,{day:'numeric',month:'short'})}</span>`:''}${x.status==='pendente'?'<br><span class="st pend">Aguardando aprovação</span>':x.status==='recusado'?`<br><span class="st rec">Recusado${x.motivo?': '+esc(x.motivo):''}</span>`:''}</span></div>${papel!=='lider'||x.autor_email===eu.email&&!pub(x)?`<button data-del="${col}/${esc(x.id)}">Apagar</button>`:''}</div>`).join(''):'<div class="empty">Nada publicado ainda.</div>';
+  const podeFoto=(col==='eventos'||col==='banners')&&papel!=='lider';
+  const thumb=x=>{if(!podeFoto)return'';const c=col==='eventos'?capaEv(x):(hasMedia(x)?x:null);const u=c?(c.mtype==='video'?'':capaUrl(c)):'';return u?`<img class="lth" src="${esc(u)}" alt="" loading="lazy">`:`<span class="lth vz">${c&&c.mtype==='video'?'vídeo':'sem<br>foto'}</span>`};
+  $('#admL').innerHTML=items.length?items.map(x=>`<div class="li">${thumb(x)}<div class="lmain"><b>${esc(x.titulo||x.culto||x.ministerio||(x.texto?String(x.texto).slice(0,40)+'…':'Banner'))}</b><br><span style="color:var(--mut)">${x.cong?esc(x.cong)+' · ':''}${x.semanal&&x.data?'Toda semana, '+DIAS[toD(x.data).getDay()]:x.data?fmt(x.data,{day:'numeric',month:'short',year:'numeric'}):esc(x.sub||'')}${okMid(x)?(x.mtype==='video'?' · vídeo':' · imagem'):''}${x.de?esc(x.de)+' → '+esc(x.cong||'Todas')+(x.fixo?' · fixado':''):''}${x.ate&&!x.data?(x.ate<TODAY?' · <b style="color:#c2410c">expirado</b>':' · até '+fmt(x.ate,{day:'numeric',month:'short'})):''}${x.hora?' · '+esc(x.hora):''}${pubFut(x)?`<br><span class="st prog">Programado · ${esc(pubTxt(x))}</span>`:''}${x.inicio&&x.inicio>TODAY?`<br><span class="st prog">Aparece a partir de ${fmt(x.inicio,{day:'numeric',month:'short'})}</span>`:''}${x.status==='pendente'?'<br><span class="st pend">Aguardando aprovação</span>':x.status==='recusado'?`<br><span class="st rec">Recusado${x.motivo?': '+esc(x.motivo):''}</span>`:''}</span></div><span class="lbt">${podeFoto?`<button class="foto" data-foto="${col}/${esc(x.id)}">Trocar foto</button>`:''}${papel!=='lider'||x.autor_email===eu.email&&!pub(x)?`<button data-del="${col}/${esc(x.id)}">Apagar</button>`:''}</span></div>`).join(''):'<div class="empty">Nada publicado ainda.</div>';
 }
 
+
+/* ===== trocar a foto de um evento ou banner já publicado ===== */
+{let alvo='';
+ document.addEventListener('click',e=>{const b=e.target.closest('[data-foto]');if(!b||!canEdit||papel==='lider')return;e.preventDefault();alvo=b.dataset.foto;const i=$('#fotoTroca');i.value='';i.click()});
+ document.addEventListener('change',async e=>{if(e.target.id!=='fotoTroca')return;const f=e.target.files&&e.target.files[0];if(!f||!alvo)return;
+   const [col,id]=alvo.split('/');const bt=document.querySelector(`[data-foto="${CSS.escape(alvo)}"]`);
+   if(!/^image\//.test(f.type)){if(bt)bt.textContent='Só imagem';return}
+   if(bt){bt.disabled=true;bt.textContent='Enviando…'}
+   try{let p;if(assets){const up=await assets.upload(await shrinkBlob(f));p={mid:up.id,mtype:'image',img:''}}else p={img:await shrink(f),mid:'',mtype:''};
+     await upd(col,id,p);
+     if(col==='eventos')for(const bn of (ALL.banners||[]).filter(x=>String(x.evento||'')===String(id)))await upd('banners',bn.id,p);
+     render();const nb=document.querySelector(`[data-foto="${CSS.escape(alvo)}"]`);if(nb){nb.textContent='Foto trocada ✓';setTimeout(()=>{if(nb.isConnected)nb.textContent='Trocar foto'},3000)}}
+   catch(err){if(bt){bt.disabled=false;bt.textContent='Não deu certo'}}
+   alvo=''})}
 const R={agenda:rAgenda,avisos:rAvisos,inicio:rInicio,eventos:rEventos,calendario:rCal,escalas:rEscalas,mais:()=>{},igreja:rIgreja,programacao:rProg,oracao:()=>{},admin:rAdmin};
 const VIEWS=Object.keys(R);
 function cur(){const h=location.hash.slice(1);return VIEWS.includes(h)?h:'inicio'}
