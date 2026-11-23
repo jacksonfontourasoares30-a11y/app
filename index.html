@@ -458,6 +458,10 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 .alst button>.ic:first-child{width:22px;height:22px;color:var(--wine);flex:none}.alst b{display:block;font-size:14.5px}.alst small{color:var(--mut);font-weight:600;font-size:12.5px}.alst button>.ic:last-child{margin-left:auto;flex:none;width:18px;height:18px;color:var(--mut)}
 .admBack{display:flex;align-items:center;gap:6px;border:0;background:none;font:800 14px Manrope,system-ui;color:var(--wine);padding:4px 0 12px;cursor:pointer}.admBack .ic{transform:rotate(180deg);width:18px;height:18px}
 .admT{font:800 21px Archivo,system-ui;margin:-4px 0 12px}
+.dvt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 12px}.dvt div{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:12px 8px;text-align:center}.dvt b{display:block;font:800 26px Archivo,system-ui;color:var(--ink)}.dvt small{color:var(--mut);font-weight:700;font-size:12px}.dvt .ic{width:20px;height:20px;color:var(--wine);margin-bottom:2px}
+.dvtot{display:flex;align-items:center;gap:10px;background:var(--wine);color:#fff;border-radius:16px;padding:12px 14px;margin-bottom:8px}.dvtot b{font:800 28px Archivo,system-ui}.dvtot span{font-weight:700;font-size:13.5px;line-height:1.3}
+.dvl .li{display:flex;align-items:center;gap:10px}.dvl .li small{color:var(--mut)}.dvl .tag{margin-left:auto;font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--line);color:var(--mut);white-space:nowrap}.dvl .tag.ok{background:#dff3ea;color:#0f7a5c}
+
 #adm input[type=file]{padding:8px;font:600 13px Manrope,system-ui;color:var(--mut)}#adm input[type=file]::file-selector-button{border:0;border-radius:10px;background:var(--rose);color:var(--wine);font:800 13.5px Manrope,system-ui;padding:9px 14px;margin-right:10px;cursor:pointer}
 
 nav div{background:light-dark(#0b2160f2,#0a1430f5)!important;box-shadow:0 14px 30px -10px rgb(11 33 96/.6)!important}
@@ -590,6 +594,7 @@ a.shr{text-decoration:none;color:inherit}
 <symbol id="i-heart" viewBox="0 0 24 24"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 10c0 5.6-7 10-7 10z"/></symbol>
 <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></symbol>
 <symbol id="i-shield" viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 4.5-3.4 8-8 9-4.6-1-8-4.5-8-9V6z"/><path d="M9 12l2 2 4-4"/></symbol>
+<symbol id="i-phone" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="18" rx="2.5"/><path d="M11 18h2"/></symbol>
 <symbol id="i-bell" viewBox="0 0 24 24"><path d="M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0"/></symbol>
 <symbol id="i-x" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></symbol>
 <symbol id="i-grid" viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2"/><rect x="13" y="4" width="7" height="7" rx="2"/><rect x="4" y="13" width="7" height="7" rx="2"/><rect x="13" y="13" width="7" height="7" rx="2"/></symbol>
@@ -787,7 +792,7 @@ a.shr{text-decoration:none;color:inherit}
         <button class="btn">Salvar</button><div class="msg"></div>
       </form>
       <datalist id="mins"></datalist>
-      <div id="rcL" hidden></div><div id="apL" hidden></div><div id="eqL" hidden></div>
+      <div id="rcL" hidden></div><div id="apL" hidden></div><div id="eqL" hidden></div><div id="dvL" hidden></div>
       <div class="h2">Publicados</div>
       <div id="admL"></div><input type="file" accept="image/*" id="fotoTroca" hidden>
     </div>
@@ -890,7 +895,7 @@ const pub=x=>!x.status||x.status==='publicado';
 function setCol(c,arr){if(c in ALL){ALL[c]=arr;S[c]=arr.filter(x=>pub(x)&&!(c==='banners'&&x.inicio&&x.inicio>TODAY))}else S[c]=arr}
 let papel='admin';
 const PAPEIS={admin:{nome:'Administrador',autor:'Administrador (Mídia)',info:'Você cuida do app: publica direto, aprova, cadastra a equipe e configura a igreja.'},pastor:{nome:'Pastor',autor:'Pastor Ageu Ozório',info:'O pastor publica direto e aprova ou recusa o que os líderes enviam.'},lider:{nome:'Líder de departamento',autor:'Líder do Asafe',info:'O líder envia avisos, eventos, banners e escalas. Nada aparece para os membros até o pastor aprovar.'}};
-const TABS={admin:['av','ev','ba','es','ap','ig','eq','rc'],pastor:['av','ev','ba','es','ap','rc'],lider:['ba']};
+const TABS={admin:['av','ev','ba','es','ap','ig','eq','dv','rc'],pastor:['av','ev','ba','es','ap','rc'],lider:['ba']};
 const DEFCFG={nome:'AD Carlos Barbosa',congs:['Sede','Congregação 1','Congregação 2','Congregação 3']};
 const DN=['domingo','segunda','terça','quarta','quinta','sexta','sábado'];
 const cfg=()=>({...DEFCFG,...(S.config||{}),congs:(S.config&&Array.isArray(S.config.congs)&&S.config.congs.length)?S.config.congs:DEFCFG.congs});
@@ -1805,7 +1810,7 @@ function rEquipe(){const eq=S.equipe||[];
   $('#feq').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,m=f.querySelector('.msg');const o={nome:f.elements.nome.value.trim(),email:f.elements.email.value.trim().toLowerCase(),papel:f.elements.papel.value,departamento:(f.elements.departamento.value||'').trim()};
     try{if(db)await db.collection('equipe').add(o);else S.equipe=[...(S.equipe||[]),{...o,id:'q'+Date.now()}];rEquipe()}catch(_){m.textContent='Não deu certo.'}})}
 
-const ADT={av:'Novo aviso',ev:'Novo evento',ba:'Novo banner',es:'Escala',ap:'Para aprovar',ig:'Dados da igreja',eq:'Equipe',rc:'Recebidos'};
+const ADT={av:'Novo aviso',ev:'Novo evento',ba:'Novo banner',es:'Escala',ap:'Para aprovar',ig:'Dados da igreja',eq:'Equipe',dv:'Aparelhos conectados',rc:'Recebidos'};
 const DEPS=['Jovens','Louvor','Infantil','Mídia','Recepção','Tesouraria','Missões','Senhoras','Homens','Adolescentes','Secretaria','Diaconia'];
 const DEPI={jovens:'🔥',louvor:'🎵',infantil:'🧸','mídia':'🎥',midia:'🎥','recepção':'🤝',recepcao:'🤝',tesouraria:'💰','missões':'🌎',missoes:'🌎',senhoras:'🌷',homens:'👔',adolescentes:'⚡',secretaria:'📋',diaconia:'🙌'};
 const depIc=d=>DEPI[String(d||'').trim().toLowerCase()]||'⛪';
@@ -1824,12 +1829,23 @@ function rLiderHome(){const nm=(eu&&eu.nome)||'Líder',dep=(eu&&eu.dep)||'';
   let vis=true;try{vis=!localStorage.getItem('lidWel:'+eu.email)}catch(_){vis=false}
   if(vis&&!$('#lwel')){const w=document.createElement('div');w.id='lwel';w.innerHTML=`<div class="lwi">${depIc(dep)}</div><h2>Olá, ${esc(String(nm).split(' ')[0])}!<br>${dep?'Seu departamento: '+esc(dep)+'.':'Você está na liderança.'}</h2><p>Aqui você envia os cartazes do seu departamento.</p><div class="lws"><span>1</span>Você envia o cartaz pelo app</div><div class="lws"><span>2</span>O pastor confere e aprova</div><div class="lws"><span>3</span>O cartaz aparece para toda a igreja</div><div style="flex:1"></div><button>Começar</button>`;document.body.append(w);w.querySelector('button').addEventListener('click',()=>{try{localStorage.setItem('lidWel:'+eu.email,'1')}catch(_){}w.remove()})}
 }
+
+let DVN=0;
+function dvQuando(t){if(!t)return'';const d=new Date(t),h=new Date();const dias=Math.floor((new Date(h.toDateString())-new Date(d.toDateString()))/864e5);return dias<=0?'hoje':dias===1?'ontem':'há '+dias+' dias'}
+async function rAparelhos(){const el=$('#dvL');el.innerHTML='<div class="empty">Carregando…</div>';
+  let r=null;try{const x=await SB.rpc('aparelhos_resumo');if(x.error)throw x.error;r=x.data}catch(_){el.innerHTML='<div class="empty">Não deu para carregar agora. Tente de novo.</div>';return}
+  const a=r.android||0,i=r.iphone||0,n=r.navegador||0,t=a+i+n;DVN=t;const L=r.lideres||[];
+  el.innerHTML=`<div class="dvtot"><b>${t}</b><span>aparelhos recebem os avisos da igreja</span></div>
+  <div class="dvt"><div>${IC('phone')}<b>${a}</b><small>Android</small></div><div>${IC('phone')}<b>${i}</b><small>iPhone</small></div><div>${IC('grid')}<b>${n}</b><small>Navegador</small></div></div>
+  <div class="card dvl"><h3>Liderança</h3><p class="note" style="text-align:left;margin:0 0 6px">Quem entrou com a conta Google aparece com o nome. Os membros entram sem login, então aparecem só nos números acima.</p>
+  ${L.length?L.map(x=>`<div class="li"><div><b>${esc(x.nome||x.email)}</b><br><small>${esc((PAPEIS[x.papel]||{}).nome||x.papel||'')}${x.departamento?' · '+esc(x.departamento):''}</small></div><span class="tag${x.visto?' ok':''}">${x.visto?'Abriu '+dvQuando(x.visto):'Ainda não entrou pelo app'}</span></div>`).join(''):'<div class="li"><small>Ninguém da equipe cadastrado.</small></div>'}</div>
+  <p class="note">Último acesso de alguém pelo app: ${r.ultimo?dvQuando(r.ultimo):'—'}.</p>`}
 function rAdmHome(){if(papel==='lider')return rLiderHome();const T=TABS[papel],np=pend().length;let nm='';try{nm=(eu&&(eu.nome||''))||''}catch(_){}nm=nm||PAPEIS[papel].nome;
   const ok=x=>pub(x),vivo=x=>!x.ate||x.ate>=TODAY;
   const nAv=ALL.avisos.filter(x=>ok(x)&&vivo(x)).length,nEv=ALL.eventos.filter(x=>ok(x)&&(x.semanal||x.data>=TODAY)).length,nEs=ALL.escalas.filter(x=>ok(x)&&x.data>=TODAY).length,nBa=ALL.banners.filter(x=>ok(x)&&vivo(x)&&!x.evento).length;
   const t=(k,ic,cor,ti,su,em)=>T.includes(k)?`<button data-ad="${k}" style="--t:${cor}"><span>${IC(ic)}</span><b>${ti}</b><small>${su}</small><em>${em}</em></button>`:'';
   const l=(k,ic,ti,su)=>T.includes(k)?`<button data-ad="${k}">${IC(ic)}<div><b>${ti}</b><small>${su}</small></div>${IC('chev')}</button>`:'';
-  const ls=l('ig','church','Dados da igreja','Endereços, horários e transmissão ao vivo')+l('eq','users','Equipe','Quem pode entrar aqui'+((S.equipe||[]).length?' · '+S.equipe.length+' pessoas':''))+l('rc','heart','Recebidos','Pedidos de oração e avisos de falta');
+  const ls=l('ig','church','Dados da igreja','Endereços, horários e transmissão ao vivo')+l('eq','users','Equipe','Quem pode entrar aqui'+((S.equipe||[]).length?' · '+S.equipe.length+' pessoas':''))+l('dv','phone','Aparelhos conectados',DVN?DVN+' celulares e computadores recebem os avisos':'Quantos recebem as notificações')+l('rc','heart','Recebidos','Pedidos de oração e avisos de falta');
   $('#admHome').innerHTML=`<div class="ahd"><small>${esc(nm.toUpperCase())}</small><b>O que vamos publicar?</b><span>${papel==='lider'?'O que você enviar passa pela aprovação do pastor.':'Chega na hora no celular dos membros.'}</span></div>
   ${T.includes('ap')&&np?`<button class="apb" data-ad="ap"><span class="n">${np}</span><div><b>${np>1?np+' itens aguardando':'1 item aguardando'} aprovação</b><span>Toque para conferir e publicar</span></div>${IC('chev')}</button>`:''}
   <div class="atl">${t('av','mega','#1546b8','Novo aviso','Recado para os membros',nAv?nAv+' no ar':'Nenhum no ar')}${t('ev','cal','#c48a12','Novo evento','Culto, congresso, festa',nEv?nEv+' próximos':'Nenhum marcado')}${t('es','users','#0f9d7a','Escala','Importar Word, Excel ou PDF',nEs?nEs+' cultos escalados':'Nenhuma publicada')}${t('ba','poster','#b8432f','Banner','Cartaz nos destaques',nBa?nBa+' no ar':'Nenhum no ar')}</div>
@@ -1840,11 +1856,12 @@ function rAdmin(){
   $('#papelC').innerHTML=Object.entries(PAPEIS).map(([k,v])=>`<button class="chip${k===papel?' on':''}" data-papel="${k}">${v.nome}</button>`).join('');$('#papelInfo').textContent=PAPEIS[papel].info;
   if(adTab!=='home'&&!TABS[papel].includes(adTab))adTab='home';
   {const home=adTab==='home';$('#admHome').hidden=!home;$('#admBack').hidden=home;$('#admT').hidden=home;$('.seg').hidden=true;
-   if(home){$$('#adm form.adm').forEach(f=>f.hidden=true);['#orsep','#rcL','#apL','#eqL'].forEach(q=>$(q).hidden=true);$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;rAdmHome();return}
+   if(home){$$('#adm form.adm').forEach(f=>f.hidden=true);['#orsep','#rcL','#apL','#eqL','#dvL'].forEach(q=>$(q).hidden=true);$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;rAdmHome();return}
    $('#admT').textContent=(papel==='lider'&&adTab==='ba')?'Novo cartaz':(ADT[adTab]||'')}
   $$('.seg [data-ad]').forEach(b=>b.hidden=!TABS[papel].includes(b.dataset.ad));
   const np=pend().length;$('#apN').textContent=np?String(np):'';
-  $('#apL').hidden=adTab!=='ap';$('#eqL').hidden=adTab!=='eq';
+  $('#apL').hidden=adTab!=='ap';$('#eqL').hidden=adTab!=='eq';$('#dvL').hidden=adTab!=='dv';
+  if(adTab==='dv'){$$('#adm form.adm').forEach(f=>f.hidden=true);$('#orsep').hidden=true;$('#rcL').hidden=true;$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;rAparelhos();return}
   if(adTab==='ap'||adTab==='eq'){$$('#adm form.adm').forEach(f=>{if(f.id!=='feq')f.hidden=true});$('#orsep').hidden=true;$('#rcL').hidden=true;$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;$$('.seg [data-ad]').forEach(b=>b.classList.toggle('on',b.dataset.ad===adTab));adTab==='ap'?rAprovar():rEquipe();return}
   $$('.seg [data-ad]').forEach(b=>b.classList.toggle('on',b.dataset.ad===adTab));
   $('#fav').hidden=adTab!=='av';if(adTab==='av')deFix();$('#fev').hidden=adTab!=='ev';if(adTab==='ev')setTimeout(()=>{rSub();if(window.__locAuto)window.__locAuto()},0);$('#fba').hidden=adTab!=='ba';{const bb=$('#fba .btn');if(bb)bb.textContent=papel==='lider'?'Enviar para o pastor':'Publicar banner';const il=$('#fba [name=img]');if(il&&il.parentElement.firstChild.nodeType===3)il.parentElement.firstChild.textContent=papel==='lider'?'Imagem do cartaz':'Imagem do banner'}$('#fes').hidden=adTab!=='es';$('#fimp').hidden=adTab!=='es';$('#orsep').hidden=adTab!=='es';$('#fmm').hidden=adTab!=='es';$('#fig').hidden=adTab!=='ig';$('#rcL').hidden=adTab!=='rc';if(adTab==='rc'){rRecebidos();$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;return}if(adTab==='ig'){$('#fig').dataset.filled='';$('#admL').innerHTML='';$('#admL').previousElementSibling.hidden=true;return}$('#admL').previousElementSibling.hidden=false;$('#admL').previousElementSibling.textContent=papel==='lider'?'Publicados e enviados':'Publicados';
