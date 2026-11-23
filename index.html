@@ -458,6 +458,7 @@ form.adm label{font-size:13.5px;font-weight:700;display:grid;gap:6px;color:var(-
 .alst button>.ic:first-child{width:22px;height:22px;color:var(--wine);flex:none}.alst b{display:block;font-size:14.5px}.alst small{color:var(--mut);font-weight:600;font-size:12.5px}.alst button>.ic:last-child{margin-left:auto;flex:none;width:18px;height:18px;color:var(--mut)}
 .admBack{display:flex;align-items:center;gap:6px;border:0;background:none;font:800 14px Manrope,system-ui;color:var(--wine);padding:4px 0 12px;cursor:pointer}.admBack .ic{transform:rotate(180deg);width:18px;height:18px}
 .admT{font:800 21px Archivo,system-ui;margin:-4px 0 12px}
+#offl{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(96px + env(safe-area-inset-bottom));z-index:6;display:flex;align-items:center;gap:7px;background:#1d2433;color:#fff;font:700 12.5px Manrope,system-ui;padding:8px 14px;border-radius:99px;box-shadow:0 6px 18px rgba(0,0,0,.25);white-space:nowrap}#offl[hidden]{display:none}#offl .ic{width:16px;height:16px;fill:none;stroke:#ffc928;stroke-width:2.2;stroke-linecap:round}
 .dvt{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:4px 0 12px}.dvt div{background:var(--card);border-radius:16px;box-shadow:var(--sh);padding:12px 8px;text-align:center}.dvt b{display:block;font:800 26px Archivo,system-ui;color:var(--ink)}.dvt small{color:var(--mut);font-weight:700;font-size:12px}.dvt .ic{width:20px;height:20px;color:var(--wine);margin-bottom:2px}
 .dvtot{display:flex;align-items:center;gap:10px;background:var(--wine);color:#fff;border-radius:16px;padding:12px 14px;margin-bottom:8px}.dvtot b{font:800 28px Archivo,system-ui}.dvtot span{font-weight:700;font-size:13.5px;line-height:1.3}
 .dvl .li{display:flex;align-items:center;gap:10px}.dvl .li small{color:var(--mut)}.dvl .tag{margin-left:auto;font-size:11.5px;font-weight:800;padding:3px 8px;border-radius:99px;background:var(--line);color:var(--mut);white-space:nowrap}.dvl .tag.ok{background:#dff3ea;color:#0f7a5c}
@@ -799,6 +800,7 @@ a.shr{text-decoration:none;color:inherit}
   </section>
 </main>
 </div>
+<div id="offl" hidden><svg class="ic" viewBox="0 0 24 24"><path d="M3 3l18 18M8.5 16.4a5 5 0 0 1 7 0M5 12.9a10 10 0 0 1 4.2-2.5M12 8a14 14 0 0 1 10 4M2 8.8a14 14 0 0 1 4.6-2.7M12 20h.01"/></svg>Sem internet · mostrando o que já estava salvo</div>
 <nav><div>
   <a href="#inicio" data-v="inicio"><svg viewBox="0 0 24 24"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Início</a>
   <a href="#agenda" data-v="agenda"><svg viewBox="0 0 24 24"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>Agenda</a>
@@ -835,8 +837,20 @@ async function fetchCol(c){
   if(c==='oracoes'||c==='ausencias'){const r=await SB.from('recebidos').select('*').eq('tipo',c==='oracoes'?'oracao':'ausencia').order('criado',{ascending:false}).limit(200);if(r.error)throw r.error;return(r.data||[]).map(x=>({id:x.id,nome:(x.dados&&x.dados.nome)||'',itens:[{...x.dados,quando:(x.dados&&x.dados.quando)||x.criado}]}))}
   return[];
 }
+/* ===== guardar no celular: abre sem internet e não baixa de novo o que não mudou ===== */
+const CXC=['banners','eventos','escalas','avisos','meses','config'];
+const cxK=c=>'cx1:'+((typeof eu!=='undefined'&&eu&&eu.papel)||'m')+':'+c+(c==='escalas'?':'+(typeof escValid!=='undefined'&&escValid?1:0):'');
+function cxLer(c){try{return JSON.parse(localStorage.getItem(cxK(c))||'null')}catch(_){return null}}
+function cxSalvar(c,list,v){try{localStorage.setItem(cxK(c),JSON.stringify({v,t:Date.now(),list}))}catch(_){}}
+let verP=null,verT=0;
+function versaoDados(){if(verP&&Date.now()-verT<2500)return verP;verT=Date.now();
+  verP=Promise.race([SB.rpc('versao_dados').then(r=>r.error?null:r.data,()=>null),new Promise(r=>setTimeout(()=>r(null),6000))]);return verP}
+function setOffl(v){const el=document.getElementById('offl');if(el)el.hidden=!v}
 async function refresh(c){const l=subs[c];if(!l||!l.length)return;if(PRIV.includes(c)&&!canEdit){l.forEach(s=>s.ok(snapOf([])));return}
-  try{const list=await fetchCol(c);l.forEach(s=>s.ok(snapOf(list)))}catch(e){l.forEach(s=>s.err&&s.err(mapErr(e)))}}
+  const gd=CXC.includes(c),cx=gd?cxLer(c):null;let v=null;
+  if(gd){v=await versaoDados();if(cx&&!canEdit&&v&&v===cx.v){setOffl(false);l.forEach(s=>s.ok(snapOf(cx.list)));return}}
+  try{const list=await fetchCol(c);setOffl(false);if(gd)cxSalvar(c,list,v);l.forEach(s=>s.ok(snapOf(list)))}
+  catch(e){if(cx){setOffl(true);l.forEach(s=>s.ok(snapOf(cx.list)));return}l.forEach(s=>s.err&&s.err(mapErr(e)))}}
 const refreshAll=()=>Object.keys(subs).forEach(refresh);
 /* ===== recarregar sozinho quando o app volta ===== */
 let refUlt=Date.now();
@@ -850,7 +864,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)refAuto()}
 window.addEventListener('online',refAuto);
 setInterval(()=>{if(!document.hidden)refAuto()},180000);
 function colRef(c){return{
-  onSnapshot(ok,err){(subs[c]=subs[c]||[]).push({ok,err});refresh(c);return()=>{}},
+  onSnapshot(ok,err){(subs[c]=subs[c]||[]).push({ok,err});{const cx=CXC.includes(c)?cxLer(c):null;if(cx)try{ok(snapOf(cx.list))}catch(_){}}refresh(c);return()=>{}},
   async add(o){
     if(c==='equipe'){const r=await SB.from('equipe').insert({email:String(o.email).toLowerCase(),nome:o.nome,papel:o.papel,departamento:o.departamento||''});if(r.error)throw mapErr(r.error);refresh(c);return{id:o.email}}
     const {status='publicado',autor_email,id,...dados}=o;
@@ -871,7 +885,7 @@ function docRef(path){const [c,id]=path.split('/');return{
     if(c==='meses'){await SB.from('conteudo').delete().eq('tipo','meses').eq('dados->>chave',id);const r=await SB.from('conteudo').insert({tipo:'meses',dados:{...o,chave:id},status:'publicado',autor_email:eu.email});if(r.error)throw mapErr(r.error);return refresh(c)}
     if(c==='config'){const {codigo,id:_i,...rest}=o;const temCodigo=!!(codigo&&String(codigo).trim());const r=await SB.from('config').upsert({id:1,dados:{...rest,temCodigo}});if(r.error)throw mapErr(r.error);
       const r2=await SB.from('privado').upsert({id:1,codigo_escalas:String(codigo||'').trim()});if(r2.error)throw mapErr(r2.error);return refresh('config')}},
-  onSnapshot(ok,err){(subs.config=subs.config||[]).push({ok:s=>ok({exists:!!s.docs[0],data:()=>s.docs[0]&&s.docs[0].data()}),err});refresh('config');return()=>{}},
+  onSnapshot(ok,err){const w=s=>ok({exists:!!s.docs[0],data:()=>s.docs[0]&&s.docs[0].data()});(subs.config=subs.config||[]).push({ok:w,err});{const cx=cxLer('config');if(cx)try{w(snapOf(cx.list))}catch(_){}}refresh('config');return()=>{}},
   async get(){return{exists:false}}
 }}
 async function carregarSessao(){eu={email:null,nome:'',papel:null};
