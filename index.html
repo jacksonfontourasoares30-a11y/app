@@ -572,6 +572,7 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .mnm button,[data-nome].btn{display:inline-flex;align-items:center;gap:6px}.mnm button{margin-left:auto;border:0;background:none;color:var(--blue,#1546b8);font:800 13.5px Manrope,system-ui,sans-serif;cursor:pointer;padding:6px 0}
 .mnm svg,[data-nome].btn svg{width:14px;height:14px}
 a.shr{text-decoration:none;color:inherit}
+.mag{margin-top:6px}
 </style>
 </head>
 <body>
@@ -928,7 +929,7 @@ const DIAS=['domingos','segundas','terças','quartas','quintas','sextas','sábad
 const todosOs=d=>(d===0||d===6?'Todos os ':'Todas as ')+DIAS[d];
 let expCache=null,expKey=null;
 function expand(){if(expKey===S.eventos)return expCache;const out=[];const lim=iso(new Date(now.getFullYear()+1,11,31));const sk=new Set();for(const e of S.eventos){if(e&&!e.semanal&&Array.isArray(e.substitui))for(const id of e.substitui)sk.add(String(id)+'|'+e.data)}
-  for(const e of S.eventos){if(!e||!/^\d{4}-\d{2}-\d{2}$/.test(e.data||''))continue;if(!e.semanal){out.push(comLocal(e));continue}
+  for(const e of S.eventos){if(!e||!/^\d{4}-\d{2}-\d{2}$/.test(e.data||''))continue;if(!e.semanal){if(!e.oculto)out.push(comLocal(e));continue}
     const d=toD(e.data),end=e.ate&&e.ate<lim?e.ate:lim;for(let k=0;k<160;k++){const x=iso(d);if(x>end)break;if(!sk.has(String(e.id)+'|'+x))out.push({...comLocal(e),data:x,base:e.id});d.setDate(d.getDate()+7)}}
   expKey=S.eventos;expCache=out;return out}
 const sorted=()=>[...expand()].sort((a,b)=>(a.data+(a.hora||'')).localeCompare(b.data+(b.hora||'')));
@@ -2131,13 +2132,13 @@ function pessoasDe(t){t=String(t||'').replace(/\s+/g,' ').trim();if(!t)return[];
     parts.forEach((x,j)=>out.push((mm&&!j?TITS[mm[1]]+' ':'')+tCase(x)))}
   return out.filter(Boolean)}
 const temTit=s=>{TITRE.lastIndex=0;return TITRE.test(nrm1(' '+s))};
-function cultosConhecidos(cn){const c=cfg();return[...new Set([...[...document.querySelectorAll('#cultos option')].map(o=>o.value),...(c.prog||[]).map(p=>p.nome),...ALL.escalas.map(s=>s.culto)].filter(Boolean))].sort((a,b)=>b.length-a.length)}
+function cultosConhecidos(cn){const c=cfg();const prog=(c.prog||[]).map(p=>p.nome);const ok=n=>n&&(KWC.test(nrm1(n))||prog.some(p=>nrm1(p)===nrm1(n)));return[...new Set([...[...document.querySelectorAll('#cultos option')].map(o=>o.value),...prog,...ALL.escalas.map(s=>s.culto).filter(ok)].filter(Boolean))].sort((a,b)=>b.length-a.length)}
 function separa(cel,K){const linhas=cel.split('\n').map(s=>s.trim()).filter(Boolean),flat=linhas.join(' ').replace(/\s+/g,' ');const F=nrm1(flat);
   for(const k of K){const N=nrm1(k).replace(/\s+/g,' ');if(F===N||F.startsWith(N+' ')||F.startsWith(N+'-')||F.startsWith(N+':'))return[k,flat.slice(N.length)]}
   if(linhas.length>1&&!temTit(linhas[0]))return[tCase(linhas[0]),linhas.slice(1).join(' ')];
   TITRE.lastIndex=0;const m=TITRE.exec(nrm1(flat));if(m){const i=m.index+m[1].length;return[tCase(flat.slice(0,i).replace(/[\s\-–:]+$/,'')),flat.slice(i)]}
   return[tCase(flat),'']}
-const KWC=/\b(CULTO|EBD|ESCOLA|CONGRESSO|ENSAIO|FESTA|VIGILIA|CEIA|ORACAO|JOVENS|ADOLESCENTES|CRIANCAS|UMADCB|UFADCB|CIRCULO|BATISMO|CONFERENCIA|SEMINARIO|ANIVERSARIO|ENCONTRO|REUNIAO|CONSAGRACAO|LAR|QUINTA|CELEBRACAO|LOUVOR|MISSOES|BENCAO|PRACA|CORAL|GRUPO|SANTA|DOMINICAL|ESPECIAL|EVANGELISMO|ACAO|TARDE|MANHA|NOITE|SEMANA|CAMPANHA|VITORIA|FAMILIA|MILAGRE|CLAMOR|PALAVRA|ADORACAO|MULHERES|HOMENS|SENHORAS|VAROES|IRMAS)\b/;
+const KWC=/\b(CULTO|EBD|ESCOLA|CONGRESSO|ENSAIO|FESTA|VIGILIA|CEIA|ORACAO|JOVENS|ADOLESCENTES|CRIANCAS|UMADCB|UFADCB|CIRCULO|BATISMO|CONFERENCIA|SEMINARIO|ANIVERSARIO|ENCONTRO|REUNIAO|CONSAGRACAO|LAR|QUINTA|CELEBRACAO|LOUVOR|MISSOES|BENCAO|PRACA|CORAL|GRUPO|SANTA|DOMINICAL|ESPECIAL|EVANGELISMO|ACAO|TARDE|MANHA|NOITE|SEMANA|CAMPANHA|VITORIA|FAMILIA|MILAGRE|CLAMOR|PALAVRA|ADORACAO|MULHERES|HOMENS|SENHORAS|VAROES|IRMAS|DEPARTAMENTO|FEMININO|MASCULINO|INFANTIL|MOCIDADE)\b/;
 const DIAW=/^(DOMINGO|SEGUNDA|TERCA|QUARTA|QUINTA|SEXTA|SABADO|DOM|SEG|TER|QUA|QUI|SEX|SAB)(FEIRA|FEI|F)?$/;
 function anoPara(d,m){const h=new Date(),y=h.getFullYear();let best=y,bd=1e15;for(const yy of [y-1,y,y+1]){const df=Math.abs(new Date(yy,m-1,d)-h);if(df<bd){bd=df;best=yy}}return best}
 function linhas2escala(L,cn){const K=cultosConhecidos(cn),out=[],p2=v=>String(v).padStart(2,'0');
@@ -2163,6 +2164,7 @@ function linhas2escala(L,cn){const K=cultosConhecidos(cn),out=[],p2=v=>String(v)
     if(!s.culto){const usados=out.filter(o=>o!==s&&o.data===s.data).map(o=>nrm1(o.culto)).filter(Boolean);const igual=(a,b)=>{const x=nrm1(a),y=nrm1(b);return x===y||x.includes(y)||y.includes(x)};const c=(s.hora&&doDia.find(p=>p.hora===s.hora))||doDia.find(p=>!usados.some(u=>igual(u,p.nome)))||doDia[0];if(c){s.culto=c.nome;if(!s.hora)s.hora=c.hora}}
     if(!s.hora&&s.culto){const c=doDia.find(p=>nrm1(p.nome)===nrm1(s.culto))||pg.find(p=>nrm1(p.nome)===nrm1(s.culto))||(/^EBD/.test(nrm1(s.culto))&&doDia.find(p=>/EBD|ESCOLA/.test(nrm1(p.nome))));if(c)s.hora=c.hora}
     const gs=[...new Set(ALL.escalas.flatMap(gr))];if(s.grupo){const g=gs.find(x=>nrm1(x)===nrm1(s.grupo));if(g)s.grupo=g}}
+  for(const s of out){if(ehCancel(s)){s.culto='Não haverá culto';s.pessoas=[];s.cancel=true}}
   out.sort((a,b)=>(a.data+a.hora).localeCompare(b.data+b.hora));
   const msg=[...(L.pre||[]).filter(t=>!/^\W*ESCALA\b/.test(nrm1(t))),...(L.pos||[])].join('\n\n').slice(0,800);
   return{itens:out,msg}}
@@ -2187,6 +2189,29 @@ async function lerPdf(buf){let pj;try{pj=await import(PDFJS+'pdf.min.mjs')}catch
     if(last&&l.p===last.p&&last.y-l.y<=l.h*1.8)poe(l);else{pos.push(txt);last=null}}
   const lig=c=>c.replace(/(\p{L}) (ffi|ffl|fi|fl|ff) (?=\p{Ll})/gu,'$1$2');
   return{pre:[junta(pre)].filter(Boolean),pos:[junta(pos)].filter(Boolean),rows:rows.map(r=>r.map(lig))}}
+
+/* ===== escala → agenda: dias especiais entram no lugar do culto fixo ===== */
+const CANC=/\b(NAO HAVERA|NAO HAVERA CULTO|NAO TERA|SEM CULTO|CANCELADO)\b/;
+function ehCancel(s){return CANC.test(nrm1([s.culto,...(s.pessoas||[]),s.grupo].join(' ')).replace(/\s+/g,' '))}
+const PAL_FRACAS=new Set(['CULTO','DA','DE','DO','DAS','DOS','E','NO','NA','EM','A','O','SEDE','GERAL','ESPECIAL']);
+function mesmoCulto(a,b){const w=x=>nrm1(x).replace(/[^A-Z ]/g,' ').split(/\s+/).filter(t=>t.length>1&&!PAL_FRACAS.has(t));const A=w(a),B=new Set(w(b));if(!A.length||!B.size)return nrm1(a)===nrm1(b);return A.some(t=>B.has(t)||(t==='EBD'&&B.has('ESCOLA'))||(t==='ESCOLA'&&B.has('EBD')))}
+function mudancasAgenda(itens,cn){const out=[];
+  for(const s of itens){if(!/^\d{4}-\d{2}-\d{2}$/.test(s.data||'')||!s.culto)continue;
+    const fx=fixosDoDia(s.data,cn).filter(e=>e.cong===cn||e.cong==='Todas'||!e.cong).filter(e=>!s.hora||!e.hora||e.hora===s.hora);
+    const ja=(ALL.eventos||[]).some(e=>e&&!e.semanal&&e.data===s.data&&(e.cong===cn||e.cong==='Todas')&&(!s.hora||!e.hora||e.hora===s.hora)&&(mesmoCulto(e.titulo,s.culto)||e.oculto&&s.cancel));
+    if(ja)continue;
+    if(s.cancel){if(fx.length)out.push({k:s.data+'|'+s.hora,tipo:'cancel',s,fx});continue}
+    const wd=toD(s.data).getDay();const pg=(cfg().prog||[]).filter(p=>p.cong===cn&&p.dia===wd&&(!s.hora||!p.hora||p.hora===s.hora));
+    if(fx.some(e=>mesmoCulto(e.titulo,s.culto))||pg.some(p=>mesmoCulto(p.nome,s.culto)))continue;
+    out.push({k:s.data+'|'+s.hora,tipo:fx.length?'troca':'novo',s,fx})}
+  return out}
+function rMudAgenda(cn){const l=mudancasAgenda(IMP.itens,cn);if(!l.length)return'';
+  const dt=d=>fmt(d,{weekday:'short',day:'numeric',month:'2-digit'});
+  return `<div class="subf mag"><b>Mudanças na agenda</b><small>Dias da escala diferentes do culto normal. Os marcados aparecem na Agenda no lugar do culto fixo, só naquele dia.</small>${l.map(m=>`<label class="subi"><input type="checkbox" name="mag" value="${esc(m.k)}" checked><span><b>${esc(dt(m.s.data))}${m.s.hora?' · '+esc(m.s.hora):''} · ${m.tipo==='cancel'?'Não haverá culto':esc(m.s.culto)}</b><small>${m.tipo==='cancel'?'Tira da agenda: '+esc(m.fx.map(e=>e.titulo).join(', ')):m.tipo==='troca'?'No lugar de: '+esc(m.fx.map(e=>e.titulo).join(', ')):'Novo na agenda'}</small></span></label>`).join('')}</div>`}
+async function aplicaAgenda(cn,marcados,lote){const l=mudancasAgenda(IMP.itens,cn).filter(m=>marcados.has(m.k));if(!l.length||!db)return 0;const ref=db.collection('eventos');let n=0;
+  for(const m of l){const s=m.s;const o=stamp({titulo:m.tipo==='cancel'?'Não haverá culto':s.culto,data:s.data,hora:s.hora||(m.fx[0]&&m.fx[0].hora)||'',cong:cn,local:'',ministerio:'Geral',desc:'',semanal:false,substitui:m.fx.map(e=>String(e.id)).slice(0,10),origem:'escala',lote,...(m.tipo==='cancel'?{oculto:true}:{})});
+    try{await ref.add(o);n++}catch(_){}}
+  return n}
 let IMP=null;
 function rImp(){const box=$('#impPrev');if(!IMP){box.innerHTML='';return}
   const {cong:cn,itens,msg}=IMP;const meses=[...new Set(itens.map(s=>s.data.slice(0,7)))];const mk=meses.sort((a,b)=>itens.filter(s=>s.data.startsWith(b)).length-itens.filter(s=>s.data.startsWith(a)).length)[0]||'';
@@ -2197,11 +2222,12 @@ function rImp(){const box=$('#impPrev');if(!IMP){box.innerHTML='';return}
     <input name="culto" value="${esc(s.culto)}" placeholder="Culto" list="cultos" maxlength="60"${s.culto?'':' class="falta"'}>
     <textarea name="pessoas" rows="${Math.max(1,s.pessoas.length)}" placeholder="Escalados (um por linha)">${esc(s.pessoas.join('\n'))}</textarea>
     <input name="grupo" value="${esc(s.grupo)}" placeholder="Louvor / grupo" list="grupos" maxlength="80"><button type="button" class="imx" data-impx="${i}" aria-label="Tirar esta linha">✕</button></div>`).join('')}
+  ${rMudAgenda(cn)}
   <label style="margin-top:4px">Mensagem do mês (aparece no topo da escala)<textarea name="msg" rows="3" maxlength="800">${esc(msg)}</textarea></label>
   ${ja.length?(podeApagar?`<label class="ck"><input type="checkbox" name="subst"> Apagar as ${ja.length} escala${ja.length===1?'':'s'} que já estão lançadas da ${esc(cn)} nesse mês</label>`:`<p class="note" style="text-align:left;margin:0">Já existem ${ja.length} escalas da ${esc(cn)} nesse mês. Elas continuam lá.</p>`):''}
   <div class="row2"><button type="button" class="btn" data-imppub="1">${papel==='lider'?'Enviar para aprovação':'Publicar escala'} (${itens.length})</button><button type="button" class="btn gh" data-impcan="1">Cancelar</button></div><div class="msg" id="impMsg"></div>`}
 function impLer(){const box=$('#impPrev');$$('#impPrev .imr').forEach(r=>{const s=IMP.itens[+r.dataset.i];const q=n=>r.querySelector(`[name=${n}]`).value.trim();s.data=q('data');s.hora=q('hora');s.culto=q('culto');s.pessoas=q('pessoas').split('\n').map(x=>x.trim()).filter(Boolean).slice(0,30);s.grupo=q('grupo')});
-  const t=box.querySelector('[name=msg]');IMP.msg=t?t.value.trim():'';const sb=box.querySelector('[name=subst]');IMP.subst=!!(sb&&sb.checked)}
+  const t=box.querySelector('[name=msg]');IMP.msg=t?t.value.trim():'';const sb=box.querySelector('[name=subst]');IMP.subst=!!(sb&&sb.checked);IMP.mag=new Set([...box.querySelectorAll('[name=mag]:checked')].map(i=>i.value))}
 async function impPublicar(btn){impLer();const m=$('#impMsg');const bad=IMP.itens.find(s=>!/^\d{4}-\d{2}-\d{2}$/.test(s.data)||!s.culto);if(bad){m.textContent='Falta a data ou o nome do culto em alguma linha (marcada em vermelho).';$$('#impPrev .imr').forEach(r=>{const s=IMP.itens[+r.dataset.i];r.querySelector('[name=culto]').classList.toggle('falta',!s.culto)});return}
   btn.disabled=true;m.textContent='Publicando…';const cn=IMP.cong,lote='imp'+Date.now().toString(36),agora=new Date().toISOString();
   const lista=IMP.itens.map(s=>({...stamp({cong:cn,data:s.data,hora:s.hora,culto:s.culto,pessoas:s.pessoas,grupo:s.grupo,destaque:false,lote}),criado:agora}));
@@ -2210,7 +2236,8 @@ async function impPublicar(btn){impLer();const m=$('#impMsg');const bad=IMP.iten
     else setCol('escalas',[...ALL.escalas,...lista.map((o,i)=>({...o,id:lote+'-'+i}))]);
     if(IMP.msg&&IMP.mes&&db&&papel!=='lider'){const id=(cn+'-'+IMP.mes).normalize('NFD').replace(/[^A-Za-z0-9-]/g,'');try{await db.doc('meses/'+id).set({cong:cn,mes:IMP.mes,texto:IMP.msg})}catch(_){}}
     else if(IMP.msg&&IMP.mes&&!db){S.meses=[...(S.meses||[]).filter(x=>!(x.cong===cn&&x.mes===IMP.mes)),{cong:cn,mes:IMP.mes,texto:IMP.msg}]}
-    const n=lista.length,pend=papel==='lider',mk=IMP.mes;if(!pend){const [yy,mm]=(mk||'-').split('-');notificar({titulo:'Escala de '+(MES[+mm-1]||'')+' publicada',corpo:cn+': '+n+' cultos. Toque para ver se você está escalado.',url:'./#escalas',cong:cn})}IMP=null;$('#fimp').reset();rImp();$('#fimp .msg').textContent=pend?`Enviado! ${n} cultos aguardando aprovação do pastor.`:`Pronto! ${n} cultos publicados na escala.`;
+    const nAg=await aplicaAgenda(cn,IMP.mag||new Set(),lote);
+    const n=lista.length,pend=papel==='lider',mk=IMP.mes;if(!pend){const [yy,mm]=(mk||'-').split('-');notificar({titulo:'Escala de '+(MES[+mm-1]||'')+' publicada',corpo:cn+': '+n+' cultos. Toque para ver se você está escalado.',url:'./#escalas',cong:cn})}IMP=null;$('#fimp').reset();rImp();$('#fimp .msg').textContent=pend?`Enviado! ${n} cultos aguardando aprovação do pastor.`:`Pronto! ${n} cultos publicados na escala${nAg?` e ${nAg} ${nAg>1?'mudanças':'mudança'} na agenda`:''}.`;
     if(mk){const [y,mo]=mk.split('-');ey=+y;emo=+mo-1}render()}
   catch(err){btn.disabled=false;m.textContent=err&&err.code==='invalid_argument'?'Você não tem permissão para publicar.':'Não deu certo. Tente de novo.'}}
 $('#fimp').addEventListener('submit',async e=>{e.preventDefault();const f=e.target,m=f.querySelector('.msg');m.textContent='';const cn=f.elements.cong.value;const arq=f.elements.arq.files[0],txt=f.elements.txt.value.trim();
