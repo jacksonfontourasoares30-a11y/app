@@ -904,7 +904,7 @@ const TODAY=iso(now);
 const toD=s=>{const[y,m,d]=String(s).split('-').map(Number);return new Date(y,m-1,d)};
 const fmt=(s,o)=>toD(s).toLocaleDateString('pt-BR',o);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const okMid=x=>x&&typeof x.mid==='string'&&/^[A-Za-z0-9_.-]{1,200}$/.test(x.mid);
+const okMid=x=>x&&x.mtype!=='video'&&typeof x.mid==='string'&&/^[A-Za-z0-9_.-]{1,200}$/.test(x.mid)&&!/\.(mp4|webm|mov|m4v)$/i.test(x.mid);
 const hasMedia=x=>okMid(x)||okImg(x&&x.img);
 const media=(x,alt='')=>okMid(x)?(x.mtype==='video'?`<video src="${MIDIA}${x.mid}" autoplay muted loop playsinline preload="metadata"></video>`:`<img src="${MIDIA}${x.mid}" alt="${esc(alt)}" loading="lazy">`):okImg(x&&x.img)?`<img src="${x.img}" alt="${esc(alt)}">`:'';
 const capaEv=e=>{if(!e)return null;if(hasMedia(e)&&e.mtype!=='video')return e;const id=String(e.base||e.id);return (S.banners||[]).find(b=>String(b.evento||'')===id&&hasMedia(b)&&b.mtype!=='video')||null};
