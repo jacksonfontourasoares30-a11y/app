@@ -1394,7 +1394,7 @@ function onbR(){const el=$('#onb');if(!el)return;
   else el.innerHTML=dots+tp(2,'Receba as novidades','Escalas, avisos e eventos chegam direto no seu celular.')+`<div class="bd"><div class="bel">${IC('bell')}</div><p class="nt" style="font-size:13.5px">Na próxima tela, toque em <b>Permitir</b>.${typeof ehIOS==='function'&&ehIOS()?' No iPhone é preciso iOS 16.4 ou mais novo.':''}</p></div><div class="ft"><button class="go" data-onbpush="1">Ativar notificações</button><button class="sk" data-onbfim="1">Agora não</button></div>`;
   const i=$('#onbN');if(i){const ok=()=>i.value.trim().length>=2;i.addEventListener('input',()=>{const g=$('#onbGo');if(g)g.disabled=!ok()});i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(ok())onbAv()}})}}
 function onbAv(){if(onbP===0){const i=$('#onbN');onbN=i?i.value.trim():onbN;if(onbN.length<2){if(i)i.focus();return}}onbP++;if(onbP>=onbPassos())onbFim();else onbR()}
-function onbFim(){me=onbN||me;cong=onbC;congAv=onbC;try{localStorage.setItem('meuNome',me);localStorage.setItem('minhaCong',cong);localStorage.setItem('congAvisos',congAv);localStorage.setItem('onbOk','1')}catch(_){}
+function onbFim(){me=onbN||me;cong=onbC;congAv=onbC;try{localStorage.setItem('meuNome',me);setTimeout(nomeSub,300);localStorage.setItem('minhaCong',cong);localStorage.setItem('congAvisos',congAv);localStorage.setItem('onbOk','1')}catch(_){}
   render();if(FCM)fcmSalvar().then(()=>{if(eu&&eu.email)SB.rpc('fcm_email',{p_token:FCM}).then(()=>{},()=>{})});else if(typeof pushSub!=='undefined'&&pushSub)pushSalvar().catch(()=>{});const el=$('#onb');if(el){el.classList.add('out');setTimeout(()=>el.remove(),450)}}
 document.addEventListener('click',async e=>{const t=e.target.closest('[data-onb],[data-onbc],[data-onbpush],[data-onbfim],[data-onbm]');if(!t||!t.closest('#onb'))return;e.preventDefault();
   if(t.dataset.onbm){const m=t.dataset.onbm;if(m==='m'){if(onbM==='nl'){try{await SB.auth.signOut()}catch(_){}if(location.hash==='#admin')location.hash='';}onbM='m';onbP=0;onbR();return}
@@ -1435,7 +1435,9 @@ const ehAppLoja=()=>!!FCM;
 function emApp(){if(FCM)return true;let r=false;try{r=/^android-app:\/\/br\.com\.adcarlosbarbosa\.app/.test(document.referrer||'');if(r)sessionStorage.setItem('emApp','1');else r=sessionStorage.getItem('emApp')==='1'}catch(_){}return r}
 try{emApp()}catch(_){}
 async function fcmSalvar(){if(!FCM||typeof SB==='undefined')return;
-  try{await SB.rpc('fcm_inscrever',{p_token:FCM,p_cong:congAv||''})}catch(_){}}
+  try{await SB.rpc('fcm_inscrever',{p_token:FCM,p_cong:congAv||''})}catch(_){}
+  try{await SB.rpc('fcm_nome',{p_token:FCM,p_nome:me||''})}catch(_){}}
+function nomeSub(){try{if(FCM)fcmSalvar();else if(typeof pushSub!=='undefined'&&pushSub)pushSalvar().catch(()=>{})}catch(_){}}
 async function fcmLimparWeb(){try{const reg=await navigator.serviceWorker.ready;const sub=await reg.pushManager.getSubscription();
   if(sub){try{await SB.rpc('push_sair',{p_endpoint:sub.endpoint})}catch(_){}try{await sub.unsubscribe()}catch(_){}pushSub=null}}catch(_){}}
 function abrirAjustesApp(){try{location.href='intent:#Intent;action=android.settings.APP_NOTIFICATION_SETTINGS;S.android.provider.extra.APP_PACKAGE='+PKG+';end'}catch(_){}}
@@ -1719,7 +1721,7 @@ function rEscalas(){
     if(!lk&&!temNome&&!en.innerHTML){
       en.innerHTML=`<form class="nmbox" id="fenome"><b>Qual é o seu nome?</b><span>Assim o app mostra primeiro os cultos em que você está escalado.</span><div class="nmr"><input name="n" maxlength="60" placeholder="Como aparece na escala" autocomplete="name"><button class="btn">Salvar</button></div></form>`;
       $('#fenome').addEventListener('submit',ev=>{ev.preventDefault();const v=ev.target.elements.n.value.trim();if(!v)return;
-        me=v;try{localStorage.setItem('meuNome',me)}catch(_){}escM='minhas';en.hidden=true;render()})}}}
+        me=v;try{localStorage.setItem('meuNome',me);setTimeout(nomeSub,300)}catch(_){}escM='minhas';en.hidden=true;render()})}}}
   {const n=me.trim().toLowerCase();if(!escM)escM=n?'minhas':'todas';
    const mine=n?S.escalas.filter(s=>s.data>=TODAY&&inCong(s)&&ppl(s).some(x=>x.toLowerCase().includes(n))).sort(escSort):[];
    const kM=ey+'-'+pad(emo+1),nT=S.escalas.filter(s=>typeof s.data==='string'&&s.data.startsWith(kM)&&inCong(s)).length;
@@ -1933,7 +1935,7 @@ function openMinhaCong(){const c=cfg();$('#sheet').innerHTML=`<div class="bd" st
 function abrirNome(){
   $('#sheet').innerHTML=`<div class="bd" style="padding-top:24px"><h2 style="font-size:22px;margin-bottom:6px">Seu nome</h2><p style="color:var(--mut);margin:0 0 14px;font-size:14.5px">Escreva do jeito que aparece na escala. É assim que o app acha os cultos em que você serve.</p><form class="adm" id="fnm"><label>Nome<input name="n" required minlength="2" maxlength="60" value="${esc(me)}" autocomplete="name"></label><button class="btn">Salvar</button></form><button class="btn gh" style="width:100%;margin-top:8px;background:none" id="fx">Cancelar</button></div>`;
   $('#modal').classList.add('on');$('#fx').onclick=closeM;
-  $('#fnm').addEventListener('submit',ev=>{ev.preventDefault();const v=ev.target.elements.n.value.trim();if(v.length<2)return;me=v;try{localStorage.setItem('meuNome',me)}catch(_){}escM='minhas';closeM();render()})}
+  $('#fnm').addEventListener('submit',ev=>{ev.preventDefault();const v=ev.target.elements.n.value.trim();if(v.length<2)return;me=v;try{localStorage.setItem('meuNome',me);setTimeout(nomeSub,300)}catch(_){}escM='minhas';closeM();render()})}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-nome]');if(!b)return;e.preventDefault();abrirNome()});
 const R={agenda:rAgenda,avisos:rAvisos,inicio:rInicio,eventos:rEventos,calendario:rCal,escalas:rEscalas,mais:()=>{},igreja:rIgreja,programacao:rProg,oracao:()=>{},admin:rAdmin};
 const VIEWS=Object.keys(R);
@@ -2054,7 +2056,7 @@ let pushSub=null,pushPub=null;
 const b64u=s=>{const b=atob((s+'='.repeat((4-s.length%4)%4)).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from(b,c=>c.charCodeAt(0))};
 async function pushChave(){if(pushPub)return pushPub;const r=await fetch(PUSH_FN,{method:'POST',headers:{'Content-Type':'application/json'},body:'{"chave":1}'});pushPub=(await r.json()).pub;return pushPub}
 async function pushEstado(){if(ehAppLoja()||emApp())return'app';if(!pushOk())return'nao';try{const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()}catch(_){}return pushSub&&Notification.permission==='granted'?'on':Notification.permission==='denied'?'bloq':'off'}
-async function pushSalvar(){if(FCM){fcmSalvar();return}if(emApp())return;if(!pushSub)return;const j=pushSub.toJSON();await SB.rpc('push_inscrever',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_cong:congAv||''})}
+async function pushSalvar(){if(FCM){fcmSalvar();return}if(emApp())return;if(!pushSub)return;const j=pushSub.toJSON();await SB.rpc('push_inscrever',{p_endpoint:j.endpoint,p_p256dh:j.keys.p256dh,p_auth:j.keys.auth,p_cong:congAv||''});try{await SB.rpc('push_nome',{p_endpoint:j.endpoint,p_nome:me||''})}catch(_){}}
 async function pushAtivar(){if(emApp()){try{await Notification.requestPermission()}catch(_){}return false}if(!pushOk())return false;const p=await Notification.requestPermission();if(p!=='granted'){rPush();return false}
   const reg=await navigator.serviceWorker.ready;pushSub=await reg.pushManager.getSubscription()||await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:b64u(await pushChave())});await pushSalvar();rPush();return true}
 async function pushDesativar(){if(pushSub){try{await SB.rpc('push_sair',{p_endpoint:pushSub.endpoint})}catch(_){}try{await pushSub.unsubscribe()}catch(_){}pushSub=null}rPush()}
