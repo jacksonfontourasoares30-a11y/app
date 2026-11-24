@@ -577,6 +577,10 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .mnm button,[data-nome].btn{display:inline-flex;align-items:center;gap:6px}.mnm button{margin-left:auto;border:0;background:none;color:var(--blue,#1546b8);font:800 13.5px Manrope,system-ui,sans-serif;cursor:pointer;padding:6px 0}
 .mnm svg,[data-nome].btn svg{width:14px;height:14px}
 a.shr{text-decoration:none;color:inherit}
+.nfc{margin:14px 0;background:#fff7e0;border:1.5px solid #f3c75a;border-radius:var(--r,20px);padding:14px}.nfh{display:flex;gap:12px;align-items:flex-start}.nfi{width:40px;height:40px;border-radius:12px;background:#f3c75a;display:grid;place-items:center;flex:none}.nfi .ic{width:22px;height:22px;color:#5a3d00}.nfh b{display:block;font:800 16px Archivo,system-ui;color:#3d2a00}.nfh small{display:block;font:600 13px/1.35 Manrope,system-ui;color:#6b5300;margin-top:2px}.nfx{margin-left:auto;border:0;background:none;font-size:18px;color:#6b5300;cursor:pointer;padding:2px 4px}
+.nfb{display:flex;align-items:center;justify-content:center;gap:8px;margin:12px 0 10px;background:#1546b8;color:#fff!important;text-decoration:none;font:800 14.5px Manrope,system-ui;padding:12px;border-radius:14px}.nfb .ic{width:18px;height:18px}
+.nfl{margin:0;padding-left:20px;font:600 13.5px/1.5 Manrope,system-ui;color:#3b4560}.nfl li{margin:2px 0}
+#onb .nfb{margin-top:4px}#onb .nfl{color:rgb(255 255 255/.88);text-align:left}
 .cxl{position:relative;overflow:hidden;width:100%;height:100%}.cxl>img,.cxl>video{display:block;width:100%;height:100%;object-fit:inherit;filter:grayscale(.55) brightness(.8)}
 .cxb{position:absolute;left:-25%;right:-25%;top:50%;transform:translateY(-50%) rotate(-14deg);background:#dc2626;color:#fff;text-align:center;font:900 clamp(15px,7vw,40px)/1 Archivo,system-ui;letter-spacing:.14em;padding:.4em 0;box-shadow:0 6px 18px rgba(0,0,0,.35);border-top:3px solid #fff;border-bottom:3px solid #fff;z-index:2;pointer-events:none}
 .cxt{display:inline-block;background:#dc2626;color:#fff;font:800 12px Manrope,system-ui;letter-spacing:.1em;padding:5px 10px;border-radius:8px;margin-bottom:6px;justify-self:start}
@@ -634,6 +638,7 @@ a.shr{text-decoration:none;color:inherit}
     <div id="urg"></div>
     <div class="hero" id="hero"></div>
     <div id="pushC" hidden></div>
+    <div id="notifOff" hidden></div>
     <div id="minha"></div>
     <a class="orc" href="#oracao" hidden><span class="oi"><svg class="ic"><use href="#i-heart"/></svg></span><span class="ot"><b>Precisa de oração?</b><small>Envie seu pedido. O pastor recebe na hora.</small></span><span class="ob">Enviar pedido</span></a>
     <div class="h2" id="destH" hidden>Destaques</div>
@@ -1404,6 +1409,8 @@ function onbR(){const el=$('#onb');if(!el)return;
   if(onbM==='nl'){el.innerHTML=`<div class="tp"><small>LIDERANÇA</small><h2>E-mail ainda<br>não liberado</h2><p>Este e-mail ainda não foi cadastrado pelo pastor.</p></div><div class="bd"><div class="nau">${IC('shield')}</div><div class="mail">${esc(eu.email||'')}</div><p class="nt" style="font-size:13.5px">Peça ao pastor ou à Mídia para liberar seu e-mail. Enquanto isso, você pode usar o app como membro.</p></div><div class="ft"><button class="go" data-onbm="m">Entrar como membro</button><button class="sk" data-onbm="l2">Tentar com outro e-mail</button></div>`;return}const N=onbPassos(),dots=`<div class="stp">${Array.from({length:N},(_,i)=>`<i class="${i===onbP?'on':''}"></i>`).join('')}</div>`,tp=(t,h,p)=>`<div class="tp"><small>PASSO ${onbP+1} DE ${N}</small><h2>${h}</h2><p>${p}</p></div>`;
   if(onbP===0)el.innerHTML=dots+tp(0,'Seja bem-vindo!<br>Como você se chama?','Assim o app mostra as escalas em que você está.')+`<div class="bd"><input id="onbN" maxlength="60" autocomplete="name" placeholder="Seu nome, como aparece na escala" value="${esc(onbN)}"><p class="nt">Fica guardado só no seu celular.</p></div><div class="ft"><button class="go" id="onbGo" data-onb="1"${String(onbN||'').trim().length>=2?'':' disabled'}>Continuar</button></div>`;
   else if(onbP===1){const cs=['',...(cfg().congs||[])];el.innerHTML=dots+tp(1,'Qual é a sua<br>congregação?','O app mostra primeiro os cultos e as escalas dela.')+`<div class="bd">${cs.map(n=>`<button class="cgo${n===onbC?' on':''}" data-onbc="${esc(n)}"><i style="background:${n?ccol(n):'#d9a52b'}"></i>${n?esc(n):'Todas as congregações'}<b>✓</b></button>`).join('')}</div><div class="ft"><button class="go" data-onb="1">Continuar</button></div>`}
+  else if(typeof NOTIF_APP!=='undefined'&&NOTIF_APP==='1'&&emApp())el.innerHTML=dots+tp(2,'Notificações ativadas ✓','Escalas, avisos e eventos vão chegar direto no seu celular.')+`<div class="bd"><div class="bel">${IC('bell')}</div></div><div class="ft"><button class="go" data-onbfim="1">Começar</button></div>`;
+  else if(typeof NOTIF_APP!=='undefined'&&NOTIF_APP==='0'&&emApp())el.innerHTML=dots+tp(2,'Notificações desligadas','Para receber escalas, avisos e eventos, ligue as notificações do app.')+`<div class="bd">${notifPassos()}</div><div class="ft"><button class="go" data-onbfim="1">Continuar</button></div>`;
   else el.innerHTML=dots+tp(2,'Receba as novidades','Escalas, avisos e eventos chegam direto no seu celular.')+`<div class="bd"><div class="bel">${IC('bell')}</div><p class="nt" style="font-size:13.5px">Na próxima tela, toque em <b>Permitir</b>.${typeof ehIOS==='function'&&ehIOS()?' No iPhone é preciso iOS 16.4 ou mais novo.':''}</p></div><div class="ft"><button class="go" data-onbpush="1">Ativar notificações</button><button class="sk" data-onbfim="1">Agora não</button></div>`;
   const i=$('#onbN');if(i){const ok=()=>i.value.trim().length>=2;i.addEventListener('input',()=>{const g=$('#onbGo');if(g)g.disabled=!ok()});i.addEventListener('keydown',e=>{if(e.key==='Enter'){e.preventDefault();if(ok())onbAv()}})}}
 function onbAv(){if(onbP===0){const i=$('#onbN');onbN=i?i.value.trim():onbN;if(onbN.length<2){if(i)i.focus();return}}onbP++;if(onbP>=onbPassos())onbFim();else onbR()}
@@ -1416,7 +1423,7 @@ document.addEventListener('click',async e=>{const t=e.target.closest('[data-onb]
   if(t.dataset.pula){onbN='';onbP++;onbR();return}
   if(t.dataset.onb)return onbAv();
   if(t.dataset.onbfim){try{localStorage.setItem('pushFechado','1')}catch(_){}return onbFim()}
-  if(t.dataset.onbpush){t.disabled=true;t.textContent='Aguarde…';cong=onbC;try{if(FCM||emApp())await Notification.requestPermission();else await pushAtivar()}catch(_){}onbFim()}});
+  if(t.dataset.onbpush){t.disabled=true;t.textContent='Aguarde…';cong=onbC;try{if(FCM||emApp()){if(NOTIF_APP===null)await Notification.requestPermission()}else await pushAtivar()}catch(_){}onbFim()}});
 setTimeout(onbIni,0);
 /* ===== iPhone: instalar na tela de início ===== */
 const ehIOS=()=>{try{return /iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1)}catch(_){return false}};
@@ -1439,7 +1446,8 @@ const PKG='br.com.adcarlosbarbosa.app';
 const LOJA='https://play.google.com/store/apps/details?id='+PKG;
 /* ===== notificação pelo app da loja (Firebase) ===== */
 let FCM=null;
-try{const q=new URLSearchParams(location.search);const t=q.get('fcm');
+let NOTIF_APP=null;try{NOTIF_APP=localStorage.getItem('notifApp')}catch(_){}
+try{const q=new URLSearchParams(location.search);const nf=q.get('notif');if(nf==='1'||nf==='0'){NOTIF_APP=nf;try{localStorage.setItem('notifApp',nf)}catch(_){}q.delete('notif');if(!q.get('fcm')){const r=location.pathname+(q.toString()?'?'+q:'')+location.hash;try{history.replaceState(null,'',r)}catch(_){}}}const t=q.get('fcm');
   if(t){FCM=t;try{localStorage.setItem('fcmToken',t)}catch(_){}
     q.delete('fcm');const r=location.pathname+(q.toString()?'?'+q:'')+location.hash;
     try{history.replaceState(null,'',r)}catch(_){}}
@@ -1914,6 +1922,15 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-cxl]
   b.disabled=true;b.textContent='Salvando…';
   try{await upd(col,id,{cancelado:novo});if(col==='eventos')for(const bn of (ALL.banners||[]).filter(y=>String(y.evento||'')===String(id)))await upd('banners',bn.id,{cancelado:novo});render()}
   catch(_){b.disabled=false;b.textContent='Não deu certo'}});
+
+/* ===== app v8: notificações desligadas no Android → passo a passo ===== */
+const NOTIF_SET='intent:#Intent;action=android.settings.APP_NOTIFICATION_SETTINGS;S.android.provider.extra.APP_PACKAGE=br.com.adcarlosbarbosa.app;end';
+function notifPassos(){return `<a class="nfb" href="${NOTIF_SET}">${IC('bell')}Abrir as configurações de notificação</a><ol class="nfl"><li>Se o botão não abrir: vá em <b>Configurações</b> do celular → <b>Apps</b> → <b>AD Carlos Barbosa</b>.</li><li>Toque em <b>Notificações</b>.</li><li>Ligue <b>Todas as notificações do app</b>.</li><li>Feche e abra o app de novo.</li></ol>`}
+function rNotifOff(){const el=document.getElementById('notifOff');if(!el)return;let fechado=false;try{fechado=sessionStorage.getItem('notifOffX')==='1'}catch(_){}
+  const mostra=emApp()&&NOTIF_APP==='0'&&!fechado;el.hidden=!mostra;if(!mostra){el.innerHTML='';return}
+  el.innerHTML=`<div class="nfc"><div class="nfh"><span class="nfi">${IC('bell')}</span><div><b>Suas notificações estão desligadas</b><small>Você não vai receber avisos, escalas e lembretes dos cultos.</small></div><button class="nfx" data-nfx="1" aria-label="Fechar">✕</button></div>${notifPassos()}</div>`}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-nfx]');if(!b)return;e.preventDefault();try{sessionStorage.setItem('notifOffX','1')}catch(_){}rNotifOff()});
+setTimeout(rNotifOff,600);
 /* ===== responder pedido de oração (notificação só para quem pediu) ===== */
 const RESP_PRONTAS=['🙏 Estamos orando por você.','O pastor vai entrar em contato com você.','Deus te abençoe! Conte com a igreja.'];
 function openResp(rid){const d=(S.oracoes||[]).find(x=>String(x.id)===String(rid));if(!d)return;const it=(d.itens||[])[0]||{};
