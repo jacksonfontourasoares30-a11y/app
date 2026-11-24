@@ -577,6 +577,11 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .mnm button,[data-nome].btn{display:inline-flex;align-items:center;gap:6px}.mnm button{margin-left:auto;border:0;background:none;color:var(--blue,#1546b8);font:800 13.5px Manrope,system-ui,sans-serif;cursor:pointer;padding:6px 0}
 .mnm svg,[data-nome].btn svg{width:14px;height:14px}
 a.shr{text-decoration:none;color:inherit}
+.rspb{display:inline-flex;align-items:center;gap:7px;margin-top:10px;border:0;background:var(--blue,#1546b8);color:#fff;font:800 13.5px Manrope,system-ui;padding:9px 14px;border-radius:12px;cursor:pointer}.rspb .ic{width:16px;height:16px}
+.rsp{margin-top:10px;background:#e8f6ee;color:#0f7a5c;font:700 13px/1.4 Manrope,system-ui;padding:9px 12px;border-radius:12px}
+.rsn{margin-top:8px;font:600 12.5px Manrope,system-ui;color:var(--mut)}
+.rqp{background:var(--line,#eef1f7);border-radius:14px;padding:12px 14px;font:600 15px/1.45 Manrope,system-ui}.rqp small{display:block;margin-top:6px;color:var(--mut);font-size:12.5px}
+.rqc{display:flex;flex-direction:column;gap:8px;margin-bottom:12px}.rqc button{text-align:left;border:1.5px solid var(--line,#dfe4ee);background:var(--card);border-radius:12px;padding:11px 13px;font:700 14px Manrope,system-ui;color:var(--ink);cursor:pointer}
 .lbr{display:flex;align-items:center;gap:10px;flex-wrap:wrap}#hero .lbr>.amb{width:auto!important;display:inline-flex;align-items:center;gap:5px;border:1.5px solid #fecdd3;background:#fff;border-radius:99px;padding:5px 11px;font:800 12.5px Manrope,system-ui;cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.12)}#hero .lbr>.amb .ic{width:15px;height:15px}
 .mcg{display:inline-flex;align-items:center;gap:8px;text-align:left;line-height:1.25;margin-top:8px;border:0;background:rgb(255 255 255/.14);color:inherit;font:700 13px Manrope,system-ui,sans-serif;padding:6px 8px 6px 12px;border-radius:99px;cursor:pointer;max-width:100%}.mcg b{font-weight:800}.mcg i{display:inline-grid;place-items:center;width:24px;height:24px;border-radius:50%;background:rgb(255 255 255/.2)}.mcg svg{width:13px;height:13px}
 .mag{margin-top:6px}
@@ -1813,10 +1818,10 @@ function rProg(){const c=cfg(),pg=(c.prog||[]).filter(x=>inCong(x));
   const cs=[...new Set(pg.map(x=>x.cong))];
   $('#pgL').innerHTML=cs.map(cn=>`<div class="card"><h3>${esc(cn)}</h3>${[0,1,2,3,4,5,6].map(d=>{const l=pg.filter(x=>x.cong===cn&&x.dia===d).sort((a,b)=>String(a.hora).localeCompare(b.hora));return l.length?`<div class="dayt">${cap(DN[d])}</div>`+l.map(x=>`<div class="wk"><b>${esc(x.hora)}</b><span>${esc(x.nome)}</span></div>`).join(''):''}).join('')}</div>`).join('')}
 function rRecebidos(){const box=$('#rcL');
-  const o=(S.oracoes||[]).flatMap(d=>(d.itens||[]).map(i=>({...i,quem:d.nome}))).sort((a,b)=>String(b.quando).localeCompare(a.quando));
+  const o=(S.oracoes||[]).flatMap(d=>(d.itens||[]).map(i=>({...i,quem:d.nome,rid:d.id}))).sort((a,b)=>String(b.quando).localeCompare(a.quando));
   const a=(S.ausencias||[]).flatMap(d=>(d.itens||[]).map(i=>({...i,quem:i.nome||d.nome}))).sort((a,b)=>String(b.quando).localeCompare(a.quando));
   box.innerHTML=`<div class="card"><h3>Avisos de ausência</h3>${a.length?a.map(x=>`<div class="rec"><b>${esc(x.quem||'Sem nome')}</b> não poderá ir — ${esc(x.culto||'')}, ${x.data?fmt(x.data,{day:'numeric',month:'short'}):''}${x.motivo?`<br>${esc(x.motivo)}`:''}<small>${x.cong?esc(x.cong)+' · ':''}enviado ${x.quando?new Date(x.quando).toLocaleString('pt-BR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}</small></div>`).join(''):'<div class="rec"><small>Nenhum aviso recebido.</small></div>'}</div>
-  <div class="card"><h3>Pedidos de oração</h3>${o.length?o.map(x=>`<div class="rec">${esc(x.texto)}<small>${esc(x.nome||x.quem||'Anônimo')}${x.cong?' · '+esc(x.cong):''} · ${x.quando?new Date(x.quando).toLocaleString('pt-BR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}</small></div>`).join(''):'<div class="rec"><small>Nenhum pedido recebido.</small></div>'}</div>`}
+  <div class="card"><h3>Pedidos de oração</h3>${o.length?o.map(x=>`<div class="rec">${esc(x.texto)}<small>${esc(x.nome||x.quem||'Anônimo')}${x.cong?' · '+esc(x.cong):''} · ${x.quando?new Date(x.quando).toLocaleString('pt-BR',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'}):''}</small>${x.resposta?`<div class="rsp">✓ Respondido${x.resposta.por?' por '+esc(x.resposta.por):''}: “${esc(x.resposta.texto)}”</div>`:x.disp?`<button class="rspb" data-resp="${esc(x.rid)}">${IC('chat')}Responder</button>`:'<div class="rsn">Este irmão não recebe notificações — não dá para responder pelo app.</div>'}</div>`).join(''):'<div class="rec"><small>Nenhum pedido recebido.</small></div>'}</div>`}
 async function upd(col,id,patch){if(db){await db.doc(col+'/'+id).update(patch)}else{setCol(col,ALL[col].map(x=>x.id===id?{...x,...patch}:x))}}
 const pend=()=>['avisos','eventos','banners','escalas'].flatMap(c=>ALL[c].filter(x=>x.status==='pendente'&&!(c==='banners'&&x.evento)).map(x=>({...x,_c:c})));
 const TIPO={avisos:'Aviso',eventos:'Evento',banners:'Banner',escalas:'Escala'};
@@ -1895,6 +1900,18 @@ function rAdmin(){
 }
 
 
+
+/* ===== responder pedido de oração (notificação só para quem pediu) ===== */
+const RESP_PRONTAS=['🙏 Estamos orando por você.','O pastor vai entrar em contato com você.','Deus te abençoe! Conte com a igreja.'];
+function openResp(rid){const d=(S.oracoes||[]).find(x=>String(x.id)===String(rid));if(!d)return;const it=(d.itens||[])[0]||{};
+  $('#sheet').innerHTML=`<div class="bd" style="padding-top:24px"><h2 style="font-size:22px;margin-bottom:6px">Responder pedido</h2><div class="rqp">“${esc(it.texto||'')}”<small>${esc(it.nome||d.nome||'Anônimo')}</small></div><p class="note" style="text-align:left;margin:12px 0 8px">Escolha uma resposta pronta ou escreva a sua. Ela chega como notificação <b>só no celular de quem pediu</b>.</p><div class="rqc">${RESP_PRONTAS.map(t=>`<button type="button" data-rpr="${esc(t)}">${esc(t)}</button>`).join('')}</div><form class="adm" id="frsp"><textarea name="t" required maxlength="300" placeholder="Escreva sua resposta…"></textarea><button class="btn" type="submit">Enviar resposta</button><p class="msg"></p></form></div>`;
+  $('#modal').classList.add('on');const f=$('#frsp');
+  $$('#sheet [data-rpr]').forEach(b=>b.onclick=()=>{f.elements.t.value=b.dataset.rpr;f.elements.t.focus()});
+  f.onsubmit=async ev=>{ev.preventDefault();const t=f.elements.t.value.trim();if(!t)return;const m=f.querySelector('.msg'),bt=f.querySelector('.btn');bt.disabled=true;m.textContent='Enviando…';
+    try{const r=await SB.rpc('responder_oracao',{p_id:rid,p_texto:t});if(r.error)throw r.error;if(r.data&&r.data.erro)throw new Error(r.data.erro);
+      it.resposta={texto:t,por:(eu&&eu.nome)||'',quando:new Date().toISOString()};closeM();rRecebidos()}
+    catch(e){bt.disabled=false;m.textContent='Não deu certo. Tente de novo.'}}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-resp]');if(!b)return;e.preventDefault();openResp(b.dataset.resp)});
 /* ===== trocar a foto de um evento ou banner já publicado ===== */
 {let alvo='';
  document.addEventListener('click',e=>{const b=e.target.closest('[data-foto]');if(!b||!canEdit||papel==='lider')return;e.preventDefault();alvo=b.dataset.foto;const i=$('#fotoTroca');i.value='';i.click()});
@@ -1982,7 +1999,8 @@ function openCartaz(id){const b=S.banners.find(x=>x.id===id);if(!b)return;
 function openCong(){const c=cfg();$('#sheet').innerHTML=`<div class="bd" style="padding-top:24px"><h2 style="font-size:22px;margin-bottom:6px">Ver a agenda de</h2><p style="color:var(--mut);margin:0 0 16px;font-size:14.5px">Muda só o que aparece na tela (eventos e escalas). Os avisos continuam chegando da <b>sua congregação: ${esc(congAv||'Todas')}</b>.</p>${['',...c.congs].map(x=>`<button class="opt${x===cong?' on':''}" data-cong="${esc(x)}"><span class="on-l"><i class="cdot" style="--cc:${ccol(x)}"></i>${esc(x||'Todas as congregações')}</span>${x===cong?'<svg class="ic"><use href="#i-chev"/></svg>':''}</button>`).join('')}</div>`;$('#modal').classList.add('on')}
 $('#cbtn').onclick=openCong;
 let uid=null;
-async function addMine(col,item,nome){const r=await SB.from('recebidos').insert({tipo:col==='oracoes'?'oracao':'ausencia',dados:{...item,nome:nome||item.nome||''}});if(r.error)throw mapErr(r.error);return 'ok'}
+function meuDisp(){try{if(FCM)return {t:String(FCM)};const ps=(typeof pushSub!=='undefined')&&pushSub;const ep=ps&&(ps.endpoint||(ps.toJSON&&ps.toJSON().endpoint));if(ep)return {e:String(ep)}}catch(_){}return null}
+async function addMine(col,item,nome){const d=col==='oracoes'?meuDisp():null;const r=await SB.from('recebidos').insert({tipo:col==='oracoes'?'oracao':'ausencia',dados:{...item,nome:nome||item.nome||'',...(d?{disp:d}:{})}});if(r.error)throw mapErr(r.error);return 'ok'}
 function openAus(id){const s=S.escalas.find(x=>x.id===id);if(!s)return;
   $('#sheet').innerHTML=`<div class="bd" style="padding-top:24px"><h2 style="font-size:22px;margin-bottom:6px">Não posso ir</h2><p style="color:var(--mut);margin:0 0 14px;font-size:14.5px">${esc(s.culto||'Culto')} · ${cap(fmt(s.data,{weekday:'long',day:'numeric',month:'long'}))}${s.hora?' · '+esc(s.hora):''}</p><form class="adm" id="fau"><label>Seu nome<input name="nome" required maxlength="60" value="${esc(me)}"></label><label>Motivo<textarea name="motivo" required maxlength="500" placeholder="Explique o motivo para a liderança"></textarea></label><p class="note" style="margin:0;text-align:left">Lembrete do pastor: não faça trocas sem consultar a liderança.</p><button class="btn">Enviar aviso à liderança</button><div class="msg"></div></form><button class="btn gh" style="width:100%;margin-top:8px;background:none" id="fx">Cancelar</button></div>`;
   $('#modal').classList.add('on');$('#fx').onclick=closeM;
