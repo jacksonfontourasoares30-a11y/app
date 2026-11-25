@@ -577,6 +577,11 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .mnm button,[data-nome].btn{display:inline-flex;align-items:center;gap:6px}.mnm button{margin-left:auto;border:0;background:none;color:var(--blue,#1546b8);font:800 13.5px Manrope,system-ui,sans-serif;cursor:pointer;padding:6px 0}
 .mnm svg,[data-nome].btn svg{width:14px;height:14px}
 a.shr{text-decoration:none;color:inherit}
+.pxh{font:800 12.5px Manrope,system-ui;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin:22px 2px 10px}
+.pxl{background:var(--card);border-radius:20px;box-shadow:var(--sh);overflow:hidden}.pxr{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;padding:12px 14px;text-align:left;color:var(--ink);cursor:pointer;font:inherit}.pxr+.pxr{border-top:1px solid var(--line,#e7eaf2)}
+.pxd{width:48px;height:52px;border-radius:14px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;background:color-mix(in srgb,var(--c,#1546b8) 13%,transparent);color:var(--c,#1546b8)}.pxd small{font:800 10.5px Manrope,system-ui;letter-spacing:.6px}.pxd b{font:800 20px/1.05 Archivo,system-ui}
+.pxt{flex:1;min-width:0;display:flex;flex-direction:column;gap:2px}.pxt b{font:800 15px Archivo,system-ui;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.pxt small{font:600 13px Manrope,system-ui;color:var(--mut)}.pxr>.ic{width:18px;height:18px;color:var(--mut);flex:none}
+.tmr .tmi,#temaM .tmi{background:none!important}.tmr .tmi{width:24px;height:24px;display:grid;place-items:center;flex:none}.tmr .tmi .ic{width:22px;height:22px;color:#334155}html[data-theme=dark] .tmr .tmi .ic{color:#cbd5e1}
 .ahs{font:800 12.5px Manrope,system-ui;letter-spacing:1.2px;text-transform:uppercase;color:var(--mut);margin:20px 2px 10px}
 .atl button.tem{outline:2px solid var(--t);outline-offset:-2px}.atl button>span{position:relative}.atl .bdg{position:absolute;top:-6px;right:-8px;min-width:20px;height:20px;padding:0 5px;border-radius:99px;background:var(--t);color:#fff;font:800 11.5px/20px Manrope,system-ui;font-style:normal;text-align:center;box-shadow:0 0 0 2px var(--card)}
 .edp{width:100%;margin:12px 0 8px;display:flex;align-items:center;justify-content:center;gap:8px}.edp svg{width:15px;height:15px}
@@ -696,9 +701,9 @@ a.shr{text-decoration:none;color:inherit}
       <a href="#oracao"><span><svg class="ic"><use href="#i-heart"/></svg></span>Oração</a>
       <a href="#calendario"><span><svg class="ic"><use href="#i-cal"/></svg></span>Calendário</a>
       <a href="#mais" id="pushM" data-push="1" hidden><span><svg class="ic"><use href="#i-bell"/></svg></span>Notificações<small id="pushMs" style="display:none">…</small></a>
-      <a href="#mais" id="temaM"><span><svg class="ic"><use href="#i-sun"/></svg></span>Tema<small id="temaMs">Claro</small></a>
     </div>
     <a class="lid" href="#admin"><svg class="ic"><use href="#i-shield"/></svg><div><b>Área da liderança</b><small>Publicar avisos, eventos e escalas</small></div></a>
+    <a class="shr tmr" href="#mais" id="temaM"><span class="tmi"><svg class="ic"><use href="#i-sun"/></svg></span><div><b>Tema da tela</b><small id="temaMs">Claro</small></div></a>
     <button class="shr" data-shareapp="1"><svg class="ic"><use href="#i-chat"/></svg><div><b>Compartilhar o app</b><small>Envie o link pelo WhatsApp</small></div></button>
     <a class="shr" href="privacidade.html"><svg class="ic"><use href="#i-shield"/></svg><div><b>Privacidade</b><small>O que o app guarda e quem pode ver</small></div></a>
   </section>
@@ -1640,7 +1645,9 @@ function rAgenda(){if(!agSel)agSel=TODAY;const d0=toD(agSel);const seg=new Date(
     const pas=agSel===TODAY&&e.hora&&e.hora<nowT;
     h+=`<button class="agti${pas?' pas':''}" style="--c:${c}" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}"><span class="ah">${esc(e.hora?e.hora.replace(':00','h').replace(':','h'):'—')}</span><span class="adt"></span><span class="acd${esc1?' me':''}"><b>${esc(e.titulo)}</b><small>${IC('pin')}${esc([e.cong&&e.cong!=='Todas'?e.cong:'',e.local].filter(Boolean).join(' · ')||'Todas as congregações')}</small>${esc1?`<span class="app">${ppl(esc1).slice(0,3).map(x=>`<i style="background:${x.toLowerCase().includes(n)?'#0b2160':corP(x)}">${esc(inic(x))}</i>`).join('')}<em>Você está na escala</em></span>`:''}</span></button>`}
   if(!agoraDone&&l.length)h+=`<div class="agnow">AGORA · ${nowT}</div>`;
-  h+='</div>';if(!l.length)h=`<div class="agw">${cap(fmt(agSel,{weekday:'long',day:'numeric',month:'long'}))}</div><div class="empty">Nada marcado para este dia.</div>`;
+  h+='</div>';if(!l.length){h=`<div class="agw">${cap(fmt(agSel,{weekday:'long',day:'numeric',month:'long'}))}</div><div class="empty">Nada marcado para este dia.</div>`;
+    const vis=new Set(),px=[];for(const e of futuros()){if(e.data<=agSel)continue;const k=(e.base||e.id)+'|'+e.data;if(vis.has(k))continue;vis.add(k);px.push(e);if(px.length>=5)break}
+    if(px.length)h+=`<div class="pxh">Próximos dias</div><div class="pxl">${px.map(e=>{const d=toD(e.data);const cg=e.cong&&e.cong!=='Todas'?e.cong:'Todas';return `<button class="pxr" data-ev="${esc(e.base||e.id)}" data-dt="${esc(e.data)}"><span class="pxd" style="--c:${ccol(cg==='Todas'?'':cg)}"><small>${DN[d.getDay()].slice(0,3).toUpperCase()}</small><b>${d.getDate()}</b></span><span class="pxt"><b>${esc(e.titulo)}</b><small>${e.hora?esc(e.hora)+' · ':''}${esc(cg==='Todas'?'Todas as congregações':cg)}</small></span>${IC('chev')}</button>`}).join('')}</div>`}
   $('#agL').innerHTML=loaded?h:SK(3)}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-agd],#agp,#agn');if(!b)return;
   if(b.dataset.agd)agSel=b.dataset.agd;else{const d=toD(agSel||TODAY);d.setDate(d.getDate()+(b.id==='agn'?7:-7));agSel=iso(d)}rAgenda()});
@@ -1756,7 +1763,7 @@ function rEscalas(){
    if(mm){if(!n){$('#eMin').innerHTML='<div class="empty" style="padding-top:8px">Digite seu nome acima, do jeito que aparece na escala, para ver os cultos em que você serve.</div>';return}
      const dd=d=>{const x=Math.round((toD(d)-toD(TODAY))/864e5);return x===0?'hoje':x===1?'amanhã':'em '+x+' dias'};let h='',last='';
      for(const s1 of mine){if(s1.data!==last){last=s1.data;h+=`<div class="edg">${cap(fmt(s1.data,{weekday:'long',day:'numeric',month:'long'})).toUpperCase()}<em>${dd(s1.data)}</em></div>`}h+=escCard(s1)}
-     $('#eMin').innerHTML=h||`<div class="empty">Nenhuma escala futura para “${esc(me)}”.<br>Confira em <b>Todas</b> se o nome está escrito igual ao da escala.</div><p style="text-align:center"><button class="btn gh" data-nome="1">${PEN}Corrigir meu nome</button></p>`;if(h)$('#eMin').insertAdjacentHTML('afterbegin',`<div class="mnm"><span>Escalas de <b>${esc(me)}</b></span><button data-nome="1">${PEN}Corrigir</button></div>`);return}}
+     $('#eMin').innerHTML=h||`<div class="empty">Nenhuma escala futura para “${esc(me)}”.<br>Confira em <b>Todas</b> se o nome está escrito igual ao da escala.</div><p style="text-align:center"><button class="btn gh" data-nome="1">${PEN}Corrigir meu nome</button></p>${(()=>{const pr=(S.escalas||[]).filter(x=>x.data>=TODAY&&inCong(x)).sort((a,b)=>(a.data+(a.hora||'')).localeCompare(b.data+(b.hora||''))).slice(0,3);if(!pr.length)return '';let hh='<div class="pxh">Próximas escalas da igreja</div>',la='';for(const s1 of pr){if(s1.data!==la){la=s1.data;hh+=`<div class="edg">${cap(fmt(s1.data,{weekday:'long',day:'numeric',month:'long'})).toUpperCase()}</div>`}hh+=escCard(s1)}return hh})()}`;if(h)$('#eMin').insertAdjacentHTML('afterbegin',`<div class="mnm"><span>Escalas de <b>${esc(me)}</b></span><button data-nome="1">${PEN}Corrigir</button></div>`);return}}
   const key=ey+'-'+pad(emo+1);$('#emT').textContent=MES[emo]+' '+ey;
   const mesL=S.escalas.filter(s=>typeof s.data==='string'&&s.data.startsWith(key)&&inCong(s));
   const mins=['Todos',...new Set(mesL.flatMap(gr))];
