@@ -1956,11 +1956,11 @@ async function palMp3(src){await lameLoad();const AC=window.AudioContext||window
   const dur=buf.duration;if(dur>PAL_MAX+2){const e=new Error('longo');e.dur=dur;throw e}
   const SR=22050,n=Math.ceil(dur*SR);const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;const oc=new OC(1,n,SR);
   const bs=oc.createBufferSource();bs.buffer=buf;bs.connect(oc.destination);bs.start(0);const out=await new Promise((ok,no)=>{const p=oc.startRendering();if(p&&p.then)p.then(ok,no);else oc.oncomplete=e=>ok(e.renderedBuffer)});
-  const f=out.getChannelData(0);let pk=0;for(let i=0;i<f.length;i++){const v=Math.abs(f[i]);if(v>pk)pk=v}const g=pk>0.05&&pk<0.7?0.89/pk:1;
+  const f=out.getChannelData(0);let pk=0;for(let i=0;i<f.length;i++){const v=Math.abs(f[i]);if(v>pk)pk=v}if(pk<0.003){const e=new Error('mudo');throw e}const g=pk>0.05&&pk<0.7?0.89/pk:1;
   const i16=new Int16Array(f.length);for(let i=0;i<f.length;i++){let v=f[i]*g;v=v>1?1:v<-1?-1:v;i16[i]=v<0?v*0x8000:v*0x7FFF}
   const enc=new lamejs.Mp3Encoder(1,SR,24);const parts=[];for(let i=0;i<i16.length;i+=1152){const m=enc.encodeBuffer(i16.subarray(i,i+1152));if(m.length)parts.push(new Uint8Array(m))}
   const e2=enc.flush();if(e2.length)parts.push(new Uint8Array(e2));return{blob:new Blob(parts,{type:'audio/mpeg'}),dur}}
-function palMime(){const L=['audio/mp4','audio/webm;codecs=opus','audio/webm','audio/ogg;codecs=opus'];try{for(const m of L)if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m}catch(_){}return''}
+function palMime(){const L=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];try{for(const m of L)if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m}catch(_){}return''}
 async function palGravar(){PR.err='';PR.msg='';try{if(!navigator.mediaDevices||!window.MediaRecorder)throw new Error('sem');
     PR.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
     const mt=palMime();PR.rec=new MediaRecorder(PR.stream,mt?{mimeType:mt}:undefined);PR.ch=[];
@@ -1968,16 +1968,16 @@ async function palGravar(){PR.err='';PR.msg='';try{if(!navigator.mediaDevices||!
     PR.rec.onstop=async()=>{clearInterval(PR.tm);cancelAnimationFrame(PR.raf);try{PR.stream.getTracks().forEach(t=>t.stop())}catch(_){}try{PR.ac&&PR.ac.close()}catch(_){}
       const raw=new Blob(PR.ch,{type:PR.rec.mimeType||mt||'audio/webm'});await palPreparar(raw)};
     try{const AC=window.AudioContext||window.webkitAudioContext;PR.ac=new AC();const src=PR.ac.createMediaStreamSource(PR.stream);PR.an=PR.ac.createAnalyser();PR.an.fftSize=256;src.connect(PR.an)}catch(_){PR.an=null}
-    PR.rec.start(250);PR.t0=Date.now();PR.st='rec';rPalAdm();
+    PR.ouviu=false;PR.rec.start(250);PR.t0=Date.now();PR.st='rec';rPalAdm();
     PR.tm=setInterval(()=>{const t=(Date.now()-PR.t0)/1000;const el=$('#paT');if(el)el.innerHTML=mmss(t)+' <small>/ 3:00</small>';if(t>=PAL_MAX)palParar()},250);palOnda()}
   catch(e){PR.st='idle';PR.err=e&&e.name==='NotAllowedError'?'O app não recebeu permissão para usar o microfone. Libere o microfone nas configurações do celular e tente de novo.':'Não deu para gravar neste aparelho. Use “Escolher áudio do celular”.';rPalAdm()}}
 function palOnda(){const box=$('#paW');if(!box||PR.st!=='rec')return;let v=new Uint8Array(PR.an?PR.an.frequencyBinCount:0);
   const step=()=>{if(PR.st!=='rec')return;let lv=.15;if(PR.an){PR.an.getByteTimeDomainData(v);let m=0;for(const x of v){const d=Math.abs(x-128);if(d>m)m=d}lv=Math.min(1,m/70+.1)}
-    const b=box.firstElementChild;if(b){box.appendChild(b);b.style.height=Math.round(12+lv*88)+'%'}PR.raf=requestAnimationFrame(()=>setTimeout(step,70))};step()}
+    const b=box.firstElementChild;if(b){box.appendChild(b);b.style.height=Math.round(12+lv*88)+'%'}if(PR.an){if(lv>.2)PR.ouviu=true;const tt=(Date.now()-PR.t0)/1000;const li=$('#paL .lim');if(li&&!PR.ouviu&&tt>4)li.textContent='Não estou ouvindo nada… confira o microfone.';else if(li&&PR.ouviu)li.textContent='Gravando… toque no quadrado para parar'}PR.raf=requestAnimationFrame(()=>setTimeout(step,70))};step()}
 function palParar(){if(PR.rec&&PR.rec.state!=='inactive'){PR.st='prep';rPalAdm();PR.rec.stop()}}
 async function palPreparar(src){PR.st='prep';PR.err='';PR.msg='';rPalAdm();
   try{const ab=await src.arrayBuffer();const r=await palMp3(ab);PR.blob=r.blob;PR.dur=r.dur;if(PR.url)URL.revokeObjectURL(PR.url);PR.url=URL.createObjectURL(r.blob);PR.st='ok'}
-  catch(e){PR.st='idle';PR.err=e&&e.message==='longo'?'Este áudio tem '+mmss(e.dur)+'. O máximo é 3 minutos.':e&&e.message==='lame'?'Sem internet para preparar o áudio. Tente de novo.':'Não deu para abrir este áudio neste aparelho. Tente gravar direto pelo app.'}
+  catch(e){PR.st='idle';PR.err=e&&e.message==='mudo'?'O áudio ficou sem som. O microfone não captou nada: confira se o app tem permissão para usar o microfone e se nenhum outro app (ligação, WhatsApp) está usando o microfone. Se preferir, grave no WhatsApp e use “Escolher áudio do celular”.':e&&e.message==='longo'?'Este áudio tem '+mmss(e.dur)+'. O máximo é 3 minutos.':e&&e.message==='lame'?'Sem internet para preparar o áudio. Tente de novo.':'Não deu para abrir este áudio neste aparelho. Tente gravar direto pelo app.'}
   rPalAdm()}
 function rPalAdm(){const box=$('#paL');if(!box)return;const L=palList();
   const ti=(box.querySelector('[name=pti]')||{}).value;const av=box.querySelector('[name=pav]');const avOn=av?av.checked:true;
@@ -1999,7 +1999,7 @@ async function palEnviar(){const box=$('#paL');const m=$('#paM');if(!PR.blob)ret
   try{const path='pal-'+Date.now()+'-'+Math.random().toString(36).slice(2,6)+'.mp3';
     const r=await SB.storage.from('midia').upload(path,PR.blob,{contentType:'audio/mpeg',cacheControl:'31536000',upsert:false});if(r.error)throw r.error;
     const ti=(box.querySelector('[name=pti]').value||'').trim().slice(0,70);
-    await db.collection('palavras').add({titulo:ti,mid:path,dur:Math.round(PR.dur),criado:new Date().toISOString(),autor:(eu&&eu.nome)||''});
+    try{await db.collection('palavras').add({titulo:ti,mid:path,dur:Math.round(PR.dur),criado:new Date().toISOString(),autor:(eu&&eu.nome)||''})}catch(e2){try{await SB.storage.from('midia').remove([path])}catch(_){}throw e2}
     if(box.querySelector('[name=pav]').checked)notificar({titulo:'Palavra do Pastor',corpo:(ti?ti+' — ':'')+'Nova meditação em áudio ('+mmss(PR.dur)+'). Toque para ouvir.',url:'./#inicio',cong:''});
     if(PR.url)URL.revokeObjectURL(PR.url);Object.assign(PR,{st:'idle',blob:null,dur:0,url:'',err:'',msg:'Publicado! Já aparece no início do app.'});rPalAdm();setTimeout(()=>{PR.msg='';},8000)}
   catch(e){b.disabled=false;m.textContent='Não deu para enviar. Verifique a internet e tente de novo.';try{console.warn('palEnviar',e&&e.message||e)}catch(_){}}}
