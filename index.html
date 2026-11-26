@@ -598,6 +598,7 @@ html[data-theme=dark] .pc small{color:#f6c453}
 .tmr{font:800 30px Archivo,system-ui;letter-spacing:1px}.tmr small{font:700 15px Manrope,system-ui;color:var(--mut)}
 .lwv{display:flex;align-items:center;justify-content:center;gap:3px;height:44px;margin:10px 0 4px}.lwv i{width:4px;height:12%;border-radius:3px;background:#ef4444;transition:height .08s}
 .lim{font:600 13px Manrope,system-ui;color:var(--mut);margin-top:6px}
+.pdg{margin-top:10px;text-align:left;font:700 13px Manrope,system-ui;color:var(--mut)}.pdg small{display:block;margin-top:4px;font-weight:600}
 .perr{margin-top:12px;background:#fef2f2;color:#b91c1c;border-radius:12px;padding:10px 12px;font:700 13.5px Manrope,system-ui}
 .ou{display:flex;align-items:center;gap:10px;margin:16px 0 12px;color:var(--mut);font:700 13px Manrope,system-ui}.ou:before,.ou:after{content:"";flex:1;height:1px;background:var(--line)}
 .fb{display:flex;align-items:center;justify-content:center;gap:8px;width:100%;box-sizing:border-box;border:1.5px dashed #9aa7c7;border-radius:16px;padding:14px;font:800 15px Manrope,system-ui;color:var(--ink);cursor:pointer}
@@ -1959,7 +1960,7 @@ async function palMp3(src){await lameLoad();const AC=window.AudioContext||window
   const f=out.getChannelData(0);let pk=0;for(let i=0;i<f.length;i++){const v=Math.abs(f[i]);if(v>pk)pk=v}if(pk<0.003){const e=new Error('mudo');throw e}const g=pk>0.05&&pk<0.7?0.89/pk:1;
   const i16=new Int16Array(f.length);for(let i=0;i<f.length;i++){let v=f[i]*g;v=v>1?1:v<-1?-1:v;i16[i]=v<0?v*0x8000:v*0x7FFF}
   const enc=new lamejs.Mp3Encoder(1,SR,24);const parts=[];for(let i=0;i<i16.length;i+=1152){const m=enc.encodeBuffer(i16.subarray(i,i+1152));if(m.length)parts.push(new Uint8Array(m))}
-  const e2=enc.flush();if(e2.length)parts.push(new Uint8Array(e2));return{blob:new Blob(parts,{type:'audio/mpeg'}),dur}}
+  const e2=enc.flush();if(e2.length)parts.push(new Uint8Array(e2));let sq=0;for(let i=0;i<f.length;i++)sq+=f[i]*f[i];return{blob:new Blob(parts,{type:'audio/mpeg'}),dur,pk,rms:Math.sqrt(sq/Math.max(1,f.length))}}
 function palMime(){const L=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];try{for(const m of L)if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m}catch(_){}return''}
 async function palGravar(){PR.err='';PR.msg='';try{if(!navigator.mediaDevices||!window.MediaRecorder)throw new Error('sem');
     PR.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
@@ -1976,7 +1977,7 @@ function palOnda(){const box=$('#paW');if(!box||PR.st!=='rec')return;let v=new U
     const b=box.firstElementChild;if(b){box.appendChild(b);b.style.height=Math.round(12+lv*88)+'%'}if(PR.an){if(lv>.2)PR.ouviu=true;const tt=(Date.now()-PR.t0)/1000;const li=$('#paL .lim');if(li&&!PR.ouviu&&tt>4)li.textContent='Não estou ouvindo nada… confira o microfone.';else if(li&&PR.ouviu)li.textContent='Gravando… toque no quadrado para parar'}PR.raf=requestAnimationFrame(()=>setTimeout(step,70))};step()}
 function palParar(){if(PR.rec&&PR.rec.state!=='inactive'){PR.st='prep';rPalAdm();PR.rec.stop()}}
 async function palPreparar(src){PR.st='prep';PR.err='';PR.msg='';rPalAdm();
-  try{const ab=await src.arrayBuffer();const r=await palMp3(ab);PR.blob=r.blob;PR.dur=r.dur;if(PR.url)URL.revokeObjectURL(PR.url);PR.url=URL.createObjectURL(r.blob);PR.st='ok'}
+  try{if(PR.raw)URL.revokeObjectURL(PR.raw);PR.raw=URL.createObjectURL(src);PR.rawT=src.type||'';const ab=await src.arrayBuffer();const r=await palMp3(ab);PR.blob=r.blob;PR.dur=r.dur;PR.pk=r.pk;PR.rms=r.rms;if(PR.url)URL.revokeObjectURL(PR.url);PR.url=URL.createObjectURL(r.blob);PR.st='ok'}
   catch(e){PR.st='idle';PR.err=e&&e.message==='mudo'?'O áudio ficou sem som. O microfone não captou nada: confira se o app tem permissão para usar o microfone e se nenhum outro app (ligação, WhatsApp) está usando o microfone. Se preferir, grave no WhatsApp e use “Escolher áudio do celular”.':e&&e.message==='longo'?'Este áudio tem '+mmss(e.dur)+'. O máximo é 3 minutos.':e&&e.message==='lame'?'Sem internet para preparar o áudio. Tente de novo.':'Não deu para abrir este áudio neste aparelho. Tente gravar direto pelo app.'}
   rPalAdm()}
 function rPalAdm(){const box=$('#paL');if(!box)return;const L=palList();
@@ -1984,7 +1985,7 @@ function rPalAdm(){const box=$('#paL');if(!box)return;const L=palList();
   let top='';
   if(PR.st==='rec')top=`<button class="mic rec" data-pstop="1" aria-label="Parar"><span></span></button><div class="tmr" id="paT" style="color:#dc2626">0:00 <small>/ 3:00</small></div><div class="lwv" id="paW">${'<i></i>'.repeat(28)}</div><div class="lim">Gravando… toque no quadrado para parar</div>`;
   else if(PR.st==='prep')top=`<div class="mic" style="opacity:.6">${IC('mic')}</div><div class="lim" style="font-size:15px">Preparando o áudio…</div>`;
-  else if(PR.st==='ok')top=`<audio controls src="${PR.url}" style="width:100%;margin:6px 0"></audio><div class="lim">Pronto: ${mmss(PR.dur)} · ${(PR.blob.size/1048576).toFixed(2).replace('.',',')} MB</div><button class="btn gh" data-pnovo="1" style="margin-top:8px">Gravar de novo</button>`;
+  else if(PR.st==='ok')top=`<audio controls src="${PR.url}" style="width:100%;margin:6px 0"></audio><div class="lim">Pronto: ${mmss(PR.dur)} · ${(PR.blob.size/1048576).toFixed(2).replace('.',',')} MB · nível da voz ${Math.round(Math.min(1,(PR.pk||0))*100)}%</div><details class="pdg"><summary>Teste: ouvir a gravação original</summary><audio controls src="${PR.raw||''}" style="width:100%;margin-top:6px"></audio><small>${esc(PR.rawT||'')} · média ${((PR.rms||0)*1000).toFixed(1)}</small></details><button class="btn gh" data-pnovo="1" style="margin-top:8px">Gravar de novo</button>`;
   else top=`<button class="mic" data-prec="1" aria-label="Gravar">${IC('mic')}</button><div class="tmr">0:00 <small>/ 3:00</small></div><div class="lim">Toque no microfone para começar a gravar</div>`;
   const lst=L.length?L.map(x=>`<div class="prw"><button class="pb2" data-pplay="${esc(x.id)}">${PLAYS}</button><div><b>${esc(x.titulo||'Meditação')}</b><small>${mmss(x.dur)} · ${esc(palQuando(x.criado))} · apaga em ${Math.max(0,Math.ceil(PAL_APAGA-palIdade(x)))} dias</small></div><button class="pdl" data-pdel="${esc(x.id)}" aria-label="Apagar">${IC('del')}</button></div>`).join(''):'<div class="lim" style="text-align:center">Nenhuma meditação enviada ainda.</div>';
   box.innerHTML=`<div class="prec"><p>Grave uma meditação curta (até 3 minutos). Ela aparece no início do app por ${PAL_DIAS} dias e é apagada depois de ${PAL_APAGA} dias.</p>${top}
