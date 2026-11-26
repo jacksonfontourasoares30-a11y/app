@@ -612,7 +612,7 @@ html[data-theme=dark] .pc small{color:#f6c453}
 .mic .ic{width:42px;height:42px}
 .mic.rec{background:linear-gradient(135deg,#ef4444,#b91c1c);box-shadow:0 0 0 12px #ef444422,0 0 0 24px #ef444412,0 12px 26px #b91c1c55}
 .mic.rec span{width:32px;height:32px;border-radius:8px;background:#fff}
-.tmr{font:800 30px Archivo,system-ui;letter-spacing:1px}.tmr small{font:700 15px Manrope,system-ui;color:var(--mut)}
+.ptmr{font:800 30px Archivo,system-ui;letter-spacing:1px}.ptmr small{font:700 15px Manrope,system-ui;color:var(--mut)}
 .lwv{display:flex;align-items:center;justify-content:center;gap:3px;height:44px;margin:10px 0 4px}.lwv i{width:4px;height:12%;border-radius:3px;background:#ef4444;transition:height .08s}
 .lim{font:600 13px Manrope,system-ui;color:var(--mut);margin-top:6px}
 .pdg{margin-top:10px;text-align:left;font:700 13px Manrope,system-ui;color:var(--mut)}.pdg small{display:block;margin-top:4px;font-weight:600}
@@ -2022,10 +2022,10 @@ async function palPreparar(src){PR.st='prep';PR.err='';PR.msg='';rPalAdm();
 function rPalAdm(){const box=$('#paL');if(!box)return;const L=palList();
   const ti=(box.querySelector('[name=pti]')||{}).value;const av=box.querySelector('[name=pav]');const avOn=av?av.checked:true;
   let top='';
-  if(PR.st==='rec')top=`<button class="mic rec" data-pstop="1" aria-label="Parar"><span></span></button><div class="tmr" id="paT" style="color:#dc2626">0:00 <small>/ 3:00</small></div><div class="lwv" id="paW">${'<i></i>'.repeat(28)}</div><div class="lim">Gravando… toque no quadrado para parar</div>`;
+  if(PR.st==='rec')top=`<button class="mic rec" data-pstop="1" aria-label="Parar"><span></span></button><div class="ptmr" id="paT" style="color:#dc2626">0:00 <small>/ 3:00</small></div><div class="lwv" id="paW">${'<i></i>'.repeat(28)}</div><div class="lim">Gravando… toque no quadrado para parar</div>`;
   else if(PR.st==='prep')top=`<div class="mic" style="opacity:.6">${IC('mic')}</div><div class="lim" style="font-size:15px">Preparando o áudio…</div>`;
   else if(PR.st==='ok')top=`<audio controls src="${PR.url}" style="width:100%;margin:6px 0"></audio><div class="lim">Pronto: ${mmss(PR.dur)} · ${(PR.blob.size/1048576).toFixed(2).replace('.',',')} MB</div><button class="btn gh" data-pnovo="1" style="margin-top:8px">Gravar de novo</button>`;
-  else top=`<button class="mic" data-prec="1" aria-label="Gravar">${IC('mic')}</button><div class="tmr">0:00 <small>/ 3:00</small></div><div class="lim">Toque no microfone para começar a gravar</div>`;
+  else top=`<button class="mic" data-prec="1" aria-label="Gravar">${IC('mic')}</button><div class="ptmr">0:00 <small>/ 3:00</small></div><div class="lim">Toque no microfone para começar a gravar</div>`;
   const lst=L.length?L.map(x=>`<div class="prw"><button class="pb2" data-pplay="${esc(x.id)}">${PLAYS}</button><div><b>${esc(x.titulo||'Meditação')}</b><small>${mmss(x.dur)} · ${esc(palQuando(x.criado))} · apaga em ${Math.max(0,Math.ceil(PAL_APAGA-palIdade(x)))} dias</small><small class="pst">🎧 ${palOuv(x.id)} ${palOuv(x.id)===1?'ouviu':'ouviram'} · ❤ ${amN('a:'+x.id)} Amém</small></div><button class="pdl" data-pdel="${esc(x.id)}" aria-label="Apagar">${IC('del')}</button></div>`).join(''):'<div class="lim" style="text-align:center">Nenhuma meditação enviada ainda.</div>';
   box.innerHTML=`<div class="prec"><p>Grave uma meditação curta (até 3 minutos). Ela aparece no início do app por ${PAL_DIAS} dias e é apagada depois de ${PAL_APAGA} dias.</p>${top}
   ${PR.err?`<div class="perr">${esc(PR.err)}</div>`:''}
