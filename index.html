@@ -1953,14 +1953,23 @@ async function palLimparCache(){if(palCx||!('caches' in window))return;palCx=tru
 const PR={st:'idle',rec:null,stream:null,ch:[],t0:0,tm:null,blob:null,dur:0,url:'',err:'',an:null,ac:null,raf:0};
 let lameP=null;function lameLoad(){return lameP||(lameP=new Promise((ok,no)=>{if(window.lamejs)return ok();const sc=document.createElement('script');sc.src='lame.min.js';sc.onload=()=>ok();sc.onerror=()=>{lameP=null;no(new Error('lame'))};document.head.appendChild(sc)}))}
 async function palMp3(src){await lameLoad();const AC=window.AudioContext||window.webkitAudioContext;const ac=new AC();
-  let buf;try{buf=await new Promise((ok,no)=>{const p=ac.decodeAudioData(src,ok,no);if(p&&p.then)p.then(ok,no)})}finally{try{ac.close()}catch(_){}}
-  const dur=buf.duration;if(dur>PAL_MAX+2){const e=new Error('longo');e.dur=dur;throw e}
-  const SR=22050,n=Math.ceil(dur*SR);const OC=window.OfflineAudioContext||window.webkitOfflineAudioContext;const oc=new OC(1,n,SR);
-  const bs=oc.createBufferSource();bs.buffer=buf;bs.connect(oc.destination);bs.start(0);const out=await new Promise((ok,no)=>{const p=oc.startRendering();if(p&&p.then)p.then(ok,no);else oc.oncomplete=e=>ok(e.renderedBuffer)});
-  const f=out.getChannelData(0);let pk=0;for(let i=0;i<f.length;i++){const v=Math.abs(f[i]);if(v>pk)pk=v}if(pk<0.003){const e=new Error('mudo');throw e}const g=pk>0.05&&pk<0.7?0.89/pk:1;
-  const i16=new Int16Array(f.length);for(let i=0;i<f.length;i++){let v=f[i]*g;v=v>1?1:v<-1?-1:v;i16[i]=v<0?v*0x8000:v*0x7FFF}
-  const enc=new lamejs.Mp3Encoder(1,SR,24);const parts=[];for(let i=0;i<i16.length;i+=1152){const m=enc.encodeBuffer(i16.subarray(i,i+1152));if(m.length)parts.push(new Uint8Array(m))}
-  const e2=enc.flush();if(e2.length)parts.push(new Uint8Array(e2));let sq=0;for(let i=0;i<f.length;i++)sq+=f[i]*f[i];return{blob:new Blob(parts,{type:'audio/mpeg'}),dur,pk,rms:Math.sqrt(sq/Math.max(1,f.length))}}
+  let buf;try{buf=await new Promise((ok,no)=>{const p=ac.decodeAudioData(src,ok,no);if(p&&p.then)p.then(ok,no)})}catch(e){try{ac.close()}catch(_){}throw e}
+  const dur=buf.duration;if(dur>PAL_MAX+2){try{ac.close()}catch(_){}const e=new Error('longo');e.dur=dur;throw e}
+  /* mono + reamostragem manual para 16 kHz (média por janela) — sem OfflineAudioContext */
+  const SR=16000,inR=buf.sampleRate,nc=buf.numberOfChannels,L0=buf.length,chs=[];for(let c=0;c<nc;c++)chs.push(buf.getChannelData(c));
+  const n=Math.floor(L0*SR/inR),f=new Float32Array(n),rt=inR/SR;
+  for(let i=0;i<n;i++){const a=Math.floor(i*rt),b=Math.max(a+1,Math.min(L0,Math.floor((i+1)*rt)));let s=0;for(let c=0;c<nc;c++){const d=chs[c];for(let k=a;k<b;k++)s+=d[k]}f[i]=s/((b-a)*nc)}
+  let pk=0,sq=0;for(let i=0;i<n;i++){const v=Math.abs(f[i]);if(v>pk)pk=v;sq+=f[i]*f[i]}const rms=Math.sqrt(sq/Math.max(1,n));
+  if(pk<0.003||rms<0.0005){try{ac.close()}catch(_){}throw new Error('mudo')}
+  const g=pk>0.05&&pk<0.7?0.89/pk:1;
+  const i16=new Int16Array(n);for(let i=0;i<n;i++){let v=f[i]*g;v=v>1?1:v<-1?-1:v;i16[i]=v<0?v*0x8000:v*0x7FFF}
+  const enc=new lamejs.Mp3Encoder(1,SR,24);const parts=[];for(let i=0;i<n;i+=1152){const m=enc.encodeBuffer(i16.subarray(i,i+1152));if(m.length)parts.push(new Uint8Array(m))}
+  const e2=enc.flush();if(e2.length)parts.push(new Uint8Array(e2));const blob=new Blob(parts,{type:'audio/mpeg'});
+  /* confere: o MP3 gerado precisa ter som */
+  let ok2=true;try{const ab2=await blob.arrayBuffer();const b2=await new Promise((ok,no)=>{const p=ac.decodeAudioData(ab2,ok,no);if(p&&p.then)p.then(ok,no)});const d2=b2.getChannelData(0);let q=0;for(let i=0;i<d2.length;i++)q+=d2[i]*d2[i];const r2=Math.sqrt(q/Math.max(1,d2.length));if(r2<rms*g*0.2)ok2=false}catch(_){}
+  try{ac.close()}catch(_){}
+  if(!ok2)throw new Error('conv');
+  return{blob,dur,pk,rms}}
 function palMime(){const L=['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg;codecs=opus'];try{for(const m of L)if(window.MediaRecorder&&MediaRecorder.isTypeSupported(m))return m}catch(_){}return''}
 async function palGravar(){PR.err='';PR.msg='';try{if(!navigator.mediaDevices||!window.MediaRecorder)throw new Error('sem');
     PR.stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:true,noiseSuppression:true,autoGainControl:true}});
@@ -1978,14 +1987,14 @@ function palOnda(){const box=$('#paW');if(!box||PR.st!=='rec')return;let v=new U
 function palParar(){if(PR.rec&&PR.rec.state!=='inactive'){PR.st='prep';rPalAdm();PR.rec.stop()}}
 async function palPreparar(src){PR.st='prep';PR.err='';PR.msg='';rPalAdm();
   try{if(PR.raw)URL.revokeObjectURL(PR.raw);PR.raw=URL.createObjectURL(src);PR.rawT=src.type||'';const ab=await src.arrayBuffer();const r=await palMp3(ab);PR.blob=r.blob;PR.dur=r.dur;PR.pk=r.pk;PR.rms=r.rms;if(PR.url)URL.revokeObjectURL(PR.url);PR.url=URL.createObjectURL(r.blob);PR.st='ok'}
-  catch(e){PR.st='idle';PR.err=e&&e.message==='mudo'?'O áudio ficou sem som. O microfone não captou nada: confira se o app tem permissão para usar o microfone e se nenhum outro app (ligação, WhatsApp) está usando o microfone. Se preferir, grave no WhatsApp e use “Escolher áudio do celular”.':e&&e.message==='longo'?'Este áudio tem '+mmss(e.dur)+'. O máximo é 3 minutos.':e&&e.message==='lame'?'Sem internet para preparar o áudio. Tente de novo.':'Não deu para abrir este áudio neste aparelho. Tente gravar direto pelo app.'}
+  catch(e){PR.st='idle';PR.err=e&&e.message==='mudo'?'O áudio ficou sem som. O microfone não captou nada: confira se o app tem permissão para usar o microfone e se nenhum outro app (ligação, WhatsApp) está usando o microfone. Se preferir, grave no WhatsApp e use “Escolher áudio do celular”.':e&&e.message==='conv'?'Não deu para preparar o áudio neste celular. Tente gravar direto pelo app ou escolher outro áudio.':e&&e.message==='longo'?'Este áudio tem '+mmss(e.dur)+'. O máximo é 3 minutos.':e&&e.message==='lame'?'Sem internet para preparar o áudio. Tente de novo.':'Não deu para abrir este áudio neste aparelho. Tente gravar direto pelo app.'}
   rPalAdm()}
 function rPalAdm(){const box=$('#paL');if(!box)return;const L=palList();
   const ti=(box.querySelector('[name=pti]')||{}).value;const av=box.querySelector('[name=pav]');const avOn=av?av.checked:true;
   let top='';
   if(PR.st==='rec')top=`<button class="mic rec" data-pstop="1" aria-label="Parar"><span></span></button><div class="tmr" id="paT" style="color:#dc2626">0:00 <small>/ 3:00</small></div><div class="lwv" id="paW">${'<i></i>'.repeat(28)}</div><div class="lim">Gravando… toque no quadrado para parar</div>`;
   else if(PR.st==='prep')top=`<div class="mic" style="opacity:.6">${IC('mic')}</div><div class="lim" style="font-size:15px">Preparando o áudio…</div>`;
-  else if(PR.st==='ok')top=`<audio controls src="${PR.url}" style="width:100%;margin:6px 0"></audio><div class="lim">Pronto: ${mmss(PR.dur)} · ${(PR.blob.size/1048576).toFixed(2).replace('.',',')} MB · nível da voz ${Math.round(Math.min(1,(PR.pk||0))*100)}%</div><details class="pdg"><summary>Teste: ouvir a gravação original</summary><audio controls src="${PR.raw||''}" style="width:100%;margin-top:6px"></audio><small>${esc(PR.rawT||'')} · média ${((PR.rms||0)*1000).toFixed(1)}</small></details><button class="btn gh" data-pnovo="1" style="margin-top:8px">Gravar de novo</button>`;
+  else if(PR.st==='ok')top=`<audio controls src="${PR.url}" style="width:100%;margin:6px 0"></audio><div class="lim">Pronto: ${mmss(PR.dur)} · ${(PR.blob.size/1048576).toFixed(2).replace('.',',')} MB</div><button class="btn gh" data-pnovo="1" style="margin-top:8px">Gravar de novo</button>`;
   else top=`<button class="mic" data-prec="1" aria-label="Gravar">${IC('mic')}</button><div class="tmr">0:00 <small>/ 3:00</small></div><div class="lim">Toque no microfone para começar a gravar</div>`;
   const lst=L.length?L.map(x=>`<div class="prw"><button class="pb2" data-pplay="${esc(x.id)}">${PLAYS}</button><div><b>${esc(x.titulo||'Meditação')}</b><small>${mmss(x.dur)} · ${esc(palQuando(x.criado))} · apaga em ${Math.max(0,Math.ceil(PAL_APAGA-palIdade(x)))} dias</small></div><button class="pdl" data-pdel="${esc(x.id)}" aria-label="Apagar">${IC('del')}</button></div>`).join(''):'<div class="lim" style="text-align:center">Nenhuma meditação enviada ainda.</div>';
   box.innerHTML=`<div class="prec"><p>Grave uma meditação curta (até 3 minutos). Ela aparece no início do app por ${PAL_DIAS} dias e é apagada depois de ${PAL_APAGA} dias.</p>${top}
