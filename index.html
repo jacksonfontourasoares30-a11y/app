@@ -577,6 +577,22 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .mnm button,[data-nome].btn{display:inline-flex;align-items:center;gap:6px}.mnm button{margin-left:auto;border:0;background:none;color:var(--blue,#1546b8);font:800 13.5px Manrope,system-ui,sans-serif;cursor:pointer;padding:6px 0}
 .mnm svg,[data-nome].btn svg{width:14px;height:14px}
 a.shr{text-decoration:none;color:inherit}
+.pc .phc{width:42px;height:42px;border-radius:50%;border:1.5px solid #fecdd3;background:#fff5f6;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;flex:none;cursor:pointer;color:#e11d48;padding:0}
+.pc .phc .ic{width:16px;height:16px;stroke:#e11d48}.pc .phc.on .ic{fill:#e11d48}.pc .phc b{display:block;font:800 10.5px/1 Manrope,system-ui;color:#e11d48;margin-top:1px}
+html[data-theme=dark] .pc .phc{background:#e11d4818;border-color:#e11d4855}
+.pc .pam{display:flex;align-items:center;gap:10px;width:100%;margin-top:8px}.pc .pam span{font:700 12px Manrope,system-ui;color:var(--mut)}
+.pc .pam .amb{margin:0;flex-direction:row;height:auto;border-radius:99px!important;border:1.5px solid #fecdd3!important;background:#fff5f6!important;box-shadow:none!important;padding:6px 12px!important;outline:0}html[data-theme=dark] .pc .pam .amb{background:#e11d4818!important;border-color:#e11d4855!important}.pc .amb b{display:inline;font:800 12.5px Manrope,system-ui;color:inherit;white-space:nowrap;overflow:visible}.prw .pst{display:block;margin-top:2px;color:#b07a12!important;font-weight:700!important}
+.pc{flex-wrap:wrap}.pc .pct{display:flex;align-items:center;gap:12px;width:100%;min-width:0}
+.pc .psk{display:flex;align-items:center;gap:8px;width:100%;margin-top:8px}
+.pc .p10{border:0;background:none;color:var(--ink);display:flex;align-items:center;gap:2px;padding:6px 4px;cursor:pointer;font:800 12px Manrope,system-ui;flex:none}.pc .p10 .ic{width:22px;height:22px}
+.pc .prw2{flex:1;min-width:0}
+.pc .prg{-webkit-appearance:none;appearance:none;width:100%;height:22px;background:transparent!important;margin:0;cursor:pointer;border:0!important;padding:0!important;box-shadow:none!important;border-radius:0;min-height:0}
+.pc .prg::-webkit-slider-runnable-track{height:5px;border-radius:5px;background:linear-gradient(90deg,#f6c453 var(--p,0%),#e3e7f0 var(--p,0%))}
+.pc .prg::-webkit-slider-thumb{-webkit-appearance:none;width:18px;height:18px;border-radius:50%;background:#c98a1c;border:3px solid #fff;box-shadow:0 1px 4px #0004;margin-top:-6.5px}
+.pc .prg::-moz-range-track{height:5px;border-radius:5px;background:#e3e7f0}.pc .prg::-moz-range-progress{height:5px;border-radius:5px;background:#f6c453}
+.pc .prg::-moz-range-thumb{width:14px;height:14px;border-radius:50%;background:#c98a1c;border:3px solid #fff}
+html[data-theme=dark] .pc .prg::-webkit-slider-runnable-track{background:linear-gradient(90deg,#f6c453 var(--p,0%),#ffffff26 var(--p,0%))}
+.pc .ptm{display:flex;justify-content:space-between;font:700 11.5px Manrope,system-ui;color:var(--mut);margin-top:-2px}
 .pc{display:flex;align-items:center;gap:12px;margin:12px 0 2px;padding:10px 12px 10px 10px;border-radius:18px;background:var(--card);box-shadow:var(--sh);position:relative;overflow:hidden;border:1px solid #f6c45355;cursor:pointer}
 .pc .pav{width:42px;height:42px;border-radius:50%;padding:2px;background:linear-gradient(135deg,#f6c453,#c98a1c);flex:none}
 .pc .pav img,.pc .pav i{display:grid;place-items:center;width:100%;height:100%;border-radius:50%;object-fit:cover;background:#123a9e;border:2px solid var(--card);box-sizing:border-box}
@@ -683,6 +699,8 @@ button.dep{width:100%;background:none;border-left:0;border-right:0;border-bottom
 <symbol id="i-play" viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></symbol>
 <symbol id="i-mic" viewBox="0 0 24 24"><rect x="9" y="3" width="6" height="11" rx="3"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3"/></symbol>
 <symbol id="i-upl" viewBox="0 0 24 24"><path d="M12 16V4M7 9l5-5 5 5M5 20h14"/></symbol>
+<symbol id="i-rw" viewBox="0 0 24 24"><path d="M4 12a8 8 0 1 0 2.4-5.7M4 4v4h4"/></symbol>
+<symbol id="i-ff" viewBox="0 0 24 24"><path d="M20 12a8 8 0 1 1-2.4-5.7M20 4v4h-4"/></symbol>
 <symbol id="i-del" viewBox="0 0 24 24"><path d="M4 7h16M9 7V4h6v3M6 7l1 13h10l1-13"/></symbol>
 <symbol id="i-chat" viewBox="0 0 24 24"><path d="M4 20l1.4-4A8 8 0 1 1 8.5 19z"/></symbol>
 <symbol id="i-book" viewBox="0 0 24 24"><path d="M4 5a2 2 0 0 1 2-2h13v16H6a2 2 0 0 0-2 2zM4 21V5M8 7h7"/></symbol>
@@ -1618,7 +1636,7 @@ const srcOf=x=>{const m=/src="([^"]+)"/.exec(hasMedia(x)?media(x,''):'');return 
 let amCount={},amMine=new Set();try{amMine=new Set(JSON.parse(localStorage.getItem('amens')||'[]'))}catch(_){}
 const amN=k=>(amCount[k]||0);
 const amBtn=k=>`<button class="amb${amMine.has(k)?' on':''}" data-amem="${esc(k)}"><svg class="ic"><use href="#i-heart"/></svg><b>${amN(k)||''}</b> Amém</button>`;
-async function amLoad(){if(typeof SB==='undefined')return;try{const r=await SB.from('amens').select('item,n');if(r.data){amCount={};r.data.forEach(x=>amCount[x.item]=x.n);if(cur()==='inicio'){rFeed()}}}catch(_){}}
+async function amLoad(){if(typeof SB==='undefined')return;try{const r=await SB.from('amens').select('item,n');if(r.data){amCount={};r.data.forEach(x=>amCount[x.item]=x.n);if(cur()==='inicio'){rFeed();try{rPal()}catch(_){}}if(cur()==='admin'&&adTab==='pa'){try{rPalAdm()}catch(_){}}}}catch(_){}}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-amem]');if(!b)return;e.preventDefault();e.stopPropagation();const k=b.dataset.amem,on=!amMine.has(k);
   if(on)amMine.add(k);else amMine.delete(k);try{localStorage.setItem('amens',JSON.stringify([...amMine].slice(-500)))}catch(_){}
   amCount[k]=Math.max(0,amN(k)+(on?1:-1));$$(`[data-amem="${CSS.escape(k)}"]`).forEach(x=>{x.classList.toggle('on',on);x.querySelector('b').textContent=amN(k)||'';if(on){x.classList.remove('pop');void x.offsetWidth;x.classList.add('pop')}});
@@ -1930,13 +1948,15 @@ function palQuando(c){const d=new Date(c);if(isNaN(d))return'';const di=iso(d);i
 const PA={aud:null,id:'',url:'',load:false};
 function rPal(){const el=$('#palC');if(!el)return;const x=palUlt();
   if(!x||palIdade(x)>PAL_DIAS){el.innerHTML='';return}
-  const F=cfg().fotos||{},fp=fotoK(F,'pastor');const on=PA.id===x.id&&PA.aud&&!PA.aud.paused;
-  const tm=PA.id===x.id&&PA.aud&&PA.aud.currentTime>0?mmss(PA.aud.currentTime)+' de '+mmss(x.dur):mmss(x.dur);
-  el.innerHTML=`<div class="pc" data-pplay="${esc(x.id)}"><span class="pav">${fp?`<img src="${esc(fotoSrc(fp))}" alt="">`:`<i>${IC('mic')}</i>`}</span><div class="tx"><small>PALAVRA DO PASTOR · ${esc(palQuando(x.criado).toUpperCase())}</small><b>${esc(x.titulo||'Meditação')}</b><span class="tm">${PA.load&&PA.id===x.id?'Carregando…':tm}</span></div><button class="pb" aria-label="${on?'Pausar':'Ouvir'}">${on?PAUSES:PLAYS}</button><span class="pg" style="width:${PA.id===x.id&&PA.aud&&x.dur?Math.min(100,PA.aud.currentTime/x.dur*100):0}%"></span></div>`;
+  const F=cfg().fotos||{},fp=fotoK(F,'pastor');const meu=PA.id===x.id&&PA.aud;const on=meu&&!PA.aud.paused;
+  const D=x.dur||(meu&&PA.aud.duration)||0,ct=meu?PA.aud.currentTime:0;
+  const no=palOuv(x.id);const tm=mmss(D)+(no?' · '+no+(no>1?' ouviram':' ouviu'):'');
+  const ctl=meu?`<div class="psk"><button class="p10" data-pskip="-10" aria-label="Voltar 10 segundos">${IC('rw')}<span>10</span></button><div class="prw2"><input type="range" class="prg" min="0" max="${Math.max(1,Math.round(D))}" step="1" value="${Math.round(ct)}" aria-label="Posição do áudio" style="--p:${D?Math.min(100,ct/D*100):0}%"><div class="ptm"><span>${mmss(ct)}</span><span>${mmss(D)}</span></div></div><button class="p10" data-pskip="10" aria-label="Avançar 10 segundos"><span>10</span>${IC('ff')}</button></div>`:'';
+  el.innerHTML=`<div class="pc${meu?' on':''}"><div class="pct" data-pplay="${esc(x.id)}"><span class="pav">${fp?`<img src="${esc(fotoSrc(fp))}" alt="">`:`<i>${IC('mic')}</i>`}</span><div class="tx"><small>PALAVRA DO PASTOR · ${esc(palQuando(x.criado).toUpperCase())}</small><b>${esc(x.titulo||'Meditação')}</b><span class="tm">${PA.load&&PA.id===x.id?'Carregando…':(meu?(on?'Tocando':'Pausado'):tm)}</span></div>${meu?'':`<button class="phc${amMine.has('a:'+x.id)?' on':''}" data-amem="a:${esc(x.id)}" aria-label="Amém"><svg class="ic"><use href="#i-heart"/></svg><b>${amN('a:'+x.id)||''}</b></button>`}<button class="pb" aria-label="${on?'Pausar':'Ouvir'}">${on?PAUSES:PLAYS}</button></div>${ctl}${meu?`<div class="pam">${amBtn('a:'+x.id)}<span>${no?no+(no>1?' pessoas ouviram':' pessoa ouviu'):''}</span></div>`:''}</div>`;
   palLimparCache()}
-function palTick(){const x=palList().find(p=>p.id===PA.id);const c=$('#palC .pc');if(!x||!c||!PA.aud)return;
-  const g=c.querySelector('.pg');if(g)g.style.width=Math.min(100,PA.aud.currentTime/(x.dur||PA.aud.duration||1)*100)+'%';
-  const t=c.querySelector('.tm');if(t)t.textContent=mmss(PA.aud.currentTime)+' de '+mmss(x.dur||PA.aud.duration)}
+function palTick(){const x=palList().find(p=>p.id===PA.id);if(x&&PA.aud&&PA.aud.currentTime>=20)palContou(x.id);const c=$('#palC .pc');if(!x||!c||!PA.aud||PA.drag)return;
+  const D=x.dur||PA.aud.duration||1,ct=PA.aud.currentTime;const r=c.querySelector('.prg');if(r){r.value=Math.round(ct);r.style.setProperty('--p',Math.min(100,ct/D*100)+'%')}
+  const t=c.querySelector('.ptm span');if(t)t.textContent=mmss(ct)}
 async function palTocar(id){const x=palList().find(p=>p.id===id);if(!x)return;
   if(PA.id===id&&PA.aud){if(PA.aud.paused)PA.aud.play().catch(()=>{});else PA.aud.pause();return}
   try{if(PA.aud){PA.aud.pause();if(PA.url)URL.revokeObjectURL(PA.url)}}catch(_){}
@@ -1947,6 +1967,13 @@ async function palTocar(id){const x=palList().find(p=>p.id===id);if(!x)return;
     PA.load=false;await a.play()}catch(_){PA.load=false;PA.id='';PA.aud=null;const t=$('#palC .tm');if(t)t.textContent='Sem internet para baixar o áudio agora.'}
   rPal()}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-pplay]');if(!b)return;e.preventDefault();palTocar(b.dataset.pplay)});
+document.addEventListener('click',e=>{const b=e.target.closest('[data-pskip]');if(!b||!PA.aud)return;e.preventDefault();const a=PA.aud;a.currentTime=Math.max(0,Math.min((a.duration||1e9)-0.2,a.currentTime+(+b.dataset.pskip)));palTick()});
+document.addEventListener('input',e=>{if(!e.target.classList||!e.target.classList.contains('prg')||!PA.aud)return;PA.drag=true;const v=+e.target.value,m=+e.target.max||1;e.target.style.setProperty('--p',Math.min(100,v/m*100)+'%');const t=$('#palC .ptm span');if(t)t.textContent=mmss(v)});
+document.addEventListener('change',e=>{if(!e.target.classList||!e.target.classList.contains('prg')||!PA.aud)return;PA.aud.currentTime=+e.target.value;PA.drag=false;palTick()});
+const palOuv=id=>amN('o:'+id);
+let palOuvi=new Set();try{palOuvi=new Set(JSON.parse(localStorage.getItem('palOuvi')||'[]'))}catch(_){}
+function palContou(id){if(palOuvi.has(id))return;palOuvi.add(id);try{localStorage.setItem('palOuvi',JSON.stringify([...palOuvi].slice(-100)))}catch(_){}
+  amCount['o:'+id]=amN('o:'+id)+1;try{SB.rpc('amem',{p_item:'o:'+id,p_delta:1}).then(r=>{if(r&&typeof r.data==='number')amCount['o:'+id]=r.data}).catch(()=>{})}catch(_){}}
 let palCx=false;
 async function palLimparCache(){if(palCx||!('caches' in window))return;palCx=true;try{const vivos=new Set(palList().map(x=>MIDIA+x.mid));const c=await caches.open('adcb-midia');for(const k of await c.keys())if(/\/midia\/pal-/.test(k.url)&&!vivos.has(k.url))await c.delete(k)}catch(_){}}
 /* liderança */
@@ -1996,7 +2023,7 @@ function rPalAdm(){const box=$('#paL');if(!box)return;const L=palList();
   else if(PR.st==='prep')top=`<div class="mic" style="opacity:.6">${IC('mic')}</div><div class="lim" style="font-size:15px">Preparando o áudio…</div>`;
   else if(PR.st==='ok')top=`<audio controls src="${PR.url}" style="width:100%;margin:6px 0"></audio><div class="lim">Pronto: ${mmss(PR.dur)} · ${(PR.blob.size/1048576).toFixed(2).replace('.',',')} MB</div><button class="btn gh" data-pnovo="1" style="margin-top:8px">Gravar de novo</button>`;
   else top=`<button class="mic" data-prec="1" aria-label="Gravar">${IC('mic')}</button><div class="tmr">0:00 <small>/ 3:00</small></div><div class="lim">Toque no microfone para começar a gravar</div>`;
-  const lst=L.length?L.map(x=>`<div class="prw"><button class="pb2" data-pplay="${esc(x.id)}">${PLAYS}</button><div><b>${esc(x.titulo||'Meditação')}</b><small>${mmss(x.dur)} · ${esc(palQuando(x.criado))} · apaga em ${Math.max(0,Math.ceil(PAL_APAGA-palIdade(x)))} dias</small></div><button class="pdl" data-pdel="${esc(x.id)}" aria-label="Apagar">${IC('del')}</button></div>`).join(''):'<div class="lim" style="text-align:center">Nenhuma meditação enviada ainda.</div>';
+  const lst=L.length?L.map(x=>`<div class="prw"><button class="pb2" data-pplay="${esc(x.id)}">${PLAYS}</button><div><b>${esc(x.titulo||'Meditação')}</b><small>${mmss(x.dur)} · ${esc(palQuando(x.criado))} · apaga em ${Math.max(0,Math.ceil(PAL_APAGA-palIdade(x)))} dias</small><small class="pst">🎧 ${palOuv(x.id)} ${palOuv(x.id)===1?'ouviu':'ouviram'} · ❤ ${amN('a:'+x.id)} Amém</small></div><button class="pdl" data-pdel="${esc(x.id)}" aria-label="Apagar">${IC('del')}</button></div>`).join(''):'<div class="lim" style="text-align:center">Nenhuma meditação enviada ainda.</div>';
   box.innerHTML=`<div class="prec"><p>Grave uma meditação curta (até 3 minutos). Ela aparece no início do app por ${PAL_DIAS} dias e é apagada depois de ${PAL_APAGA} dias.</p>${top}
   ${PR.err?`<div class="perr">${esc(PR.err)}</div>`:''}
   ${PR.st==='idle'||PR.st==='ok'?`<div class="ou">ou</div><label class="fb">${IC('upl')}Escolher áudio do celular<input type="file" accept="audio/*" id="paF" hidden></label>`:''}
