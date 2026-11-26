@@ -577,6 +577,13 @@ nav a.on svg{background:#d9a52b;stroke:#0b2160;width:46px!important;height:30px!
 .mnm button,[data-nome].btn{display:inline-flex;align-items:center;gap:6px}.mnm button{margin-left:auto;border:0;background:none;color:var(--blue,#1546b8);font:800 13.5px Manrope,system-ui,sans-serif;cursor:pointer;padding:6px 0}
 .mnm svg,[data-nome].btn svg{width:14px;height:14px}
 a.shr{text-decoration:none;color:inherit}
+.dsk{padding-bottom:12px}.dsh{display:flex;align-items:baseline;justify-content:space-between;gap:8px}.dsh small{font:700 12.5px Manrope,system-ui;color:var(--mut)}
+.dst{display:flex;gap:10px;overflow-x:auto;margin:4px -16px 0;padding:6px 16px 6px;scrollbar-width:none}.dst::-webkit-scrollbar{display:none}
+.dsb{flex:none;width:86px;display:flex;flex-direction:column;align-items:center;gap:7px;border:0;background:none;padding:0;cursor:pointer;color:var(--ink);font:inherit}
+.dsr{width:74px;height:74px;border-radius:50%;padding:3px;background:conic-gradient(from 210deg,var(--dc),color-mix(in srgb,var(--dc) 45%,#fbbf24),var(--dc));display:block}
+.dsc{width:100%;height:100%;border-radius:50%;border:3px solid var(--card,#fff);overflow:hidden;display:grid;place-items:center;background:color-mix(in srgb,var(--dc) 14%,var(--card,#fff))}.dsc img{width:100%;height:100%;object-fit:cover;display:block}.dsc i{font:800 20px Archivo,system-ui;font-style:normal;color:var(--dc)}
+.dsb b{font:700 12px/1.2 Manrope,system-ui;text-align:center;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;max-width:86px}
+.dsb:active .dsr{transform:scale(.94)}
 .dpi.dpl{background:none!important;padding:0;overflow:hidden;border-radius:50%;box-shadow:0 2px 8px #0002}.dpi.dpl img{width:100%;height:100%;object-fit:cover;display:block}
 .dpf{margin:-8px -4px 0;border-radius:22px;overflow:hidden;aspect-ratio:4/3;background:#e6ebe8}.dpf img{width:100%;height:100%;object-fit:cover;object-position:50% 28%;display:block}
 .dps .dph .dpi.dpl{border-radius:50%}.dps .dph.sob{margin-top:8px;padding-left:12px;align-items:center}.dps .dph.sob .dpi{width:84px;height:84px;margin-top:-50px;border:4px solid var(--card,#fff);box-shadow:0 6px 18px #0003;flex:none}
@@ -726,7 +733,7 @@ button.dep{width:100%;background:none;border-left:0;border-right:0;border-bottom
     <a class="back" href="#mais"><svg class="ic" style="transform:rotate(180deg)"><use href="#i-chev"/></svg>Mais</a>
     <div class="ph"><h2>Conheça a igreja</h2><p id="igSub">Assembleia de Deus em Carlos Barbosa.</p></div>
     <div class="card"><h3>Pastores presidentes</h3><div class="pastor"><div class="av" id="pastAv">AO</div><div><b>Pr. Ageu Gaspar Ozório e Liane Ozório</b><p>Assembleia de Deus · Carlos Barbosa</p></div></div></div>
-    <div class="card" id="depC" hidden><h3>Departamentos</h3><div id="depL"></div></div>
+    <div class="card dsk" id="depC" hidden><div class="dsh"><h3>Departamentos</h3><small>Toque para conhecer</small></div><div id="depL"></div></div>
     <div class="h2" style="margin-top:20px">Nossas congregações</div>
     <div id="igL"></div>
   </section>
@@ -1858,7 +1865,7 @@ function openDep(i){const c=cfg(),D=Array.isArray(c.deps)?c.deps:[],d=D[i];if(!d
   $('#modal').classList.add('on');$('#fx').onclick=closeM}
 document.addEventListener('click',e=>{const b=e.target.closest('[data-dep]');if(!b)return;e.preventDefault();openDep(+b.dataset.dep)});
 document.addEventListener('click',e=>{if(e.target.closest('#sheet .dps [data-ev]'))closeM()},true);
-function rIgreja(){const c=cfg(),inf=c.info||{};{const D=Array.isArray(c.deps)?c.deps:[];$('#depC').hidden=!D.length;const CR=['#1f6b45','#7c3aed','#c48a12','#e11d48','#1546b8','#0891b2'];$('#depL').innerHTML=D.map((d,i)=>{const t=String(d.tel||'').replace(/\D/g,'');const w=t?(t.length<=11?'55'+t:t):'';return `<button class="dep" data-dep="${i}" style="--dc:${CR[i%CR.length]}">${(()=>{const lg=fotoK(c.fotos||{},'dep:'+d.nome+':logo');return lg?`<span class="dpi dpl"><img src="${fotoSrc(lg)}" alt="Logo ${esc(d.nome)}"></span>`:`<span class="dpi">${IC('users')}</span>`})()}<div class="dpt"><b>${esc(d.nome)}</b>${d.lid?`<span>${esc(d.lid)}</span>`:''}${d.onde?`<small>${esc(d.onde)}</small>`:''}</div>${IC('chev')}</button>`}).join('')}{const pa=$('#pastAv'),F=c.fotos||{};if(pa)pa.innerHTML=F.pastor?`<img src="${fotoSrc(F.pastor)}" alt="Pastores presidentes">`:'AO'}
+function rIgreja(){const c=cfg(),inf=c.info||{};{const D=Array.isArray(c.deps)?c.deps:[];$('#depC').hidden=!D.length;const CR=['#1f6b45','#7c3aed','#c48a12','#e11d48','#1546b8','#0891b2'];$('#depL').className='dst';$('#depL').innerHTML=D.map((d,i)=>{const lg=fotoK(c.fotos||{},'dep:'+d.nome+':logo');const ini=String(d.nome||'?').trim().split(/\s+/).filter(w=>w.length>2).slice(0,2).map(w=>w[0].toUpperCase()).join('')||String(d.nome||'?')[0].toUpperCase();return `<button class="dsb" data-dep="${i}" style="--dc:${CR[i%CR.length]}"><span class="dsr"><span class="dsc">${lg?`<img src="${fotoSrc(lg)}" alt="Logo ${esc(d.nome)}">`:`<i>${esc(ini)}</i>`}</span></span><b>${esc(d.nome)}</b></button>`}).join('')}{const pa=$('#pastAv'),F=c.fotos||{};if(pa)pa.innerHTML=F.pastor?`<img src="${fotoSrc(F.pastor)}" alt="Pastores presidentes">`:'AO'}
   const DS=['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
   $('#igL').innerHTML=c.congs.map(n=>{const i=infoK(inf,n)||{};const cc=ccol(n),dk=(CDK[n]||CDKN[ncg(n)])?`rgb(${CDK[n]||CDKN[ncg(n)]})`:'#0b2160';const hs=(c.prog||[]).filter(x=>ncg(x.cong)===ncg(n)).sort((a,b)=>a.dia-b.dia||String(a.hora).localeCompare(b.hora));
     return `<div class="cg2" style="--cc:${cc};--cd:${dk}"><div class="hd">${(()=>{const F=c.fotos||{},v=F[n]||(n===c.congs[0]?F.pastor:'');return v?`<img class="hdf" src="${fotoSrc(v)}" alt="">`:''})()}<div><b>${esc(n)}</b>${i.resp?`<span>${esc(i.resp)}</span>`:''}</div></div><div class="bd2">${i.end?`<div class="ad">${IC('pin')}${esc(i.end)}</div>`:'<div class="ad">Endereço em breve.</div>'}${hs.length?`<div class="hrs">${hs.map(x=>`<span>${DS[x.dia]} ${esc(String(x.hora).replace(':00','h').replace(':','h'))}</span>`).join('')}</div>`:''}${i.end?`<a class="btn gh" href="${maps(i.end)}" target="_blank" rel="noopener">${IC('pin')}Como chegar</a>`:''}</div></div>`}).join('')}
