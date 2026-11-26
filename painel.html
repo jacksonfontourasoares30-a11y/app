@@ -129,15 +129,15 @@ async function githubKB(){
 
 async function carregar(){
   const {data:{session}}=await SB.auth.getSession();
-  if(!session){$('#porta').style.display='';$('#rec').style.display='none';return}
+  if(!session){$('#porta').style.display='block';$('#rec').style.display='none';return}
   const {data,error}=await SB.rpc('painel_limites');
   if(error||!data){
-    $('#porta').style.display='';$('#rec').style.display='none';
+    $('#porta').style.display='block';$('#rec').style.display='none';
     $('#pmsg').textContent='A conta '+(session.user.email||'')+' não tem acesso a este painel.';
     $('#entrar').textContent='Entrar com outra conta';
     return;
   }
-  $('#porta').style.display='none';$('#rec').style.display='';
+  $('#porta').style.display='none';$('#rec').style.display='block';
   const GB=1073741824, MBd=524288000;
   $('#mv').innerHTML=mb(data.midia_bytes)+' <span>de 1 GB</span>';
   $('#mp').textContent=pc(data.midia_bytes,GB);
