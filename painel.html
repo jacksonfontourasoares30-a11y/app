@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Painel · limites do app</title>
+<link rel="icon" href="icon-192.png">
+<style>
+*{box-sizing:border-box;margin:0}
+body{background:#F7F9FD;color:#0A1A44;font:16px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif;padding:22px;max-width:960px;margin:0 auto}
+.topo{display:flex;align-items:center;gap:14px}
+.selo{background:#0A1A44;border-radius:13px;padding:9px 11px;display:flex;flex:none}
+.selo img{width:46px;display:block}
+h1{font-size:22px;font-weight:800;letter-spacing:-.01em}
+.data{color:#5B6788;font-size:14px;margin:4px 0 22px}
+.cx{background:#fff;border:1px solid #DCE3F2;border-radius:16px;padding:18px 20px;margin-bottom:13px}
+.rot{font-size:12px;font-weight:700;letter-spacing:.09em;text-transform:uppercase;color:#5B6788;margin-bottom:8px}
+.med{display:flex;align-items:baseline;justify-content:space-between;gap:10px;margin-bottom:8px}
+.med b{font-size:20px;font-weight:800}
+.med b span{font-size:13.5px;font-weight:700;color:#5B6788}
+.pc{font-size:13.5px;color:#5B6788;white-space:nowrap}
+.trilho{height:9px;border-radius:99px;background:#E6EBF7;overflow:hidden}
+.trilho i{display:block;height:100%;border-radius:99px;background:#B8860B;transition:width .4s}
+.sobra{font-size:13px;color:#5B6788;margin-top:8px}
+.par{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-bottom:13px}
+.par .cx{margin:0}
+@media(max-width:620px){.par{grid-template-columns:1fr}}
+.dest{border-color:#C8B36A;background:#FFFCF3}
+.ok{background:#F2FAF4;border-color:#BFE3C9}
+.sec{font-size:12px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#8291B5;margin:20px 0 9px}
+.ab{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.ab b{font-size:18px;font-weight:800}
+a{color:#1A4FB4;font-weight:700}
+.bt{background:#0A1A44;color:#fff;border:0;border-radius:11px;padding:13px 22px;font:700 15px system-ui;cursor:pointer}
+.bt.g{background:#fff;color:#0A1A44;border:1px solid #CBD6EC}
+.nota{font-size:13.5px;color:#4A5570}.nota b{color:#0A1A44}
+#porta{text-align:center;padding:46px 22px}
+#porta p{color:#5B6788;margin:10px 0 22px;font-size:15px}
+#rec{display:none}
+.rod{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-top:16px}
+.rod small{color:#5B6788;font-size:13px}
+</style>
+</head>
+<body>
+<div class="topo"><span class="selo"><img src="icon-192.png" alt=""></span>
+<div><h1>Painel · limites do app</h1><p class="data" id="dt">—</p></div></div>
+
+<div id="porta">
+  <h2 style="font-size:19px">Acesso restrito</h2>
+  <p id="pmsg">Entre com a sua conta Google para ver os números.</p>
+  <button class="bt" id="entrar">Entrar com o Google</button>
+</div>
+
+<div id="rec">
+  <p class="sec">O que pode travar</p>
+
+  <div class="cx dest">
+    <p class="rot">Tráfego do Supabase · o mais apertado</p>
+    <div class="ab"><b>Só no painel do Supabase</b><span class="pc">limite de 5 GB no mês</span></div>
+    <p class="sobra">Esse número não dá para ler daqui, então não invento nenhum.
+      Veja em <a id="lkusage" href="#" target="_blank" rel="noopener">Reports › Usage</a>.
+      É o limite que apertaria primeiro.</p>
+  </div>
+
+  <div class="par">
+    <div class="cx"><p class="rot">Espaço de fotos e áudios</p>
+      <div class="med"><b id="mv">—</b><span class="pc" id="mp">—</span></div>
+      <div class="trilho"><i id="mb" style="width:0"></i></div>
+      <p class="sobra" id="ms">—</p></div>
+    <div class="cx"><p class="rot">Banco de dados</p>
+      <div class="med"><b id="bv">—</b><span class="pc" id="bp">—</span></div>
+      <div class="trilho"><i id="bb" style="width:0"></i></div>
+      <p class="sobra" id="bs">—</p></div>
+  </div>
+
+  <div class="par">
+    <div class="cx"><p class="rot">Tamanho do site (GitHub)</p>
+      <div class="med"><b id="gv">—</b><span class="pc" id="gp">—</span></div>
+      <div class="trilho"><i id="gb" style="width:0"></i></div>
+      <p class="sobra">Limite de 1 GB. Conta o histórico do repositório.</p></div>
+    <div class="cx"><p class="rot">Compilações do app (Actions)</p>
+      <div class="ab"><b>Só no GitHub</b><span class="pc">cerca de 130 por mês</span></div>
+      <p class="sobra">Precisaria de uma chave sua para ler, então também não mostro número.
+        Veja em <a href="https://github.com/settings/billing" target="_blank" rel="noopener">Settings › Billing</a>.</p></div>
+  </div>
+
+  <p class="sec">Situação</p>
+  <div class="par">
+    <div class="cx ok"><p class="rot">Projeto</p>
+      <div class="ab"><b>Acordado</b><span class="pc">pausa com 7 dias parado</span></div>
+      <p class="sobra">Se estes números carregaram, o Supabase está no ar.</p></div>
+    <div class="cx"><p class="rot">Aparelhos recebendo avisos</p>
+      <div class="ab"><b id="av">—</b><span class="pc" id="ad">—</span></div>
+      <p class="sobra">Sem limite. O Firebase é grátis e ilimitado.</p></div>
+  </div>
+
+  <div class="cx ok">
+    <p class="nota"><b>Não há como vir cobrança.</b> Sem cartão cadastrado e com limite de gasto zero,
+      se algum número estourar o serviço fica limitado até virar o mês.</p>
+  </div>
+
+  <div class="rod">
+    <small id="quem">—</small>
+    <span><button class="bt g" id="sair">Sair</button>
+    <button class="bt" id="rec2">Atualizar</button></span>
+  </div>
+</div>
+
+<script src="supabase.js"></script>
+<script>
+const URL_SB='https://ospxutgttdefnodvmcis.supabase.co';
+const SB=supabase.createClient(URL_SB,'sb_publishable_ilYg80GeUVYzzWEO4f0YuQ_EmxvXWX8',
+  {auth:{flowType:'pkce',persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+const $=s=>document.querySelector(s);
+const mb=n=>(n/1048576).toFixed(n<10485760?1:0).replace('.',',')+' MB';
+const pc=(a,b)=>{const p=a/b*100;return p<0.01?'<0,01%':p.toFixed(p<1?2:1).replace('.',',')+'%'};
+
+$('#lkusage').href='https://supabase.com/dashboard/project/ospxutgttdefnodvmcis/reports/usage';
+
+$('#entrar').onclick=()=>SB.auth.signInWithOAuth({provider:'google',
+  options:{redirectTo:location.origin+location.pathname,queryParams:{prompt:'select_account'}}});
+$('#sair').onclick=async()=>{await SB.auth.signOut();location.reload()};
+$('#rec2').onclick=()=>carregar();
+
+async function githubKB(){
+  try{const r=await fetch('https://api.github.com/repos/adcarlosbarbosa/adcarlosbarbosa.github.io');
+    if(!r.ok)return null;return (await r.json()).size}catch(_){return null}
+}
+
+async function carregar(){
+  const {data:{session}}=await SB.auth.getSession();
+  if(!session){$('#porta').style.display='';$('#rec').style.display='none';return}
+  const {data,error}=await SB.rpc('painel_limites');
+  if(error||!data){
+    $('#porta').style.display='';$('#rec').style.display='none';
+    $('#pmsg').textContent='A conta '+(session.user.email||'')+' não tem acesso a este painel.';
+    $('#entrar').textContent='Entrar com outra conta';
+    return;
+  }
+  $('#porta').style.display='none';$('#rec').style.display='';
+  const GB=1073741824, MBd=524288000;
+  $('#mv').innerHTML=mb(data.midia_bytes)+' <span>de 1 GB</span>';
+  $('#mp').textContent=pc(data.midia_bytes,GB);
+  $('#mb').style.width=Math.max(0.4,data.midia_bytes/GB*100)+'%';
+  $('#ms').textContent=data.midia_arquivos+' arquivos.';
+  $('#bv').innerHTML=mb(data.banco_bytes)+' <span>de 500 MB</span>';
+  $('#bp').textContent=pc(data.banco_bytes,MBd);
+  $('#bb').style.width=Math.max(0.4,data.banco_bytes/MBd*100)+'%';
+  $('#bs').textContent=data.publicacoes+' publicações.';
+  const t=data.android+data.iphone+data.navegador;
+  $('#av').textContent=t+(t===1?' aparelho':' aparelhos');
+  $('#ad').textContent=data.android+' Android · '+(data.iphone+data.navegador)+' outros';
+  $('#quem').textContent='Entrou como '+(session.user.email||'');
+  $('#dt').textContent=new Date(data.em).toLocaleString('pt-BR',{dateStyle:'long',timeStyle:'short'});
+  const kb=await githubKB();
+  if(kb==null){$('#gv').textContent='não deu para ler';$('#gp').textContent='';}
+  else{$('#gv').innerHTML=mb(kb*1024)+' <span>de 1 GB</span>';
+       $('#gp').textContent=pc(kb*1024,GB);
+       $('#gb').style.width=Math.max(0.4,kb*1024/GB*100)+'%';}
+}
+SB.auth.onAuthStateChange(()=>carregar());
+carregar();
+</script>
+</body>
+</html>
