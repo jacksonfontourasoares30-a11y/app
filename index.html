@@ -2108,7 +2108,7 @@ function rAdmHome(){if(papel==='lider')return rLiderHome();const T=TABS[papel],n
   const nAv=ALL.avisos.filter(x=>ok(x)&&vivo(x)).length,nEv=ALL.eventos.filter(x=>ok(x)&&(x.semanal||x.data>=TODAY)).length,nEs=ALL.escalas.filter(x=>ok(x)&&x.data>=TODAY).length,nBa=ALL.banners.filter(x=>ok(x)&&vivo(x)&&!x.evento).length;
   const t=(k,ic,cor,ti,su,em)=>T.includes(k)?`<button data-ad="${k}" style="--t:${cor}"><span>${IC(ic)}</span><b>${ti}</b><small>${su}</small><em>${em}</em></button>`:'';
   const l=(k,ic,ti,su)=>T.includes(k)?`<button data-ad="${k}">${IC(ic)}<div><b>${ti}</b><small>${su}</small></div>${IC('chev')}</button>`:'';
-  const ls=l('ig','church','Dados da igreja','Endereços, horários e transmissão ao vivo')+l('eq','users','Equipe','Quem pode entrar aqui'+((S.equipe||[]).length?' · '+S.equipe.length+' pessoas':''))+l('dv','phone','Aparelhos conectados',DVN?DVN+' celulares e computadores recebem os avisos':'Quantos recebem as notificações');
+  const ls=l('ig','church','Dados da igreja','Endereços, horários e transmissão ao vivo')+l('eq','users','Equipe','Quem pode entrar aqui'+((S.equipe||[]).length?' · '+S.equipe.length+' pessoas':''))+l('dv','phone','Aparelhos conectados',DVN?DVN+' celulares e computadores recebem os avisos':'Quantos recebem as notificações')+(ehDono()?`<button data-lim="1">${IC('shield')}<div><b>Limites do app</b><small>Quanto dos planos gratuitos está sendo usado</small></div>${IC('chev')}</button>`:'');
   const oPend=(S.oracoes||[]).filter(d=>!(d.itens||[]).some(i=>i.resposta)).length,nFal=(S.ausencias||[]).filter(d=>(d.itens||[]).some(i=>!i.data||i.data>=TODAY)).length;
   const rb=(k,rcf,ic,cor,ti,su,em,n)=>T.includes(k)?`<button data-ad="${k}"${rcf?` data-rcf="${rcf}"`:''} style="--t:${cor}"${n?' class="tem"':''}><span>${IC(ic)}${n?`<i class="bdg">${n}</i>`:''}</span><b>${ti}</b><small>${su}</small><em>${em}</em></button>`:'';
   const rec=rb('ap','','check','#7c3aed','Para aprovar','Cartazes e eventos dos líderes',np?np+' esperando':'Nada esperando',np)+rb('rc','oracao','heart','#e11d48','Orações','Pedidos dos irmãos',oPend?oPend+' sem resposta':'Tudo respondido',oPend)+rb('rc','falta','users','#0f766e','Faltas','Quem não poderá ir',nFal?nFal+(nFal>1?' próximas':' próxima'):'Nenhuma',0);
@@ -2117,6 +2117,11 @@ function rAdmHome(){if(papel==='lider')return rLiderHome();const T=TABS[papel],n
   ${rec?`<div class="ahs">Recebidos</div><div class="atl">${rec}</div>`:''}
   ${ls?`<div class="ahs">Configurações</div>`:''}${ls?`<div class="alst">${ls}</div>`:''}`}
 document.addEventListener('click',e=>{if(e.target.closest('a[href="#admin"]'))adTab='home'});
+/* painel de limites: só para o dono do projeto (acrescente e-mails na lista) */
+function ehDono(){try{const D=['jacksonfontourasoares30@gmail.com'];
+  return D.includes(String((eu&&eu.email)||'').trim().toLowerCase())}catch(_){return false}}
+document.addEventListener('click',e=>{const b=e.target.closest('[data-lim]');if(!b)return;e.preventDefault();
+  try{window.open('painel.html','_blank','noopener')}catch(_){location.href='painel.html'}});
 function rAdmin(){
   try{palVencidas()}catch(_){}
   rLock();$('#lock').hidden=canEdit;$('#adm').hidden=!canEdit;if(!canEdit)return;
